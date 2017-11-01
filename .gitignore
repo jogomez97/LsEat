@@ -1,2 +1,5 @@
-#configuracio de ftp
+# Configuracio de ftp
 .ftpconfig
+
+# Fitxers basura de macOS
+.DS_Store
