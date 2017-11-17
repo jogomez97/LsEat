@@ -17,13 +17,15 @@
 
 #include "io.h"
 #include "data.h"
+#include "communication.h"
+
 
 #define DATA_EXEC         "Executant Data\n"
 #define WAITING_CLIENTS   "Esperant clients...\n"
 
 #define CONFIGFILE  "Data.dat"
 
-int main (int argc, char *argv[]) {
+int main () {
     int clilen;
     int sock;
     int newsock;
@@ -41,9 +43,8 @@ int main (int argc, char *argv[]) {
         //acabar l'execusió
         return -1;
     } else {
-      data d = *(data*)arg;
 
-      connectPicard(d);
+      connectPicard(data);
       return 0;
   }
 }
