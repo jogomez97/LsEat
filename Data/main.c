@@ -26,13 +26,11 @@
 #define CONFIGFILE  "Data.dat"
 
 int main () {
-    int clilen;
+  /*  int clilen;
     int sock;
     int newsock;
     int port_servidor;
-    char buffer[200];
-
-    pthread_t tenterprise;
+    char buffer[200];*/
 
     int error;
     Data data;
