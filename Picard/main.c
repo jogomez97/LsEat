@@ -58,7 +58,6 @@ int connectat;
 char* comanda;
 
 int main(int argc, char const *argv[]) {
-    int a;
 
     //Comprovem que només s'hagi passat un fitxer
     if (argc != 2) {
