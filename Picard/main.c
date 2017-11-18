@@ -19,42 +19,14 @@
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
 #include <unistd.h>
+
 #include "io.h"
 #include "dades.h"
+#include "communication.h"
+#include "utils.h"
 
-#define ERROR_ARG       "Error! No s'ha passat el nombre de paràmetres que pertoca.\n"
-#define INTRO_COMAND    "Introdueixi comandes...\n"
-#define DIS_MSG         "Gràcies per fer servir LsEat. Fins la propera.\n"
-#define ERROR_COMAND    "Comanda no reconeguda\n"
-#define ERROR_CONN      "Error! Ja estàs connectat.\n"
-#define ERROR_NCONN     "Error! No t'has connectat.\n"
-#define ERROR_CONNECT   "Error de connexion con el servidor.\n"
-#define ERROR_SOCK      "Error en crear el socket.\n"
-
-//S'haurà de borrar per les següents fases
-#define COMANDA_OK      "[Comanda OK]\n"
-
-#define CONNECT         "CONNECTA"
-#define SHOW            "MOSTRA"
-#define MENU            "MENU"
-#define ORDER           "DEMANA"
-#define DELETE          "ELIMINA"
-#define PAY             "PAGAR"
-#define DISCONNECT      "DESCONNECTA"
-
-void stringToUpper(char* string);
-int connectaData();
-void show();
-void order();
-void delete();
-void pay();
-void disconnect();
+//Falta trobar lloc per aquesta funció
 void alliberaMemoria();
 void intHandler();
 
@@ -97,12 +69,12 @@ int main(int argc, char const *argv[]) {
 
                 split = strtok(comanda, " ");
                 if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-                    connectat = connectaData();
+                    connectaData(connectat, picard);
                 } else if (strcmp(SHOW, split) == 0) {
                     split = strtok(NULL, " ");
                     if (split != NULL && strtok(NULL, " ") == NULL) {
                         if (strcmp(split, MENU) == 0) {
-                            show();
+                            show(connectat);
                         } else {
                             write(1, ERROR_COMAND, strlen(ERROR_COMAND));
                         }
@@ -115,7 +87,7 @@ int main(int argc, char const *argv[]) {
                     if (num != NULL && plat != NULL) {
                         quantitat = atoi(num);
                         if (quantitat > 0) {
-                            order();
+                            order(connectat);
                         } else {
                             write(1, ERROR_COMAND, strlen(ERROR_COMAND));
                         }
@@ -128,7 +100,7 @@ int main(int argc, char const *argv[]) {
                     if (num != NULL && plat != NULL) {
                         quantitat = atoi(num);
                         if (quantitat > 0) {
-                            delete();
+                            delete(connectat);
                         } else {
                             write(1, ERROR_COMAND, strlen(ERROR_COMAND));
                         }
@@ -139,7 +111,7 @@ int main(int argc, char const *argv[]) {
                     pay(connectat);
                 } else if (strcmp(DISCONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
                     alliberaMemoria();
-                    disconnect();
+                    disconnect(connectat);
                     return 0;
                 } else {
                     write(1, ERROR_COMAND, strlen(ERROR_COMAND));
@@ -151,16 +123,6 @@ int main(int argc, char const *argv[]) {
 
     }
     return 0;
-}
-
-void stringToUpper(char* string) {
-    int i;
-    int fi = strlen(string);
-
-    for (i = 0; i < fi; i++) {
-        string[i] = toupper(string[i]);
-    }
-
 }
 
 void alliberaMemoria() {
@@ -179,96 +141,4 @@ void intHandler() {
     }
     write(1, "\n", sizeof(char));
     exit(0);
-}
-
-/* FUNCIONS DE LES OPCIONS */
-
-int connectaData() {
-
-    if (!connectat) {
-        //Aquí s'intentarà connectar amb Data, de moment suposarem que
-        //es fa bé (return 1)
-        //Connect
-        int sockfd;
-
-        sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-        if (sockfd < 0) {
-            write(1, ERROR_SOCK, strlen(ERROR_SOCK));
-            return -1;
-        }
-
-        struct sockaddr_in s_addr;
-        memset(&s_addr, 0, sizeof (s_addr));
-        s_addr.sin_family = AF_INET;
-        s_addr.sin_port = htons(picard.port);
-
-        int error = inet_aton(picard.ip, &s_addr.sin_addr);
-
-        if (error < 0) {
-            write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-            return -1;
-        };
-
-        if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
-            write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-            return -1;
-        }
-
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
-        return 1;
-    } else {
-        write(1, ERROR_CONN, strlen(ERROR_CONN));
-    }
-
-    return 1;
-}
-
-void show() {
-
-    if (connectat) {
-        //Fem tot el pertinent per mostrar el menú
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
-    } else {
-        write(1, ERROR_NCONN, strlen(ERROR_NCONN));
-    }
-
-}
-
-void order() {
-
-    if (connectat) {
-        //Fem tot el pertinent per fer una comanda
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
-    } else {
-        write(1, ERROR_NCONN, strlen(ERROR_NCONN));
-    }
-}
-
-void delete() {
-
-    if (connectat) {
-        //Fem tot el pertinent esborrar una comanda
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
-    } else {
-        write(1, ERROR_NCONN, strlen(ERROR_NCONN));
-    }
-
-}
-
-void pay() {
-
-    if (connectat) {
-        //Fem tot el pertinent per a pagar
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
-    } else {
-        write(1, ERROR_NCONN, strlen(ERROR_NCONN));
-    }
-}
-
-void disconnect() {
-    if (connectat) {
-        //Ens desconnectem
-    }
-    write(1, DIS_MSG, strlen(DIS_MSG));
 }
