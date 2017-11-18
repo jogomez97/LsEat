@@ -51,41 +51,38 @@ int main(int argc, char const *argv[]) {
             } else {
                 write(1, C_MENU, strlen(C_MENU));
 
+
                 //Connectar-se a Data
                 int sockfd = connectaData(enterprise.ipData, enterprise.portData);
-                if (sockfd > 0) {
+                if (sockfd < 0) {
                     return EXIT_FAILURE;
                 } else {
-                    write(1, "CONNECTED\n", strlen("CONNECTED\n"));
 
                     //Nova connexió Enterprise->Data
                     Trama trama;
+                    int length;
 
+                    //Afegim les dades a trama
                     trama.type = 0x01;
-                    strcpy(trama.header, "[ENT_INF]");
+                    strcpy(trama.header, "[ENT_INF]\0");
+                    length = strlen(enterprise.nom) + strlen(enterprise.ipData)
+                            + sizeof(enterprise.portData) + 2 * sizeof(char);
+                    char buffer[length];
+                    sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portData, enterprise.ipData);
+                    trama.data = buffer;
+                    trama.length = strlen(trama.data);
 
+                    //Enviem Trama
+                    length = sizeof(trama.type) + strlen(trama.header)
+                            + sizeof(trama.length) + strlen(trama.data);
+                    write(sockfd, &trama, length);
 
-                    //Mirar pq el strlen para on l'espai de Enterprise
-
-
-                    char str[10];
-                    trama.data = strcat(enterprise.nom, "&");
-                    write(1, trama.data, sizeof(trama.data));
-                    write(1, "\n", 1);
-                    sprintf(str, "%d", enterprise.portData);
-                    trama.data = strcat(trama.data, str);
-                    write(1, trama.data, sizeof(trama.data));
-                    write(1, "\n", 1);
-                    trama.data = strcat(trama.data, "&");
-                    write(1, trama.data, sizeof(trama.data));
-                    write(1, "\n", 1);
-                    trama.data = strcat(trama.data, enterprise.ipData);
-                    write(1, trama.data, 100);
-                    write(1, "\n", 1);
-
-                    trama.length = sizeof(trama.data);
-
-
+                    char b[10];
+                    sprintf(b, "LENGTH: %d\n", length);
+                    write(1, b, strlen(b));
+                    char buffer2[length];
+                    sprintf(buffer2, "%X/%s/%d/%s\n", trama.type, trama.header, trama.length, trama.data);
+                    write(1, buffer2, strlen(buffer2));
 
                     close(sockfd);
                 }

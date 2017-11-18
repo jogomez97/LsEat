@@ -9,12 +9,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define ERROR_ARGC "Error! No se han pasado los arg necesarios!\n"
-#define ERROR_OPEN "Error! No se ha podido abrir un fichero.\n"
-#define ERROR_MESSAGE   "Opcion incorrecta.\n"
+#define ERROR_ARGC "Error! No s'han passat els arguments necessaris!\n"
+#define ERROR_OPEN "Error! No s'ha pogut obrir el fitxer.\n"
+#define ERROR_MESSAGE   "Opció incorrecta.\n"
 #define ERROR_SOCK  "Error en crear el socket!\n"
 #define ERROR_ACCEPT "Error en acceptar!\n"
-#define ERROR_CONNECT "Error de connexion con el servidor.\n"
+#define ERROR_CONNECT "Error de connexió amb Data.\n"
 
 typedef struct {
     char        type;

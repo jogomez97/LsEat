@@ -32,11 +32,11 @@ int main () {
     error = readFile(CONFIGFILE, &data);
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal
-        //acabar l'execusió
+        //acabar l'execució
         return -1;
     } else {
 
-      connectPicard(data);
+      connectEnterprise(data);
       return 0;
   }
 }
