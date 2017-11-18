@@ -20,6 +20,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <unistd.h>
 #include "io.h"
 #include "dades.h"
@@ -30,6 +34,8 @@
 #define ERROR_COMAND    "Comanda no reconeguda\n"
 #define ERROR_CONN      "Error! Ja estàs connectat.\n"
 #define ERROR_NCONN     "Error! No t'has connectat.\n"
+#define ERROR_CONNECT   "Error de connexion con el servidor.\n"
+#define ERROR_SOCK      "Error en crear el socket.\n"
 
 //S'haurà de borrar per les següents fases
 #define COMANDA_OK      "[Comanda OK]\n"
@@ -43,7 +49,7 @@
 #define DISCONNECT      "DESCONNECTA"
 
 void stringToUpper(char* string);
-int connect();
+int connectaData();
 void show();
 void order();
 void delete();
@@ -91,7 +97,7 @@ int main(int argc, char const *argv[]) {
 
                 split = strtok(comanda, " ");
                 if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-                    connectat = connect();
+                    connectat = connectaData();
                 } else if (strcmp(SHOW, split) == 0) {
                     split = strtok(NULL, " ");
                     if (split != NULL && strtok(NULL, " ") == NULL) {
@@ -177,11 +183,38 @@ void intHandler() {
 
 /* FUNCIONS DE LES OPCIONS */
 
-int connect() {
+int connectaData() {
 
     if (!connectat) {
         //Aquí s'intentarà connectar amb Data, de moment suposarem que
         //es fa bé (return 1)
+        //Connect
+        int sockfd;
+
+        sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+        if (sockfd < 0) {
+            write(1, ERROR_SOCK, strlen(ERROR_SOCK));
+            return -1;
+        }
+
+        struct sockaddr_in s_addr;
+        memset(&s_addr, 0, sizeof (s_addr));
+        s_addr.sin_family = AF_INET;
+        s_addr.sin_port = htons(picard.port);
+
+        int error = inet_aton(picard.ip, &s_addr.sin_addr);
+
+        if (error < 0) {
+            write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+            return -1;
+        };
+
+        if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
+            write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+            return -1;
+        }
+
         write(1, COMANDA_OK, strlen(COMANDA_OK));
         return 1;
     } else {

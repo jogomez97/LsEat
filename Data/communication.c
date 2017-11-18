@@ -16,10 +16,16 @@ int connectPicard (Data d) {
   //Bind
   struct sockaddr_in s_addr;
   memset(&s_addr, 0, sizeof(s_addr));
+
   s_addr.sin_family = AF_INET;
+
+  printf("%d\n", d.portPicard);
+  printf("%s\n", d.ip);
+
   s_addr.sin_port = htons(d.portPicard);
 
   int error = inet_aton(d.ip, &s_addr.sin_addr);
+
   if (error < 0) {
     write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
     return -1;
@@ -41,6 +47,8 @@ int connectPicard (Data d) {
     if (clientfd < 0) {
       write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
     } else {
+
+      printf("CLIENT IS HEREEEEE\n");
 
       read(clientfd, &trama.type, sizeof(trama.type));
       read(clientfd, &trama.header, sizeof(trama.header));

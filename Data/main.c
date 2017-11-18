@@ -19,18 +19,12 @@
 #include "data.h"
 #include "communication.h"
 
-
 #define DATA_EXEC         "Executant Data\n"
 #define WAITING_CLIENTS   "Esperant clients...\n"
 
 #define CONFIGFILE  "Data.dat"
 
 int main () {
-  /*  int clilen;
-    int sock;
-    int newsock;
-    int port_servidor;
-    char buffer[200];*/
 
     int error;
     Data data;
