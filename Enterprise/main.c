@@ -62,9 +62,12 @@ int main(int argc, char const *argv[]) {
                     Trama trama;
                     int length;
 
+                    memset(&trama, 0, sizeof(trama));
+
                     //Afegim les dades a trama
                     trama.type = 0x01;
-                    strcpy(trama.header, "[ENT_INF]\0");
+                    strcpy(trama.header, "[ENT_INFO]\0");
+
                     length = strlen(enterprise.nom) + strlen(enterprise.ipData)
                             + sizeof(enterprise.portData) + 2 * sizeof(char);
                     char buffer[length];
@@ -73,16 +76,22 @@ int main(int argc, char const *argv[]) {
                     trama.length = strlen(trama.data);
 
                     //Enviem Trama
-                    length = sizeof(trama.type) + strlen(trama.header)
+                    length = sizeof(trama.type) + sizeof(trama.header)
                             + sizeof(trama.length) + strlen(trama.data);
-                    write(sockfd, &trama, length);
 
                     char b[10];
                     sprintf(b, "LENGTH: %d\n", length);
                     write(1, b, strlen(b));
                     char buffer2[length];
-                    sprintf(buffer2, "%X/%s/%d/%s\n", trama.type, trama.header, trama.length, trama.data);
+
+
+                    printf("%u\n", trama.length );
+
+
+                    sprintf(buffer2, "%c%s%u%s", trama.type, trama.header, trama.length, trama.data);
                     write(1, buffer2, strlen(buffer2));
+                    write(1, "\n", strlen("\n"));
+                    write(sockfd, buffer2, strlen(buffer2));
 
                     close(sockfd);
                 }

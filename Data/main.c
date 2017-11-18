@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "io.h"
 #include "data.h"
@@ -36,7 +37,10 @@ int main () {
         return -1;
     } else {
 
-      connectEnterprise(data);
-      return 0;
-  }
+        //pthread_t tEnterprise;
+
+        //connectPicard(data);
+        connectEnterprise(data);
+        return 0;
+    }
 }

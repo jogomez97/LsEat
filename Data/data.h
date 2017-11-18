@@ -2,9 +2,9 @@
 #define   _DATA_H_
 
 typedef struct {
-  char* ip;
-  int portPicard;
-  int portEnterprise;
+    char* ip;
+    int portPicard;
+    int portEnterprise;
 } Data;
 
 #endif
