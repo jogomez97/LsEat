@@ -11,15 +11,17 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <pthread.h>
 
 #include "data.h"
 
 #define CONNECTEDP          "[DATA] Connexió amb picard establerta\n"
 #define DESCONP             "[DATA] Desconnexió de Picard\n"
-#define WAIT_CONNECT        "[DATA] Esperant una nova connexió\n"
+#define WAIT_CONNECTE       "[DATA] Esperant una nova connexió d'Enterprise\n"
+#define WAIT_CONNECTP        "[DATA] Esperant una nova connexió de Picard\n"
 #define CONNECTED_E         "[DATA] Connexió establerta amb enterprise\n"
 #define DISCONNECTED_E      "[DATA] Desconnexió d'enterprise\n"
-#define CONNECTED_P         "[DATA] Connexió amb picard establerta\n"
+#define CONNECTED_P         "[DATA] Connexió amb Picard establerta\n"
 #define DISCONNECTED_P      "[DATA] Desconnexió de Picard\n"
 #define ERROR_SOCK          "Error en crear el socket!\n"
 #define ERROR_CONNECT       "Error de connexion con el servidor.\n"
@@ -46,11 +48,16 @@ typedef struct {
     char*       data;
 } Trama;
 
-int connectPicard(Data d);
-int connectEnterprise(Data d);
+extern Data d;
+
+int connectPicard();
+int connectEnterprise();
 void gestionaEnterprise(int clientfd);
 void gestionaPicard(int clientfd);
 Trama readTrama(int clientfd, int* error);
 void writeTrama(int sockfd, char type, char header[10], char* data);
+
+void * threadFunc(void * arg);
+void creaThread();
 
 #endif

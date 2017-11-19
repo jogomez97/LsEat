@@ -15,7 +15,9 @@
 #define ERROR_FILE2 "Error! El fitxer especificat està buit o no compleix el format.\n"
 
 
-int readFile(char* path, Data* data);
+extern Data d;
+
+int readFile(char* path, Data* d);
 char* readUntil(int fd, char cFi);
 void printConnection(char* name);
 void printDisconnection(char* name);

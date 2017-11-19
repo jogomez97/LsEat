@@ -1,6 +1,6 @@
 #include "communication.h"
 
-int connectPicard(Data d) {
+int connectPicard() {
     int sockfd;
     int clientfd;
 
@@ -22,12 +22,12 @@ int connectPicard(Data d) {
 
     if (error < 0) {
         write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-        return -1;
-    };
+        exit(0);
+    }
 
     if (bind(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
         write(1, ERROR_BIND, strlen(ERROR_BIND));
-        return -1;
+        exit(0);
     }
 
     //Listen
@@ -37,11 +37,10 @@ int connectPicard(Data d) {
     socklen_t len = sizeof(s_addr);
 
     while (1) {
-        write(1, WAIT_CONNECT, strlen(WAIT_CONNECT));
+        write(1, WAIT_CONNECTP, strlen(WAIT_CONNECTP));
         clientfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (clientfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
-            return -1;
         } else {
             gestionaPicard(clientfd);
         }
@@ -95,7 +94,18 @@ void gestionaPicard(int clientfd) {
 
 /* FUNCIONS ENTERPRISE */
 
-int connectEnterprise(Data d) {
+void * threadFunc(void * arg) {
+
+    connectEnterprise();
+    return arg;
+}
+
+void creaThread() {
+    pthread_t id;
+    pthread_create(&id, NULL, threadFunc, NULL);
+}
+
+int connectEnterprise() {
     int sockfd;
     int clientfd;
 
@@ -104,7 +114,7 @@ int connectEnterprise(Data d) {
     sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sockfd < 0) {
         write(1, ERROR_SOCK, strlen(ERROR_SOCK));
-        return -1;
+        exit(0);
     }
 
     //Bind
@@ -117,12 +127,12 @@ int connectEnterprise(Data d) {
 
     if (error < 0) {
         write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-        return -1;
+        exit(0);
     };
 
     if (bind(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
         write(1, ERROR_BIND, strlen(ERROR_BIND));
-        return -1;
+        exit(0);
     }
 
     //Listen
@@ -132,11 +142,10 @@ int connectEnterprise(Data d) {
     socklen_t len = sizeof(s_addr);
 
     while (1) {
-        write(1, WAIT_CONNECT, strlen(WAIT_CONNECT));
+        write(1, WAIT_CONNECTE, strlen(WAIT_CONNECTE));
         clientfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (clientfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
-            return -1;
         } else {
             gestionaEnterprise(clientfd);
         }

@@ -96,7 +96,7 @@ int enviaNovaConnexio(int sockfd, int new) {
         length = strlen(enterprise.nom) + strlen(enterprise.ipData)
                 + sizeof(enterprise.portPicard) + 2 * sizeof(char);
         char buffer[length];
-        sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portData, enterprise.ipData);
+        sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portPicard, enterprise.ipPicard);
 
         writeTrama(sockfd, 0x01, ENT_INF, buffer);
         trama = readTrama(sockfd, &error);
@@ -123,7 +123,7 @@ int enviaNovaConnexio(int sockfd, int new) {
     } else {
         length = sizeof(int) + sizeof(char) + sizeof(enterprise.portPicard);
         char buffer[length];
-        sprintf(buffer, "%d&%d", enterprise.portData, enterprise.nConnections);
+        sprintf(buffer, "%d&%d", enterprise.portPicard, enterprise.nConnections);
 
         writeTrama(sockfd, 0x07, UPDATE, buffer);
         trama = readTrama(sockfd, &error);
@@ -156,17 +156,16 @@ int enviaNovaConnexio(int sockfd, int new) {
 
 /* Connexio amb Picards */
 
-int engegaServidor() {
+void engegaServidor() {
     int sockfd;
     int picardfd;
-    Trama trama;
 
     /* Obrir servidor */
     //Creació socket
     sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sockfd < 0) {
         write(1, ERROR_SOCK, strlen(ERROR_SOCK));
-        return -1;
+        raise(SIGINT);
     }
 
     //Bind
@@ -179,12 +178,12 @@ int engegaServidor() {
 
     if (error < 0) {
         write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-        return -1;
-    };
+        raise(SIGINT);
+    }
 
     if (bind(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
         write(1, ERROR_BIND, strlen(ERROR_BIND));
-        return -1;
+        raise(SIGINT);
     }
 
     //Listen
@@ -198,29 +197,49 @@ int engegaServidor() {
         picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (picardfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
-            return -1;
         } else {
             write(1, CONNECTED_P, strlen(CONNECTED_P));
-            switch (trama.type) {
-                case 0x01:
-                    if (strcmp(trama.header, PIC_INF) == 0) {
-                        writeTrama(picardfd, 0x01, CONOKb, "");
-                    } else {
-                        writeTrama(picardfd, 0x01, CONKOb, "");
-                    }
-                    break;
-                case 0x02:
 
-                    break;
-                case 0x07:
+            //A partir d'aquí ha de ser un thread per cada picard
+            Trama trama;
+            int error;
+            int end = 0;
 
+            while (!end) {
+                trama = readTrama(picardfd, &error);
+                if (error <= 0) {
+                    write(1, ERROR_DISCONNECTEDP, strlen(ERROR_DISCONNECTEDP));
                     break;
-                default:
-                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-                    break;
+                }
+
+                char    a[500];
+                sprintf(a, "%X/%s/%u/%s\n", trama.type, trama.header, trama.length, trama.data);
+                write(1, a, strlen(a));
+
+                switch (trama.type) {
+                    case 0x01:
+                        if (strcmp(trama.header, PIC_INF) == 0) {
+                            writeTrama(picardfd, 0x01, CONOKb, "");
+                        } else {
+                            writeTrama(picardfd, 0x01, CONKOb, "");
+                        }
+                        break;
+                    case 0x02:
+                        if (strcmp(trama.header, PIC_NAME) == 0) {
+                            writeTrama(picardfd, 0x02, CONOKb, "");
+                        } else {
+                            writeTrama(picardfd, 0x02, CONKOb, "");
+                        }
+                        end = 1;
+                        close(picardfd);
+                        break;
+                    default:
+                        write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                        break;
+                }
             }
+
         }
-        return 0;
     }
 }
 

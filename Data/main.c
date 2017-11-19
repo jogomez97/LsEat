@@ -26,14 +26,15 @@
 #define CONFIGFILE  "Data.dat"
 
 Fleet flota;
+Data d;
 
 int main () {
 
     int error;
-    Data data;
+
     flota.quants = 0;
 
-    error = readFile(CONFIGFILE, &data);
+    error = readFile(CONFIGFILE, &d);
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal
         //acabar l'execució
@@ -41,9 +42,9 @@ int main () {
     } else {
 
         //pthread_t tEnterprise;
+        creaThread();
+        connectPicard();
 
-        connectPicard(data);
-        //connectEnterprise(data);
         return 0;
     }
 }

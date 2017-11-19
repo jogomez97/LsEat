@@ -35,6 +35,7 @@ int main(int argc, char const *argv[]) {
         error = readConfig((char*)argv[1], &enterprise);
         enterprise.nConnections = 0;
 
+
         if (error) {
             return EXIT_FAILURE;
         } else {
@@ -52,7 +53,6 @@ int main(int argc, char const *argv[]) {
                 gestionaConnexioData(NEW_CONN);
                 creaThread();
                 engegaServidor();
-
             }
 
         }

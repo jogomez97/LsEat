@@ -6,7 +6,7 @@
 #include "io.h"
 
 /* FUNCIONS LECTURA */
-int readFile(char* path, Data* data) {
+int readFile(char* path, Data* d) {
     int fd;
 
     fd = open(path, O_RDONLY);
@@ -23,11 +23,11 @@ int readFile(char* path, Data* data) {
             char* aux;
 
             lseek(fd, -1, SEEK_CUR);
-            data->ip = readUntil(fd, '\n');
+            d->ip = readUntil(fd, '\n');
             aux = readUntil(fd, '\n');
-            data->portPicard = atoi(aux);
+            d->portPicard = atoi(aux);
             aux = readUntil(fd, '\n');
-            data->portEnterprise = atoi(aux);
+            d->portEnterprise = atoi(aux);
 
             free(aux);
             close(fd);

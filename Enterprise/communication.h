@@ -26,6 +26,7 @@
 #define ERROR_CONNECT       "Error de connexió amb Data.\n"
 #define ERROR_TRAMA         "Error en la trama!\n"
 #define ERROR_DISCONNECTED  "Error! Data s'ha desconnectat\n"
+#define ERROR_DISCONNECTEDP "Error! Picard s'ha desconnectat\n"
 #define CONNECTED_D         "[ENTERPRISE] Connexió establerta amb Data\n"
 #define DISCONNECTED_D      "[ENTERPRISE] Desconnexió de Data\n"
 #define CONNECTED_P         "[ENTERPRISE] Connexió establerta amb Picard\n"
@@ -33,6 +34,7 @@
 #define WAITING             "Esperant clients...\n"
 
 #define PIC_INF             "[PIC_INF]"
+#define PIC_NAME            "[PIC_NAME]"
 #define ENT_INF             "[ENT_INF]"
 #define CONOK               "CONOK"
 #define CONKO               "CONKO"
@@ -59,6 +61,6 @@ int connectaData();
 int enviaNovaConnexio(int sockfd, int new);
 Trama readTrama(int sockfd, int* error);
 void writeTrama(int sockfd, char type, char header[10], char* data);
-int engegaServidor();
+void engegaServidor();
 
 #endif
