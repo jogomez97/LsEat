@@ -12,8 +12,11 @@
 #include <unistd.h>
 #include <pthread.h>
 
-
+#include "systemFunc.h"
 #include "dades.h"
+
+#define ERROR_BIND          "Error en fer el bind!\n"
+#define NCONN 10
 
 #define ERROR_ARGC          "Error! No s'han passat els arguments necessaris!\n"
 #define ERROR_OPEN          "Error! No s'ha pogut obrir el fitxer.\n"
@@ -25,7 +28,11 @@
 #define ERROR_DISCONNECTED  "Error! Data s'ha desconnectat\n"
 #define CONNECTED_D         "[ENTERPRISE] Connexió establerta amb Data\n"
 #define DISCONNECTED_D      "[ENTERPRISE] Desconnexió de Data\n"
+#define CONNECTED_P         "[ENTERPRISE] Connexió establerta amb Picard\n"
+#define DISCONNECTED_P      "[ENTERPRISE] Desconnexió de Picard\n"
+#define WAITING             "Esperant clients...\n"
 
+#define PIC_INF             "[PIC_INF]"
 #define ENT_INF             "[ENT_INF]"
 #define CONOK               "CONOK"
 #define CONKO               "CONKO"
@@ -34,8 +41,6 @@
 #define UPDATE              "[UPDATE]"
 #define UPDATEOK            "[UPDATEOK]"
 #define UPDATEKO            "[UPDATEKO]"
-
-#define NEW_CONN            1
 
 typedef struct {
     char        type;
@@ -54,10 +59,6 @@ int connectaData();
 int enviaNovaConnexio(int sockfd, int new);
 Trama readTrama(int sockfd, int* error);
 void writeTrama(int sockfd, char type, char header[10], char* data);
-
-
-void * threadFunc(void * arg);
-void creaThread();
-void alarmSignal();
+int engegaServidor();
 
 #endif

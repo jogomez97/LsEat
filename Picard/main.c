@@ -51,8 +51,8 @@ int main(int argc, char const *argv[]) {
         } else {
             signal(SIGINT, intHandler);
             //Printar informació de benvinguda
-            printWelcome(picard.nom);
-            printMoney(picard.saldo);
+            printWelcome();
+            printMoney();
             write(1, INTRO_COMAND, strlen(INTRO_COMAND));
 
             //Variables pròpies de l'execució

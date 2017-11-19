@@ -157,9 +157,9 @@ int inputFlush() {
 
 /* FUNCIONS ESCRIPTURA */
 
-void printWelcome(char* name) {
-    int mida = strlen("Benvingut.\n") + strlen(name);
+void printWelcome() {
+    int mida = strlen("Benvingut.\n") + strlen(enterprise.nom);
     char buffer[mida];
-    sprintf(buffer, "Benvingut %s.\n", name);
+    sprintf(buffer, "Benvingut %s.\n", enterprise.nom);
     write(1, buffer, strlen(buffer));
 }

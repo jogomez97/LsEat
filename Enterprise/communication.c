@@ -1,29 +1,6 @@
 #include "communication.h"
 
-void alarmSignal() {
-    connectionFlag = 1;
-    signal(SIGALRM, alarmSignal);
-    alarm(enterprise.seg);
-}
-
-void * threadFunc(void * arg) {
-
-    signal(SIGALRM, alarmSignal);
-    alarm(enterprise.seg);
-    while (1) {
-        if (connectionFlag) {
-            connectionFlag = 0;
-            gestionaConnexioData(!NEW_CONN);
-        }
-    }
-    return arg;
-}
-
-void creaThread() {
-    pthread_t id;
-    pthread_create(&id, NULL, threadFunc, NULL);
-}
-
+/* Connexio amb Data */
 void gestionaConnexioData(int new) {
     int done = 0;
 
@@ -177,7 +154,77 @@ int enviaNovaConnexio(int sockfd, int new) {
     return 0;
 }
 
+/* Connexio amb Picards */
 
+int engegaServidor() {
+    int sockfd;
+    int picardfd;
+    Trama trama;
+
+    /* Obrir servidor */
+    //Creació socket
+    sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sockfd < 0) {
+        write(1, ERROR_SOCK, strlen(ERROR_SOCK));
+        return -1;
+    }
+
+    //Bind
+    struct sockaddr_in s_addr;
+    memset(&s_addr, 0, sizeof(s_addr));
+    s_addr.sin_family = AF_INET;
+    s_addr.sin_port = htons(enterprise.portPicard);
+
+    int error = inet_aton(enterprise.ipPicard, &s_addr.sin_addr);
+
+    if (error < 0) {
+        write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+        return -1;
+    };
+
+    if (bind(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
+        write(1, ERROR_BIND, strlen(ERROR_BIND));
+        return -1;
+    }
+
+    //Listen
+    listen(sockfd, NCONN);
+
+    //Accept
+    socklen_t len = sizeof(s_addr);
+
+    while (1) {
+        write(1, WAITING, strlen(WAITING));
+        picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
+        if (picardfd < 0) {
+            write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
+            return -1;
+        } else {
+            write(1, CONNECTED_P, strlen(CONNECTED_P));
+            switch (trama.type) {
+                case 0x01:
+                    if (strcmp(trama.header, PIC_INF) == 0) {
+                        writeTrama(picardfd, 0x01, CONOKb, "");
+                    } else {
+                        writeTrama(picardfd, 0x01, CONKOb, "");
+                    }
+                    break;
+                case 0x02:
+
+                    break;
+                case 0x07:
+
+                    break;
+                default:
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    break;
+            }
+        }
+        return 0;
+    }
+}
+
+/* Funcions generals */
 Trama readTrama(int clientfd, int* error) {
     Trama trama;
     memset(&trama, 0, sizeof(trama));

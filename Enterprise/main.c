@@ -4,15 +4,6 @@
            PORTS: 8180-8189 / 8260-8269
 ∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗*/
 
-/*  TODO:
-*       - Alliberar memoria Enterprise
-*       - Alliberar tots els plats
-*
-*/
-
-// Type 1 byte, header 10 bytes, length 2 bytes, data length bytes
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -21,6 +12,7 @@
 #include "io.h"
 #include "dades.h"
 #include "communication.h"
+#include "systemFunc.h"
 
 #define NPARAM          3
 #define ERROR_ARG       "Error! No s'ha passat el nombre de paràmetres que pertoca.\n"
@@ -29,6 +21,7 @@
 #define ERROR_DATA      "Error en connectar amb Data\n"
 
 Enterprise enterprise;
+Menu menu;
 int connectionFlag;
 
 int main(int argc, char const *argv[]) {
@@ -45,10 +38,10 @@ int main(int argc, char const *argv[]) {
         if (error) {
             return EXIT_FAILURE;
         } else {
-            Menu menu;
             connectionFlag = 0;
+            signal(SIGINT, intHandler);
 
-            printWelcome(enterprise.nom);
+            printWelcome();
             error = readMenu((char*)argv[2], &menu);
 
             if (error) {
@@ -58,9 +51,7 @@ int main(int argc, char const *argv[]) {
                 write(1, C_MENU, strlen(C_MENU));
                 gestionaConnexioData(NEW_CONN);
                 creaThread();
-                while(1) {
-                    //Aquí es connectaran Picards i tal així de jajas
-                }
+                engegaServidor();
 
             }
 

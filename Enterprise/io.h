@@ -12,6 +12,8 @@
 #define ERROR_FILE1 "Error! No s'ha pogut obrir el fitxer especificat.\n"
 #define ERROR_FILE2 "Error! El fitxer especificat està buit o no compleix el format.\n"
 
+extern Enterprise enterprise;
+
 //Funcions de lectura
 int readConfig(char* path, Enterprise* enterprise);
 int readMenu(char* path, Menu* menu);
@@ -20,6 +22,6 @@ char* readKB();
 int inputFlush();
 
 //Funcions d'escriptura
-void printWelcome(char* name);
+void printWelcome();
 
 #endif
