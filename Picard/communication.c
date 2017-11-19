@@ -30,7 +30,6 @@ int connectaData(int connectat, Picard picard) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
             return -1;
         }
-
         write(1, COMANDA_OK, strlen(COMANDA_OK));
         return 1;
     } else {

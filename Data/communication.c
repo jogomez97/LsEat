@@ -40,24 +40,37 @@ int connectPicard(Data d) {
         clientfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (clientfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
+            return -1;
         } else {
-
-            Trama trama = readTrama(clientfd);
-            char buffer[500];
-
-            sprintf(buffer, "%c&%s&%d&%s\n", trama.type, trama.header, trama.length, trama.data);
-            write(1, buffer, strlen(buffer));
-            switch (trama.type) {
-                case 0x01:
-                    write(1, "WE IN BOYZ", strlen("WE IN BOYZ"));
-                    break;
-                default:
-                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-                    break;
-            }
+            gestionaPicard(clientfd);
         }
         return 0;
     }
+}
+
+void gestionaPicard(int clientfd) {
+    Trama trama;
+
+    write(1, CONNECTEDP, strlen(CONNECTEDP));
+
+    memset(&trama, 0, sizeof(trama));
+    trama = readTrama(clientfd);
+
+    switch (trama.type) {
+        case 0x01:
+            //està a data.
+            if (flota.quants == 0) {
+                writeTrama(clientfd, 0x01, ENT_INF, getFlota());
+                free(getFlota());
+            } else {
+                writeTrama(clientfd, 0x01, CONOK, "");
+            }
+            break;
+        default:
+            write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+            break;
+    }
+    close(clientfd);
 }
 
 /* FUNCIONS ENTERPRISE */
@@ -116,7 +129,7 @@ void gestionaEnterprise(int clientfd) {
     Trama trama;
     int error;
 
-    write(1, CONNECTED, strlen(CONNECTED));
+    write(1, CONNECTEDE, strlen(CONNECTEDE));
 
     memset(&trama, 0, sizeof(trama));
     trama = readTrama(clientfd);
@@ -182,5 +195,4 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
         }
     }
     write(clientfd, buffer2, length);
-
 }

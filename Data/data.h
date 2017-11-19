@@ -27,5 +27,6 @@ extern Fleet flota;
 
 int gestionaFlota(char* data);
 void printaFlota();
+char* getFlota();
 
 #endif

@@ -19,9 +19,7 @@ int gestionaFlota(char* data) {
         printaFlota();
         return 0;
     }
-
     return -1;
-
 }
 
 void printaFlota() {
@@ -30,4 +28,15 @@ void printaFlota() {
         write(1, flota.enterprises[i].nom, strlen(flota.enterprises[i].nom));
         write(1, "\n", 1);
     }
+}
+
+char* getFlota() {
+    Enterprise e = flota.enterprises[flota.quants - 1];
+
+    int length = strlen(e.nom) + strlen(e.ip)
+            + sizeof(e.port) + 2 * sizeof(char);
+    // S'haura de alliberar somewhere
+    char* buffer = (char*)malloc(sizeof(char) * length);
+    sprintf(buffer, "%s&%d&%s", e.nom, e.port, e.ip);
+    return buffer;
 }

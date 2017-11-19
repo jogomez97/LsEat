@@ -15,7 +15,9 @@
 #include "data.h"
 
 #define WAIT_CONNECT "Esperant una nova connexió\n"
-#define CONNECTED    "Connexió establerta\n"
+#define CONNECTEDE    "Connexió amb enterprise establerta\n"
+#define CONNECTEDP    "Connexió amb picard establerta\n"
+#define DESCONP    "Picard desconnectant-se...\n"
 #define ERROR_SOCK  "Error en crear el socket!\n"
 #define ERROR_CONNECT "Error de connexion con el servidor.\n"
 #define ERROR_ACCEPT "Error en acceptar!\n"
@@ -39,6 +41,7 @@ typedef struct {
 int connectPicard(Data d);
 int connectEnterprise(Data d);
 void gestionaEnterprise(int clientfd);
+void gestionaPicard(int clientfd);
 Trama readTrama(int clientfd);
 void writeTrama(int sockfd, char type, char header[10], char* data);
 
