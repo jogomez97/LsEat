@@ -1,5 +1,29 @@
 #include "communication.h"
 
+void alarmSignal() {
+    connectionFlag = 1;
+    signal(SIGALRM, alarmSignal);
+    alarm(enterprise.seg);
+}
+
+static void * threadFunc(void * arg) {
+    
+    signal(SIGALRM, alarmSignal);
+    alarm(enterprise.seg);
+    while (1) {
+        if (connectionFlag) {
+            connectionFlag = 0;
+            gestionaNovaConnexio();
+        }
+    }
+    return arg;
+}
+
+void creaThread() {
+    pthread_t id;
+    pthread_create(&id, NULL, threadFunc, NULL);
+}
+
 void gestionaNovaConnexio() {
     int done = 0;
 

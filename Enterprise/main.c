@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <pthread.h>
 #include "io.h"
 #include "dades.h"
 #include "communication.h"
@@ -28,6 +29,7 @@
 #define ERROR_DATA      "Error en connectar amb Data\n"
 
 Enterprise enterprise;
+int connectionFlag;
 
 int main(int argc, char const *argv[]) {
 
@@ -43,6 +45,7 @@ int main(int argc, char const *argv[]) {
             return EXIT_FAILURE;
         } else {
             Menu menu;
+            connectionFlag = 0;
 
             printWelcome(enterprise.nom);
             error = readMenu((char*)argv[2], &menu);
@@ -50,8 +53,14 @@ int main(int argc, char const *argv[]) {
             if (error) {
                 return EXIT_FAILURE;
             } else {
+
                 write(1, C_MENU, strlen(C_MENU));
                 gestionaNovaConnexio();
+                creaThread();
+                while(1) {
+                    //Aquí es connectaran Picards i tal així de jajas
+                }
+
             }
 
         }

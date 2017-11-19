@@ -42,9 +42,7 @@ int connectPicard(Data d) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
             return -1;
         } else {
-<<<<<<< HEAD
             gestionaPicard(clientfd);
-=======
 
             Trama trama = readTrama(clientfd, &error);
             char buffer[500];
@@ -59,7 +57,7 @@ int connectPicard(Data d) {
                     write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                     break;
             }
->>>>>>> 673e61a014017953def354af6d0c802ad1635f66
+
         }
         return 0;
     }
@@ -67,11 +65,12 @@ int connectPicard(Data d) {
 
 void gestionaPicard(int clientfd) {
     Trama trama;
+    int error = 0;
 
     write(1, CONNECTEDP, strlen(CONNECTEDP));
 
     memset(&trama, 0, sizeof(trama));
-    trama = readTrama(clientfd);
+    trama = readTrama(clientfd, &error);
 
     switch (trama.type) {
         case 0x01:
@@ -147,11 +146,7 @@ void gestionaEnterprise(int clientfd) {
     int error;
     int end = 1;
 
-<<<<<<< HEAD
-    write(1, CONNECTEDE, strlen(CONNECTEDE));
-=======
     write(1, CONNECTED_E, strlen(CONNECTED_E));
->>>>>>> be739512bd13ce38f5c6af4540cfad3ddffd9cb1
 
     while (end) {
         memset(&trama, 0, sizeof(trama));

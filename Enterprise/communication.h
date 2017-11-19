@@ -4,11 +4,14 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <pthread.h>
+
 
 #include "dades.h"
 
@@ -38,6 +41,7 @@ typedef struct {
 
 //Variables globals externes
 extern Enterprise enterprise;
+extern int connectionFlag;
 
 void gestionaNovaConnexio();
 int desconnecta(int sockfd);
@@ -45,5 +49,10 @@ int connectaData();
 int enviaNovaConnexio(int sockfd);
 Trama readTrama(int sockfd, int* error);
 void writeTrama(int sockfd, char type, char header[10], char* data);
+
+
+static void * threadFunc(void * arg);
+void creaThread();
+void alarmSignal();
 
 #endif
