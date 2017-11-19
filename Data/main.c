@@ -42,8 +42,8 @@ int main () {
 
         //pthread_t tEnterprise;
 
-        //connectPicard(data);
-        connectEnterprise(data);
+        connectPicard(data);
+        //connectEnterprise(data);
         return 0;
     }
 }

@@ -2,65 +2,11 @@
 
 int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
     if (mode == DATA) {
-        if (!connectat) {
-            //Aquí s'intentarà connectar amb Data, de moment suposarem que
-            //es fa bé (return 1)
-            //Connect
-            int sockfd;
+        //Aquí s'intentarà connectar amb Data, de moment suposarem que
+        //es fa bé (return 1)
+        //Connect
 
-            sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-            if (sockfd < 0) {
-                write(1, ERROR_SOCK, strlen(ERROR_SOCK));
-                return -1;
-            }
-
-            struct sockaddr_in s_addr;
-            memset(&s_addr, 0, sizeof (s_addr));
-            s_addr.sin_family = AF_INET;
-            s_addr.sin_port = htons(picard.port);
-
-            int error = inet_aton(picard.ip, &s_addr.sin_addr);
-
-            if (error < 0) {
-                write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-                return -1;
-            };
-
-            if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
-                write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-                return -1;
-            }
-            write(1, COMANDA_OK, strlen(COMANDA_OK));
-
-
-            writeTrama(sockfd, 0x01, PIC_NAME, picard.nom);
-
-            error = 0;
-
-            Trama t = readTrama(sockfd, &error);
-
-            if (error <= 0) {
-                write(1, ERROR_DATA, strlen(ERROR_DATA));
-                close(sockfd);
-                return -1;
-            }
-
-            error = gestionaTrama(t, DATA);
-
-            if (error == 1) {
-                close(sockfd);
-                return -1;
-            }
-
-            return 1;
-        } else {
-            write(1, ERROR_CONN, strlen(ERROR_CONN));
-        }
-    } else {
-        int sockfd;
-
-        sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
         if (sockfd < 0) {
             write(1, ERROR_SOCK, strlen(ERROR_SOCK));
@@ -70,9 +16,9 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
         struct sockaddr_in s_addr;
         memset(&s_addr, 0, sizeof (s_addr));
         s_addr.sin_family = AF_INET;
-        s_addr.sin_port = htons(e->port);
+        s_addr.sin_port = htons(picard.port);
 
-        int error = inet_aton(e->ip, &s_addr.sin_addr);
+        int error = inet_aton(picard.ip, &s_addr.sin_addr);
 
         if (error < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -85,10 +31,62 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
         }
         write(1, COMANDA_OK, strlen(COMANDA_OK));
 
+        writeTrama(sockfd, 0x01, PIC_NAME, picard.nom);
 
-        writeTrama(sockfd, 0x01, PIC_INF, getPicardInfo(picard));
+        error = 0;
+
+        Trama t = readTrama(sockfd, &error);
+
+        if (error <= 0) {
+            write(1, ERROR_DATA, strlen(ERROR_DATA));
+            close(sockfd);
+            return -1;
+        }
+
+        error = gestionaTrama(t, DATA);
+
+        if (error == 1) {
+            close(sockfd);
+            return -1;
+        }
 
         return 1;
+    } else {
+        if (!connectat) {
+            int sockfd;
+
+            sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+            if (sockfd < 0) {
+                write(1, ERROR_SOCK, strlen(ERROR_SOCK));
+                return -1;
+            }
+
+            struct sockaddr_in s_addr;
+            memset(&s_addr, 0, sizeof (s_addr));
+            s_addr.sin_family = AF_INET;
+            s_addr.sin_port = htons(e->port);
+
+            int error = inet_aton(e->ip, &s_addr.sin_addr);
+
+            if (error < 0) {
+                write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+                return -1;
+            };
+
+            if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
+                write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+                return -1;
+            }
+
+            write(1, COMANDA_OK, strlen(COMANDA_OK));
+            write(1, "CONNECTED A ENTERPRISE", strlen("CONNECTED A ENTERPRISE"));
+
+            writeTrama(sockfd, 0x01, PIC_INF, getPicardInfo(picard));
+            return 1;
+        } else {
+            write(1, ERROR_CONN, strlen(ERROR_CONN));
+        }
     }
     return 1;
 }
@@ -151,8 +149,19 @@ int gestionaTrama(Trama t, int mode) {
 
             Enterprise e;
 
-            printf("DATAAAAA: %s\n", t.data);
+            char * split = strtok(t.data, "&");
+            e.nom = (char*) malloc(sizeof(char) * strlen(split));
+            strcpy(e.nom, split);
 
+            split = strtok(NULL, "&");
+            e.port = atoi(split);
+
+            split = strtok(NULL, "&");
+
+            e.ip = (char*) malloc(sizeof(char) * strlen(split));
+            strcpy(e.ip, split);
+
+            //falta alliberar tot aixo
 
             connectaServidor(0, picard, ENTERPRISE, &e);
             return 1;
@@ -210,5 +219,6 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
             buffer2[i] = '\0';
         }
     }
+
     write(clientfd, buffer2, length);
 }
