@@ -33,6 +33,7 @@ void intHandler();
 Picard picard;
 int connectat;
 char* comanda;
+int sockfd;
 
 int main(int argc, char const *argv[]) {
 
@@ -68,7 +69,15 @@ int main(int argc, char const *argv[]) {
 
                 split = strtok(comanda, " ");
                 if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-                    connectaData(connectat, picard);
+                    if (!connectat) {
+                        int a = connectaServidor(connectat, picard, DATA, NULL);
+                        if (a > 1) {
+                            sockfd = a;
+                            connectat = 1;
+                        }
+                    } else {
+                        write(1, ERROR_ESTABLISHED, strlen(ERROR_ESTABLISHED));
+                    }
                 } else if (strcmp(SHOW, split) == 0) {
                     split = strtok(NULL, " ");
                     if (split != NULL && strtok(NULL, " ") == NULL) {
@@ -136,7 +145,7 @@ void alliberaMemoria() {
 void intHandler() {
     alliberaMemoria();
     if (connectat) {
-        //Aquí es desconnectarà de enterprise amb el protocol adient
+        //writeTrama()...
     }
     write(1, "\n", sizeof(char));
     exit(0);

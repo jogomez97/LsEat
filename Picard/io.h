@@ -18,6 +18,12 @@
 #define ERROR_NCONN     "Error! No t'has connectat.\n"
 #define ERROR_CONNECT   "Error de connexion con el servidor.\n"
 #define ERROR_SOCK      "Error en crear el socket.\n"
+#define CONNECTED_D     "Connexió establerta amb data\n"
+#define DISCONNECTED_D  "Desconnexió amb data\n"
+#define CONNECTED_E     "Connexió establerta amb enterprise\n"
+#define DISCONNECTED_E  "Desconnexió amb enterprise\n"
+#define ERROR_DATA      "Error amb la connexió amb Data\n"
+#define ERROR_ESTABLISHED "Connexió amb Enterprise ja realitzada!\n"
 
 #define CONNECT         "CONNECTA"
 #define SHOW            "MOSTRA"

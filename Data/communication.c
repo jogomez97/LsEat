@@ -37,27 +37,14 @@ int connectPicard(Data d) {
     socklen_t len = sizeof(s_addr);
 
     while (1) {
+        write(1, WAIT_CONNECT, strlen(WAIT_CONNECT));
         clientfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (clientfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
             return -1;
         } else {
             gestionaPicard(clientfd);
-            Trama trama = readTrama(clientfd, &error);
-            char buffer[500];
-
-            sprintf(buffer, "%c&%s&%d&%s\n", trama.type, trama.header, trama.length, trama.data);
-            write(1, buffer, strlen(buffer));
-            switch (trama.type) {
-                case 0x01:
-                    write(1, "WE IN BOYZ", strlen("WE IN BOYZ"));
-                    break;
-                default:
-                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-                    break;
-            }
         }
-        return 0;
     }
 }
 
@@ -79,15 +66,27 @@ void gestionaPicard(int clientfd) {
     switch (trama.type) {
         case 0x01:
             //està a data.
-            if (flota.quants == 0) {
+
+            //HARD CODED STUGG
+            /*flota.quants = 1;
+
+            flota.enterprises = (Enterprise*) malloc(sizeof(Enterprise));
+
+            flota.enterprises[0].nom = "ENTERPRISEA\0";
+            flota.enterprises[0].port = 8265;
+            flota.enterprises[0].ip = "127.0.0.1";*/
+
+
+            if (flota.quants > 0) {
                 writeTrama(clientfd, 0x01, ENT_INF, getEnterprise());
                 // free(getEnterprise()) alliberar punter;
-
             } else {
-                writeTrama(clientfd, 0x01, CONOK, "");
+                writeTrama(clientfd, 0x01, CONKO, "");
             }
+            write(1, DISCONNECTED_P, strlen(DISCONNECTED_P));
             break;
         default:
+            printf("1\n");
             write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             break;
     }
@@ -198,6 +197,7 @@ void gestionaEnterprise(int clientfd) {
                 end = 0;
                 break;
             default:
+                printf("2\n");
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 break;
         }
