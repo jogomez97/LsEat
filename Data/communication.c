@@ -115,10 +115,11 @@ int connectEnterprise(Data d) {
 void gestionaEnterprise(int clientfd) {
     Trama trama;
     int error;
+    int end = 1;
 
-    write(1, CONNECTED, strlen(CONNECTED));
+    write(1, CONNECTED_E, strlen(CONNECTED_E));
 
-    while (1) {
+    while (end) {
         memset(&trama, 0, sizeof(trama));
         error = 0;
         trama = readTrama(clientfd, &error);
@@ -141,7 +142,10 @@ void gestionaEnterprise(int clientfd) {
                 break;
             case 0x02:
                 if (strcmp(trama.header, ENT_INF) == 0) {
+                    write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
                     writeTrama(clientfd, 0x02, CONOKb, "");
+                    close(clientfd);
+                    end = 0;
                 } else {
                     writeTrama(clientfd, 0x02, CONKOb, "");
                 }
@@ -160,7 +164,7 @@ Trama readTrama(int clientfd, int* error) {
     Trama trama;
     memset(&trama, 0, sizeof(trama));
 
-    read(clientfd, &trama.type, sizeof(trama.type));
+    *error = read(clientfd, &trama.type, sizeof(trama.type));
     read(clientfd, &trama.header, sizeof(trama.header));
     char aux[3];
     read(clientfd, &aux, sizeof(trama.length));
@@ -169,7 +173,7 @@ Trama readTrama(int clientfd, int* error) {
     trama.length = (uint16_t)atoi(aux);
 
     trama.data = (char*) malloc(sizeof(char) * trama.length);
-    *error = read(clientfd, trama.data, sizeof(char) * trama.length);
+    read(clientfd, trama.data, sizeof(char) * trama.length);
 
     return trama;
 }
