@@ -145,7 +145,14 @@ void alliberaMemoria() {
 void intHandler() {
     alliberaMemoria();
     if (connectat) {
-        //writeTrama()...
+        writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
+        int error = 0;
+        Trama t  = readTrama(sockfd, &error);
+        if (error <= 0) {
+            write(1, ERROR_DATA, strlen(ERROR_DATA));
+            close(sockfd);
+        }
+        gestionaTrama(t, ENTERPRISE);
     }
     write(1, "\n", sizeof(char));
     exit(0);
