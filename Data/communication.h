@@ -14,6 +14,7 @@
 
 #include "data.h"
 
+<<<<<<< HEAD
 #define WAIT_CONNECT "Esperant una nova connexió\n"
 #define CONNECTEDE    "Connexió amb enterprise establerta\n"
 #define CONNECTEDP    "Connexió amb picard establerta\n"
@@ -24,6 +25,17 @@
 #define ERROR_BIND "Error en fer el bind!\n"
 #define ERROR_TRAMA "Error en la trama!\n"
 #define ERROR_DISCONNECTED "Error! S'ha perdut la connexió\n"
+=======
+#define WAIT_CONNECT        "[DATA] Esperant una nova connexió\n"
+#define CONNECTED_E         "[DATA] Connexió establerta amb enterprise\n"
+#define DISCONNECTED_E      "[DATA] Desconnexió d'enterprise\n"
+#define ERROR_SOCK          "Error en crear el socket!\n"
+#define ERROR_CONNECT       "Error de connexion con el servidor.\n"
+#define ERROR_ACCEPT        "Error en acceptar!\n"
+#define ERROR_BIND          "Error en fer el bind!\n"
+#define ERROR_TRAMA         "Error en la trama!\n"
+#define ERROR_DISCONNECTED  "Error! S'ha perdut la connexió\n"
+>>>>>>> be739512bd13ce38f5c6af4540cfad3ddffd9cb1
 #define NCONN 10
 #define PORT 8260
 
