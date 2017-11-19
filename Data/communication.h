@@ -25,6 +25,10 @@
 #define NCONN 10
 #define PORT 8260
 
+#define ENT_INF     "[ENT_INF]\0"
+#define CONOK       "CONOK\0"
+#define CONKO       "CONKO\0"
+
 typedef struct {
     char        type;
     char        header[10];
@@ -34,5 +38,8 @@ typedef struct {
 
 int connectPicard(Data d);
 int connectEnterprise(Data d);
+void gestionaEnterprise(int clientfd);
+Trama readTrama(int clientfd);
+void writeTrama(int sockfd, char type, char header[10], char* data);
 
 #endif

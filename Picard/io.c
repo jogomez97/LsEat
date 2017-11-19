@@ -80,6 +80,7 @@ char* readKB() {
     buffer[count - 1] = '\0';
     if (count == 1) {
         free(buffer);
+        printShell();
         buffer = readKB();
     }
     return buffer;
@@ -98,22 +99,22 @@ int inputFlush() {
 
 /* FUNCIONS ESCRIPTURA */
 
-void printWelcome(char* name) {
-    int mida = strlen("Benvingut.\n") + strlen(name);
+void printWelcome() {
+    int mida = strlen("Benvingut.\n") + strlen(picard.nom);
     char buffer[mida];
-    sprintf(buffer, "Benvingut %s.\n", name);
+    sprintf(buffer, "Benvingut %s.\n", picard.nom);
     write(1, buffer, strlen(buffer));
 }
 
-void printMoney(int money) {
+void printMoney() {
     char buffer[strlen("Teeuros disponibles\n") + 3];
-    sprintf(buffer, "Té %d euros disponibles\n", money);
+    sprintf(buffer, "Té %d euros disponibles\n", picard.saldo);
     write(1, buffer, strlen(buffer));
 }
 
-void printShell(char* name) {
-    int mida = strlen(name) + 2;
+void printShell() {
+    int mida = strlen(picard.nom) + 2;
     char buffer[mida];
-    sprintf(buffer, "%s> ", name);
+    sprintf(buffer, "%s> ", picard.nom);
     write(1, buffer, strlen(buffer));
 }

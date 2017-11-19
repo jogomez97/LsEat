@@ -3,7 +3,6 @@
 int connectPicard(Data d) {
     int sockfd;
     int clientfd;
-    Trama trama;
 
     /* Obrir servidor */
     //Creació socket
@@ -43,16 +42,7 @@ int connectPicard(Data d) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
         } else {
 
-            read(clientfd, &trama.type, sizeof(trama.type));
-            read(clientfd, &trama.header, sizeof(trama.header));
-            read(clientfd, &trama.length, sizeof(trama.length));
-            trama.data = (char*) malloc(sizeof(char) * trama.length);
-            if (trama.data == NULL) {
-                return -1;
-            }
-            read(clientfd, &trama.data, sizeof(char) * trama.length);
-
-
+            Trama trama = readTrama(clientfd);
             char buffer[500];
 
             sprintf(buffer, "%c&%s&%d&%s\n", trama.type, trama.header, trama.length, trama.data);
@@ -70,10 +60,11 @@ int connectPicard(Data d) {
     }
 }
 
+/* FUNCIONS ENTERPRISE */
+
 int connectEnterprise(Data d) {
     int sockfd;
     int clientfd;
-    Trama trama;
 
     /* Obrir servidor */
     //Creació socket
@@ -107,43 +98,89 @@ int connectEnterprise(Data d) {
     //Accept
     socklen_t len = sizeof(s_addr);
 
-    //De moment 1 connexió que sino despres t'has d'esperat per fer el bind
-    //while (1) {
+    while (1) {
         write(1, WAIT_CONNECT, strlen(WAIT_CONNECT));
         clientfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (clientfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
             return -1;
         } else {
-            write(1, CONNECTED, strlen(CONNECTED));
-
-            memset(&trama, 0, sizeof(trama));
-
-
-            read(clientfd, &trama.type, sizeof(trama.type));
-            read(clientfd, &trama.header, sizeof(trama.header));
-            char aux[2];
-            read(clientfd, &aux, sizeof(trama.length));
-
-            trama.length = (uint16_t)atoi(aux);
-
-            trama.data = (char*) malloc(sizeof(char) * trama.length);
-            if (trama.data == NULL) {
-                return -1;
-            }
-            read(clientfd, trama.data, sizeof(char) * trama.length);
-
-            switch (trama.type) {
-                case 0x01:
-                    write(1, "WE IN BOYZ\n", strlen("WE IN BOYZ\n"));
-                    break;
-                default:
-                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-                    break;
-            }
-            close(clientfd);
-            close(sockfd);
+            gestionaEnterprise(clientfd);
         }
-    //}
+    }
+    close(sockfd);
     return 0;
+}
+
+void gestionaEnterprise(int clientfd) {
+    Trama trama;
+    int error;
+
+    write(1, CONNECTED, strlen(CONNECTED));
+
+    memset(&trama, 0, sizeof(trama));
+    trama = readTrama(clientfd);
+
+    switch (trama.type) {
+        case 0x01:
+            //està a data.c
+            error = gestionaFlota(trama.data);
+            if (!error) {
+                writeTrama(clientfd, 0x01, CONOK, "");
+            } else {
+                writeTrama(clientfd, 0x01, CONKO, "");
+            }
+            break;
+        default:
+            write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+            break;
+    }
+    close(clientfd);
+}
+
+
+Trama readTrama(int clientfd) {
+    Trama trama;
+    memset(&trama, 0, sizeof(trama));
+
+    read(clientfd, &trama.type, sizeof(trama.type));
+    read(clientfd, &trama.header, sizeof(trama.header));
+    char aux[2];
+    read(clientfd, &aux, sizeof(trama.length));
+
+    trama.length = (uint16_t)atoi(aux);
+
+    trama.data = (char*) malloc(sizeof(char) * trama.length);
+    read(clientfd, trama.data, sizeof(char) * trama.length);
+
+    return trama;
+}
+
+void writeTrama(int clientfd, char type, char header[10], char* data) {
+    Trama trama;
+    int length;
+    int i;
+
+    memset(&trama, 0, sizeof(trama));
+
+    //Afegim les dades a trama
+    trama.type = type;
+    strcpy(trama.header, header);
+    trama.data = data;
+    trama.length = strlen(trama.data);
+
+    //Enviem Trama
+    length = sizeof(trama.type) + sizeof(trama.header)
+            + sizeof(trama.length) + strlen(trama.data);
+
+    char buffer2[length];
+    sprintf(buffer2, "%c%-10s%u%s", trama.type, trama.header, trama.length, trama.data);
+    //Plenem el que falta de header amb '\0'
+    for (i = 1; i < 11; i++) {
+        if (buffer2[i] == ' ') {
+            buffer2[i] = '\0';
+        }
+    }
+    write(clientfd, buffer2, length);
+
 }

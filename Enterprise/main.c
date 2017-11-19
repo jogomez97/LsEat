@@ -27,6 +27,8 @@
 #define WAIT_CLIENT     "Esperant clients...\n"
 #define ERROR_DATA      "Error en connectar amb Data\n"
 
+Enterprise enterprise;
+
 int main(int argc, char const *argv[]) {
 
     if (argc != NPARAM) {
@@ -34,7 +36,6 @@ int main(int argc, char const *argv[]) {
         return EXIT_FAILURE;
     } else {
         int error;
-        Enterprise enterprise;
 
         error = readConfig((char*)argv[1], &enterprise);
 
@@ -50,48 +51,11 @@ int main(int argc, char const *argv[]) {
                 return EXIT_FAILURE;
             } else {
                 write(1, C_MENU, strlen(C_MENU));
-
-
-                //Connectar-se a Data
-                int sockfd = connectaData(enterprise.ipData, enterprise.portData);
-                if (sockfd < 0) {
-                    return EXIT_FAILURE;
-                } else {
-
-                    //Nova connexió Enterprise->Data
-                    Trama trama;
-                    int length;
-
-                    memset(&trama, 0, sizeof(trama));
-
-                    //Afegim les dades a trama
-                    trama.type = 0x01;
-                    strcpy(trama.header, "[ENT_INFO]\0");
-
-                    length = strlen(enterprise.nom) + strlen(enterprise.ipData)
-                            + sizeof(enterprise.portData) + 2 * sizeof(char);
-                    char buffer[length];
-                    sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portData, enterprise.ipData);
-                    trama.data = buffer;
-                    trama.length = strlen(trama.data);
-
-                    //Enviem Trama
-                    length = sizeof(trama.type) + sizeof(trama.header)
-                            + sizeof(trama.length) + strlen(trama.data);
-
-                    char buffer2[length];
-                    sprintf(buffer2, "%c%s%u%s", trama.type, trama.header, trama.length, trama.data);
-                    write(sockfd, buffer2, strlen(buffer2));
-
-                    close(sockfd);
-                }
-
+                gestionaNovaConnexio(enterprise.ipData, enterprise.portData);
             }
 
         }
 
     }
-
-
     return EXIT_SUCCESS;
 }

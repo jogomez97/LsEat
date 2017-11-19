@@ -25,10 +25,13 @@
 
 #define CONFIGFILE  "Data.dat"
 
+Fleet flota;
+
 int main () {
 
     int error;
     Data data;
+    flota.quants = 0;
 
     error = readFile(CONFIGFILE, &data);
     if (error) {
