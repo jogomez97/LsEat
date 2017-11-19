@@ -18,6 +18,8 @@
 #define PIC_NAME    "[PIC_NAME]\0"
 #define PIC_INF     "[PIC_INF]\0"
 #define ENT_INF     "[ENT_INF]\0"
+#define CONOK       "[CONOK]\0"
+#define CONKO       "[CONKO]\0"
 #define DATA        1
 #define ENTERPRISE  0
 

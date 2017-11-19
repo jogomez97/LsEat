@@ -1,6 +1,7 @@
 #include "communication.h"
 
 int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
+    Trama t;
     if (mode == DATA) {
         //Aquí s'intentarà connectar amb Data, de moment suposarem que
         //es fa bé (return 1)
@@ -35,7 +36,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         error = 0;
 
-        Trama t = readTrama(sockfd, &error);
+        t = readTrama(sockfd, &error);
 
         if (error <= 0) {
             write(1, ERROR_DATA, strlen(ERROR_DATA));
@@ -50,7 +51,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             return -1;
         }
 
-        return 1;
+        return 0;
     } else {
         if (!connectat) {
             int sockfd;
@@ -63,7 +64,9 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             }
 
             struct sockaddr_in s_addr;
+
             memset(&s_addr, 0, sizeof (s_addr));
+
             s_addr.sin_family = AF_INET;
             s_addr.sin_port = htons(e->port);
 
@@ -80,9 +83,22 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             }
 
             write(1, COMANDA_OK, strlen(COMANDA_OK));
-            write(1, "CONNECTED A ENTERPRISE", strlen("CONNECTED A ENTERPRISE"));
 
+            write(1, "1\n", strlen("1\n"));
             writeTrama(sockfd, 0x01, PIC_INF, getPicardInfo(picard));
+
+            t = readTrama(sockfd, &error);
+            write(1, "2\n", strlen("2\n"));
+
+            if (error <= 0) {
+                write(1, ERROR_DATA, strlen(ERROR_DATA));
+                close(sockfd);
+                return -1;
+            }
+
+            write(1, "3\n", strlen("3\n"));
+            gestionaTrama(t, ENTERPRISE);
+
             return 1;
         } else {
             write(1, ERROR_CONN, strlen(ERROR_CONN));
@@ -164,6 +180,14 @@ int gestionaTrama(Trama t, int mode) {
             //falta alliberar tot aixo
 
             connectaServidor(0, picard, ENTERPRISE, &e);
+            return 1;
+        } else {
+            write(1, ERROR_DATA, strlen(ERROR_DATA));
+            return -1;
+        }
+    } else {
+        if (strcmp(t.header, CONOK) == 0) {
+            write(1, CONNECTED_E, strlen(CONNECTED_E));
             return 1;
         } else {
             write(1, ERROR_DATA, strlen(ERROR_DATA));

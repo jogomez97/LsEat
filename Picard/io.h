@@ -22,6 +22,7 @@
 #define DISCONNECTED_D  "Desconnexió amb data\n"
 #define CONNECTED_E     "Connexió establerta amb enterprise\n"
 #define DISCONNECTED_E  "Desconnexió amb enterprise\n"
+#define ERROR_DISCON_E  "Error en la desconnexió amb enterprise\n"
 #define ERROR_DATA      "Error amb la connexió amb Data\n"
 #define ERROR_ESTABLISHED "Connexió amb Enterprise ja realitzada!\n"
 
