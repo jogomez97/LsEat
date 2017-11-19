@@ -14,6 +14,8 @@
 
 #include "data.h"
 
+#define CONNECTEDP          "[DATA] Connexió amb picard establerta\n"
+#define DESCONP             "[DATA] Desconnexió de Picard\n"
 #define WAIT_CONNECT        "[DATA] Esperant una nova connexió\n"
 #define CONNECTED_E         "[DATA] Connexió establerta amb enterprise\n"
 #define DISCONNECTED_E      "[DATA] Desconnexió d'enterprise\n"
@@ -25,15 +27,17 @@
 #define ERROR_BIND          "Error en fer el bind!\n"
 #define ERROR_TRAMA         "Error en la trama!\n"
 #define ERROR_DISCONNECTED  "Error! S'ha perdut la connexió\n"
-
 #define NCONN 10
 #define PORT 8260
 
-#define ENT_INF     "[ENT_INF]\0"
-#define CONOK       "CONOK\0"
-#define CONKO       "CONKO\0"
-#define CONOKb      "[CONOK]\0"       //b de brackets
-#define CONKOb      "[CONKO]\0"
+#define ENT_INF             "[ENT_INF]\0"
+#define CONOK               "CONOK\0"
+#define CONKO               "CONKO\0"
+#define CONOKb              "[CONOK]\0"       //b de brackets
+#define CONKOb              "[CONKO]\0"
+#define UPDATE              "[UPDATE]"
+#define UPDATEOK            "[UPDATEOK]"
+#define UPDATEKO            "[UPDATEKO]"
 
 typedef struct {
     char        type;

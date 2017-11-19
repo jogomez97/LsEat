@@ -43,6 +43,19 @@ int connectPicard(Data d) {
             return -1;
         } else {
             gestionaPicard(clientfd);
+            Trama trama = readTrama(clientfd, &error);
+            char buffer[500];
+
+            sprintf(buffer, "%c&%s&%d&%s\n", trama.type, trama.header, trama.length, trama.data);
+            write(1, buffer, strlen(buffer));
+            switch (trama.type) {
+                case 0x01:
+                    write(1, "WE IN BOYZ", strlen("WE IN BOYZ"));
+                    break;
+                default:
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    break;
+            }
         }
         return 0;
     }
@@ -50,20 +63,19 @@ int connectPicard(Data d) {
 
 void gestionaPicard(int clientfd) {
     Trama trama;
+    int error = 0;
 
 
     write(1, CONNECTED_P, strlen(CONNECTED_P));
 
-    int error = 0;
-
     memset(&trama, 0, sizeof(trama));
     trama = readTrama(clientfd, &error);
+
 
     if (error <= 0) {
         write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
         close(clientfd);
     }
-
     switch (trama.type) {
         case 0x01:
             //està a data.
@@ -136,11 +148,10 @@ int connectEnterprise(Data d) {
 void gestionaEnterprise(int clientfd) {
     Trama trama;
     int error;
+    //s'hauria de dir !end, porta a confusió
     int end = 1;
 
-
     write(1, CONNECTED_E, strlen(CONNECTED_E));
-
 
     while (end) {
         memset(&trama, 0, sizeof(trama));
@@ -172,6 +183,18 @@ void gestionaEnterprise(int clientfd) {
                 } else {
                     writeTrama(clientfd, 0x02, CONKOb, "");
                 }
+                break;
+            case 0x07:
+                if (strcmp(trama.header, UPDATE) == 0) {
+                    //S'haurà de fer gestió de nConnectats per fer el balanceig
+                    writeTrama(clientfd, 0x07, UPDATEOK, "");
+                } else {
+                    writeTrama(clientfd, 0x07, UPDATEKO, "");
+                }
+                write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
+                writeTrama(clientfd, 0x07, UPDATEOK, "");
+                close(clientfd);
+                end = 0;
                 break;
             default:
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
