@@ -36,6 +36,7 @@ typedef struct {
 extern Enterprise enterprise;
 
 void gestionaNovaConnexio();
+void desconnecta(int sockfd);
 int connectaData();
 int enviaNovaConnexio(int sockfd);
 Trama readTrama(int sockfd);

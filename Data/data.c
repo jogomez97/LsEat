@@ -16,7 +16,7 @@ int gestionaFlota(char* data) {
 
         flota.enterprises[flota.quants].port = atoi(aux);
         flota.quants++;
-        printaFlota();
+        //printaFlota();
         return 0;
     }
     return -1;

@@ -30,6 +30,8 @@
 #define ENT_INF     "[ENT_INF]\0"
 #define CONOK       "CONOK\0"
 #define CONKO       "CONKO\0"
+#define CONOKb      "[CONOK]\0"       //b de brackets
+#define CONKOb      "[CONKO]\0"
 
 typedef struct {
     char        type;
@@ -41,8 +43,12 @@ typedef struct {
 int connectPicard(Data d);
 int connectEnterprise(Data d);
 void gestionaEnterprise(int clientfd);
+<<<<<<< HEAD
 void gestionaPicard(int clientfd);
 Trama readTrama(int clientfd);
+=======
+Trama readTrama(int clientfd, int* error);
+>>>>>>> 673e61a014017953def354af6d0c802ad1635f66
 void writeTrama(int sockfd, char type, char header[10], char* data);
 
 #endif

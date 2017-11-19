@@ -42,7 +42,24 @@ int connectPicard(Data d) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
             return -1;
         } else {
+<<<<<<< HEAD
             gestionaPicard(clientfd);
+=======
+
+            Trama trama = readTrama(clientfd, &error);
+            char buffer[500];
+
+            sprintf(buffer, "%c&%s&%d&%s\n", trama.type, trama.header, trama.length, trama.data);
+            write(1, buffer, strlen(buffer));
+            switch (trama.type) {
+                case 0x01:
+                    write(1, "WE IN BOYZ", strlen("WE IN BOYZ"));
+                    break;
+                default:
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    break;
+            }
+>>>>>>> 673e61a014017953def354af6d0c802ad1635f66
         }
         return 0;
     }
@@ -131,40 +148,58 @@ void gestionaEnterprise(int clientfd) {
 
     write(1, CONNECTEDE, strlen(CONNECTEDE));
 
-    memset(&trama, 0, sizeof(trama));
-    trama = readTrama(clientfd);
+    while (1) {
+        memset(&trama, 0, sizeof(trama));
+        error = 0;
+        trama = readTrama(clientfd, &error);
 
-    switch (trama.type) {
-        case 0x01:
-            //està a data.c
-            error = gestionaFlota(trama.data);
-            if (!error) {
-                writeTrama(clientfd, 0x01, CONOK, "");
-            } else {
-                writeTrama(clientfd, 0x01, CONKO, "");
-            }
+        if (error <= 0) {
+            write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
+            close(clientfd);
             break;
-        default:
-            write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-            break;
+        }
+
+        switch (trama.type) {
+            case 0x01:
+                //està a data.c
+                error = gestionaFlota(trama.data);
+                if (!error) {
+                    writeTrama(clientfd, 0x01, CONOK, "");
+                } else {
+                    writeTrama(clientfd, 0x01, CONKO, "");
+                }
+                break;
+            case 0x02:
+                if (strcmp(trama.header, ENT_INF) == 0) {
+                    writeTrama(clientfd, 0x02, CONOKb, "");
+                } else {
+                    writeTrama(clientfd, 0x02, CONKOb, "");
+                }
+                break;
+            default:
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                break;
+        }
     }
-    close(clientfd);
+
 }
 
+/* FUNCIONS GENÈRIQUES */
 
-Trama readTrama(int clientfd) {
+Trama readTrama(int clientfd, int* error) {
     Trama trama;
     memset(&trama, 0, sizeof(trama));
 
     read(clientfd, &trama.type, sizeof(trama.type));
     read(clientfd, &trama.header, sizeof(trama.header));
-    char aux[2];
+    char aux[3];
     read(clientfd, &aux, sizeof(trama.length));
+    aux[2] = '\0';
 
     trama.length = (uint16_t)atoi(aux);
 
     trama.data = (char*) malloc(sizeof(char) * trama.length);
-    read(clientfd, trama.data, sizeof(char) * trama.length);
+    *error = read(clientfd, trama.data, sizeof(char) * trama.length);
 
     return trama;
 }
@@ -187,7 +222,7 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
             + sizeof(trama.length) + strlen(trama.data);
 
     char buffer2[length];
-    sprintf(buffer2, "%c%-10s%u%s", trama.type, trama.header, trama.length, trama.data);
+    sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
         if (buffer2[i] == ' ') {
