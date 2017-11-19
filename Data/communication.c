@@ -67,12 +67,11 @@ void gestionaPicard(int clientfd) {
     switch (trama.type) {
         case 0x01:
             //està a data.
-            if (flota.quants == 0) {
+            if (flota.quants > 0) {
                 writeTrama(clientfd, 0x01, ENT_INF, getEnterprise());
                 // free(getEnterprise()) alliberar punter;
-
             } else {
-                writeTrama(clientfd, 0x01, CONOK, "");
+                writeTrama(clientfd, 0x01, CONKO, "");
             }
             break;
         default:

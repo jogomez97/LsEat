@@ -68,7 +68,7 @@ int main(int argc, char const *argv[]) {
 
                 split = strtok(comanda, " ");
                 if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-                    connectaData(connectat, picard);
+                    connectaServidor(connectat, picard, DATA, NULL);
                 } else if (strcmp(SHOW, split) == 0) {
                     split = strtok(NULL, " ");
                     if (split != NULL && strtok(NULL, " ") == NULL) {
