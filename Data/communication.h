@@ -19,6 +19,8 @@
 #define WAIT_CONNECT        "[DATA] Esperant una nova connexió\n"
 #define CONNECTED_E         "[DATA] Connexió establerta amb enterprise\n"
 #define DISCONNECTED_E      "[DATA] Desconnexió d'enterprise\n"
+#define CONNECTED_P         "[DATA] Connexió amb picard establerta\n"
+#define DISCONNECTED_P      "[DATA] Desconnexió de Picard\n"
 #define ERROR_SOCK          "Error en crear el socket!\n"
 #define ERROR_CONNECT       "Error de connexion con el servidor.\n"
 #define ERROR_ACCEPT        "Error en acceptar!\n"
@@ -28,11 +30,14 @@
 #define NCONN 10
 #define PORT 8260
 
-#define ENT_INF     "[ENT_INF]\0"
-#define CONOK       "CONOK\0"
-#define CONKO       "CONKO\0"
-#define CONOKb      "[CONOK]\0"       //b de brackets
-#define CONKOb      "[CONKO]\0"
+#define ENT_INF             "[ENT_INF]\0"
+#define CONOK               "CONOK\0"
+#define CONKO               "CONKO\0"
+#define CONOKb              "[CONOK]\0"       //b de brackets
+#define CONKOb              "[CONKO]\0"
+#define UPDATE              "[UPDATE]"
+#define UPDATEOK            "[UPDATEOK]"
+#define UPDATEKO            "[UPDATEKO]"
 
 typedef struct {
     char        type;

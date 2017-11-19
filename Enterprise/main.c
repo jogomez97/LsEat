@@ -40,6 +40,7 @@ int main(int argc, char const *argv[]) {
         int error;
 
         error = readConfig((char*)argv[1], &enterprise);
+        enterprise.nConnections = 0;
 
         if (error) {
             return EXIT_FAILURE;
@@ -55,7 +56,7 @@ int main(int argc, char const *argv[]) {
             } else {
 
                 write(1, C_MENU, strlen(C_MENU));
-                gestionaNovaConnexio();
+                gestionaConnexioData(NEW_CONN);
                 creaThread();
                 while(1) {
                     //Aquí es connectaran Picards i tal així de jajas

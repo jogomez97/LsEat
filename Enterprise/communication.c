@@ -6,14 +6,14 @@ void alarmSignal() {
     alarm(enterprise.seg);
 }
 
-static void * threadFunc(void * arg) {
-    
+void * threadFunc(void * arg) {
+
     signal(SIGALRM, alarmSignal);
     alarm(enterprise.seg);
     while (1) {
         if (connectionFlag) {
             connectionFlag = 0;
-            gestionaNovaConnexio();
+            gestionaConnexioData(!NEW_CONN);
         }
     }
     return arg;
@@ -24,7 +24,7 @@ void creaThread() {
     pthread_create(&id, NULL, threadFunc, NULL);
 }
 
-void gestionaNovaConnexio() {
+void gestionaConnexioData(int new) {
     int done = 0;
 
     int sockfd = connectaData();
@@ -32,13 +32,14 @@ void gestionaNovaConnexio() {
         exit(0);
     } else {
         write(1, CONNECTED_D, strlen(CONNECTED_D));
-        int error = enviaNovaConnexio(sockfd);
+
+        int error = enviaNovaConnexio(sockfd, new);
         if (error) {
-            desconnecta(sockfd);
+            desconnecta(sockfd, new);
             exit(0);
         }
         while (!done) {
-            done = desconnecta(sockfd);
+            done = desconnecta(sockfd, new);
             if (done) {
                 write(1, DISCONNECTED_D, strlen(DISCONNECTED_D));
             }
@@ -46,32 +47,39 @@ void gestionaNovaConnexio() {
     }
 }
 
-int desconnecta(int sockfd) {
-    char data[sizeof(int) + 1];
-    sprintf(data, "%d", enterprise.portData);
-    writeTrama(sockfd, 0x02, ENT_INF, data);
+int desconnecta(int sockfd, int new) {
 
-    int read = 0;
+    if (new) {
+        char data[sizeof(int) + 1];
+        sprintf(data, "%d", enterprise.portData);
+        writeTrama(sockfd, 0x02, ENT_INF, data);
 
-    Trama trama = readTrama(sockfd, &read);
-    if (read <= 0) {
-        write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
+        int read = 0;
+
+        Trama trama = readTrama(sockfd, &read);
+        if (read <= 0) {
+            write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
+            close(sockfd);
+            return 1;
+        }
+
+        switch (trama.type) {
+            case 0x02:
+                if (strcmp(trama.header, CONOKb) == 0) {
+                    close(sockfd);
+                    return 1;
+                }
+                return 0;
+                break;
+            default:
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                return 0;
+        }
+    } else {
         close(sockfd);
         return 1;
     }
 
-    switch (trama.type) {
-        case 0x02:
-            if (strcmp(trama.header, CONOKb) == 0) {
-                close(sockfd);
-                return 1;
-            }
-            return 0;
-            break;
-        default:
-            write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-            return 0;
-    }
 }
 
 int connectaData() {
@@ -102,41 +110,73 @@ int connectaData() {
     return sockfd;
 }
 
-int enviaNovaConnexio(int sockfd) {
+int enviaNovaConnexio(int sockfd, int new) {
     int length;
     Trama trama;
     int error;
 
-    length = strlen(enterprise.nom) + strlen(enterprise.ipData)
-            + sizeof(enterprise.portData) + 2 * sizeof(char);
-    char buffer[length];
-    sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portData, enterprise.ipData);
+    if (new) {
+        length = strlen(enterprise.nom) + strlen(enterprise.ipData)
+                + sizeof(enterprise.portPicard) + 2 * sizeof(char);
+        char buffer[length];
+        sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portData, enterprise.ipData);
 
-    writeTrama(sockfd, 0x01, ENT_INF, buffer);
-    trama = readTrama(sockfd, &error);
-    if (error <= 0) {
-        write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-        close(sockfd);
-        return -1;
-    }
-
-    switch(trama.type) {
-        case 0x01:
-            if (strcmp(trama.header, CONOK) == 0) {
-                return 0;
-            } else if (strcmp(trama.header, CONKO) == 0) {
-                return -1;
-            } else {
-                return -1;
-            }
-            break;
-        default:
-            write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+        writeTrama(sockfd, 0x01, ENT_INF, buffer);
+        trama = readTrama(sockfd, &error);
+        if (error <= 0) {
+            write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+            close(sockfd);
             return -1;
+        }
+
+        switch(trama.type) {
+            case 0x01:
+                if (strcmp(trama.header, CONOK) == 0) {
+                    return 0;
+                } else if (strcmp(trama.header, CONKO) == 0) {
+                    return -1;
+                } else {
+                    return -1;
+                }
+                break;
+            default:
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                return -1;
+        }
+    } else {
+        length = sizeof(int) + sizeof(char) + sizeof(enterprise.portPicard);
+        char buffer[length];
+        sprintf(buffer, "%d&%d", enterprise.portData, enterprise.nConnections);
+
+        writeTrama(sockfd, 0x07, UPDATE, buffer);
+        trama = readTrama(sockfd, &error);
+        if (error <= 0) {
+            write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+            close(sockfd);
+            return -1;
+        }
+
+        switch(trama.type) {
+            case 0x07:
+                if (strcmp(trama.header, UPDATEOK) == 0) {
+                    return 0;
+                } else if (strcmp(trama.header, UPDATEKO) == 0) {
+                    return -1;
+                } else {
+                    return -1;
+                }
+                break;
+            default:
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                return -1;
+        }
+
     }
+
 
     return 0;
 }
+
 
 Trama readTrama(int clientfd, int* error) {
     Trama trama;

@@ -8,6 +8,7 @@ typedef struct {
     int     portData;
     char*   ipPicard;
     int     portPicard;
+    int     nConnections;
 } Enterprise;
 
 typedef struct {
