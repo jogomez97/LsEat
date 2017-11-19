@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
                 return EXIT_FAILURE;
             } else {
                 write(1, C_MENU, strlen(C_MENU));
-                gestionaNovaConnexio(enterprise.ipData, enterprise.portData);
+                gestionaNovaConnexio();
             }
 
         }

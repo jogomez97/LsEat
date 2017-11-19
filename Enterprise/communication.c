@@ -8,9 +8,17 @@ void gestionaNovaConnexio() {
         int error = enviaNovaConnexio(sockfd);
         if (error) {
             write(1, ERROR_1STDATA, strlen(ERROR_1STDATA));
+            desconnecta(sockfd);
             exit(0);
         }
+        desconnecta(sockfd);
     }
+}
+
+void desconnecta(int sockfd) {
+    char data[sizeof(int) + 1];
+    sprintf(data, "%d", enterprise.portData);
+    writeTrama(sockfd, 0x02, ENT_INF, data);
 }
 
 int connectaData() {
@@ -52,7 +60,6 @@ int enviaNovaConnexio(int sockfd) {
 
     writeTrama(sockfd, 0x01, ENT_INF, buffer);
     trama = readTrama(sockfd);
-    close(sockfd);
 
     switch(trama.type) {
         case 0x01:
@@ -63,6 +70,9 @@ int enviaNovaConnexio(int sockfd) {
             } else {
                 return -1;
             }
+            break;
+        case 0x02:
+            
             break;
         default:
             write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
@@ -108,7 +118,7 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
 
 
     char buffer2[length];
-    sprintf(buffer2, "%c%-10s%u%s", trama.type, trama.header, trama.length, trama.data);
+    sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
         if (buffer2[i] == ' ') {
@@ -116,5 +126,6 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
         }
     }
     write(sockfd, buffer2, length);
+
 
 }
