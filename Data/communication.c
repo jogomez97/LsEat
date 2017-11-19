@@ -119,27 +119,19 @@ int connectEnterprise(Data d) {
 
             memset(&trama, 0, sizeof(trama));
 
+
             read(clientfd, &trama.type, sizeof(trama.type));
             read(clientfd, &trama.header, sizeof(trama.header));
-            read(clientfd, &trama.length, sizeof(trama.length));
+            char aux[2];
+            read(clientfd, &aux, sizeof(trama.length));
+
+            trama.length = (uint16_t)atoi(aux);
 
             trama.data = (char*) malloc(sizeof(char) * trama.length);
             if (trama.data == NULL) {
                 return -1;
             }
             read(clientfd, trama.data, sizeof(char) * trama.length);
-
-
-
-            //DEBUG
-            int length = sizeof(trama.type) + strlen(trama.header)
-                    + sizeof(trama.length) + strlen(trama.data);
-            char b[10];
-            sprintf(b, "LENGTH: %d\n", length);
-            write(1, b, strlen(b));
-            char buffer2[length];
-            sprintf(buffer2, "%c  /  %s  /  %u  /  %s\n", trama.type, trama.header, trama.length, trama.data);
-            write(1, buffer2, strlen(buffer2));
 
             switch (trama.type) {
                 case 0x01:

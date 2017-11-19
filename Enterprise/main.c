@@ -79,18 +79,8 @@ int main(int argc, char const *argv[]) {
                     length = sizeof(trama.type) + sizeof(trama.header)
                             + sizeof(trama.length) + strlen(trama.data);
 
-                    char b[10];
-                    sprintf(b, "LENGTH: %d\n", length);
-                    write(1, b, strlen(b));
                     char buffer2[length];
-
-
-                    printf("%u\n", trama.length );
-
-
                     sprintf(buffer2, "%c%s%u%s", trama.type, trama.header, trama.length, trama.data);
-                    write(1, buffer2, strlen(buffer2));
-                    write(1, "\n", strlen("\n"));
                     write(sockfd, buffer2, strlen(buffer2));
 
                     close(sockfd);
