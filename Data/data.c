@@ -30,7 +30,7 @@ void printaFlota() {
     }
 }
 
-char* getFlota() {
+char* getEnterprise() {
     Enterprise e = flota.enterprises[flota.quants - 1];
 
     int length = strlen(e.nom) + strlen(e.ip)

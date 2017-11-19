@@ -42,24 +42,7 @@ int connectPicard(Data d) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
             return -1;
         } else {
-<<<<<<< HEAD
             gestionaPicard(clientfd);
-=======
-
-            Trama trama = readTrama(clientfd, &error);
-            char buffer[500];
-
-            sprintf(buffer, "%c&%s&%d&%s\n", trama.type, trama.header, trama.length, trama.data);
-            write(1, buffer, strlen(buffer));
-            switch (trama.type) {
-                case 0x01:
-                    write(1, "WE IN BOYZ", strlen("WE IN BOYZ"));
-                    break;
-                default:
-                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-                    break;
-            }
->>>>>>> 673e61a014017953def354af6d0c802ad1635f66
         }
         return 0;
     }
@@ -68,17 +51,26 @@ int connectPicard(Data d) {
 void gestionaPicard(int clientfd) {
     Trama trama;
 
-    write(1, CONNECTEDP, strlen(CONNECTEDP));
+
+    write(1, CONNECTED_P, strlen(CONNECTED_P));
+
+    int error = 0;
 
     memset(&trama, 0, sizeof(trama));
-    trama = readTrama(clientfd);
+    trama = readTrama(clientfd, &error);
+
+    if (error <= 0) {
+        write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
+        close(clientfd);
+    }
 
     switch (trama.type) {
         case 0x01:
             //està a data.
             if (flota.quants == 0) {
-                writeTrama(clientfd, 0x01, ENT_INF, getFlota());
-                free(getFlota());
+                writeTrama(clientfd, 0x01, ENT_INF, getEnterprise());
+                // free(getEnterprise()) alliberar punter;
+
             } else {
                 writeTrama(clientfd, 0x01, CONOK, "");
             }
@@ -147,11 +139,9 @@ void gestionaEnterprise(int clientfd) {
     int error;
     int end = 1;
 
-<<<<<<< HEAD
-    write(1, CONNECTEDE, strlen(CONNECTEDE));
-=======
+
     write(1, CONNECTED_E, strlen(CONNECTED_E));
->>>>>>> be739512bd13ce38f5c6af4540cfad3ddffd9cb1
+
 
     while (end) {
         memset(&trama, 0, sizeof(trama));
