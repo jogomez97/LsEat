@@ -1,4 +1,4 @@
-SUBDIRS= Picard Enterprise Data
+SUBDIRS=./Picard ./Enterprise ./Data
 
 all: $(SUBDIRS)
 

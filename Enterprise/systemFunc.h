@@ -15,15 +15,11 @@
 #define NEW_CONN            1
 
 //Variables globals externes
-extern Enterprise enterprise;
-extern Menu menu;
 extern int connectionFlag;
 
 void * threadFunc(void * arg);
 void * threadPicard(void * arg);
 void creaThread();
 void alarmSignal();
-void alliberaMemoria();
-void intHandler();
 
 #endif
