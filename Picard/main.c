@@ -71,7 +71,6 @@ int main(int argc, char const *argv[]) {
                 if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
                     if (!connectat) {
                         int a = connectaServidor(connectat, picard, DATA, NULL);
-                        printf("%d\n", a);
                         if (a >= 1) {
                             sockfd = a;
                             connectat = 1;
@@ -119,8 +118,9 @@ int main(int argc, char const *argv[]) {
                 } else if (strcmp(PAY, split) == 0 && strtok(NULL, " ") == NULL) {
                     pay(connectat);
                 } else if (strcmp(DISCONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
+                    disconnect(connectat, sockfd);
                     alliberaMemoria();
-                    disconnect(connectat);
+                    exit(0);
                     return 0;
                 } else {
                     write(1, ERROR_COMAND, strlen(ERROR_COMAND));
@@ -144,24 +144,18 @@ void alliberaMemoria() {
 }
 
 void intHandler() {
-    alliberaMemoria();
-
     if (connectat) {
-        write(1, "1\n", sizeof("1\n"));
 
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
-        write(1, "2\n", sizeof("2\n"));
 
         int error = 0;
         Trama t  = readTrama(sockfd, &error);
-
-        write(1, "3\n", sizeof("3\n"));
 
         if (error <= 0) {
             write(1, ERROR_DATA, strlen(ERROR_DATA));
             close(sockfd);
         }
-        if (gestionaTrama(t, ENTERPRISE)) {
+        if (gestionaTrama(t, DSC_ENTERP)) {
             write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
             close(sockfd);
         } else {
@@ -170,6 +164,6 @@ void intHandler() {
         }
     }
 
-    write(1, "\n", sizeof(char));
+    alliberaMemoria();
     exit(0);
 }

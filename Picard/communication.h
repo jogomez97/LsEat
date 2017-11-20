@@ -20,6 +20,7 @@
 #define ENT_INF     "[ENT_INF]\0"
 #define CONOK       "[CONOK]\0"
 #define CONKO       "[CONKO]\0"
+#define DSC_ENTERP  2
 #define DATA        1
 #define ENTERPRISE  0
 
@@ -40,7 +41,7 @@ void delete(int connectat);
 
 void pay(int connectat);
 
-void disconnect(int connectat);
+void disconnect(int connectat, int sockfd);
 
 int gestionaTrama(Trama t, int mode);
 

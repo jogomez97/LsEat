@@ -11,7 +11,6 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         if (sockfd < 0) {
             write(1, ERROR_SOCK, strlen(ERROR_SOCK));
-            write(1, "1\n", sizeof("1\n"));
             return -1;
         }
 
@@ -24,13 +23,11 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         if (error < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-            write(1, "2\n", sizeof("2\n"));
             return -1;
         };
 
         if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-            write(1, "3\n", sizeof("3\n"));
             return -1;
         }
         write(1, COMANDA_OK, strlen(COMANDA_OK));
@@ -49,12 +46,12 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         error = gestionaTrama(t, DATA);
 
-        if (error != 1) {
+        if (error < 1) {
             close(sockfd);
             return -1;
         }
 
-        return 1;
+        return error;
     } else {
         if (!connectat) {
             int sockfd;
@@ -96,7 +93,12 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
                 close(sockfd);
                 return -1;
             }
-            return gestionaTrama(t, ENTERPRISE);
+
+            if (gestionaTrama(t, ENTERPRISE)) {
+                return sockfd;
+            }
+
+            return -1;
         } else {
             write(1, ERROR_CONN, strlen(ERROR_CONN));
         }
@@ -148,16 +150,32 @@ void pay(int connectat) {
     }
 }
 
-void disconnect(int connectat) {
-    if (connectat) {
-        //Ens desconnectem
-    }
+void disconnect(int connectat, int sockfd) {
     write(1, DIS_MSG, strlen(DIS_MSG));
+    if (connectat) {
+        writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
+
+        int error = 0;
+        Trama t  = readTrama(sockfd, &error);
+
+        if (error <= 0) {
+            write(1, ERROR_DATA, strlen(ERROR_DATA));
+            close(sockfd);
+        }
+        if (gestionaTrama(t, DSC_ENTERP)) {
+            write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
+            close(sockfd);
+        } else {
+            write(1, ERROR_DISCON_E, strlen(ERROR_DISCON_E));
+            close(sockfd);
+        }
+    }
 }
 
 int gestionaTrama(Trama t, int mode) {
     if (mode == DATA) {
         if (strcmp(t.header, ENT_INF) == 0) {
+            write(1, CONNECTED_D, strlen(CONNECTED_D));
             write(1, DISCONNECTED_D, strlen(DISCONNECTED_D));
 
             Enterprise e;
@@ -176,17 +194,16 @@ int gestionaTrama(Trama t, int mode) {
 
             //falta alliberar tot aixo
 
-            connectaServidor(0, picard, ENTERPRISE, &e);
-            return 1;
+            return connectaServidor(0, picard, ENTERPRISE, &e);
         } else {
             write(1, ERROR_DATA, strlen(ERROR_DATA));
             return -1;
         }
     } else {
-        if (strcmp(t.header, CONOK) == 0) {
+        if (strcmp(t.header, CONOK) == 0 && mode == ENTERPRISE) {
             write(1, CONNECTED_E, strlen(CONNECTED_E));
             return 1;
-        } else {
+        } else if (strcmp(t.header, CONOK) != 0){
             write(1, ERROR_DATA, strlen(ERROR_DATA));
             return -1;
         }
