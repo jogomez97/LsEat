@@ -20,6 +20,7 @@ extern Menu menu;
 extern int connectionFlag;
 
 void * threadFunc(void * arg);
+void * threadPicard(void * arg);
 void creaThread();
 void alarmSignal();
 void alliberaMemoria();
