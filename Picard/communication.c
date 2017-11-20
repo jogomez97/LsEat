@@ -11,6 +11,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         if (sockfd < 0) {
             write(1, ERROR_SOCK, strlen(ERROR_SOCK));
+            write(1, "1\n", sizeof("1\n"));
             return -1;
         }
 
@@ -23,11 +24,13 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         if (error < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+            write(1, "2\n", sizeof("2\n"));
             return -1;
         };
 
         if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
+            write(1, "3\n", sizeof("3\n"));
             return -1;
         }
         write(1, COMANDA_OK, strlen(COMANDA_OK));
@@ -46,12 +49,12 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
         error = gestionaTrama(t, DATA);
 
-        if (error == 1) {
+        if (error != 1) {
             close(sockfd);
             return -1;
         }
 
-        return 0;
+        return 1;
     } else {
         if (!connectat) {
             int sockfd;
@@ -84,22 +87,16 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
             write(1, COMANDA_OK, strlen(COMANDA_OK));
 
-            write(1, "1\n", strlen("1\n"));
             writeTrama(sockfd, 0x01, PIC_INF, getPicardInfo(picard));
 
             t = readTrama(sockfd, &error);
-            write(1, "2\n", strlen("2\n"));
 
             if (error <= 0) {
                 write(1, ERROR_DATA, strlen(ERROR_DATA));
                 close(sockfd);
                 return -1;
             }
-
-            write(1, "3\n", strlen("3\n"));
-            gestionaTrama(t, ENTERPRISE);
-
-            return 1;
+            return gestionaTrama(t, ENTERPRISE);
         } else {
             write(1, ERROR_CONN, strlen(ERROR_CONN));
         }
