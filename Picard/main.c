@@ -4,17 +4,6 @@
            PORTS: 8180-8189 / 8260-8269
 ∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗*/
 
-
-/*  TODO:
-+ - Trobar un lloc per posar la funció stringToUpper, ara està al main
-* - Modul propi per a les funcions del shell? shell.c?
-*
-* Preguntes:
-*   - La classe dades en pot juntar amb el main? (struct)
-*   - Es connectaran sempre primer o poden fer una altra tasca?
-*
-*/
-
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,7 +14,6 @@
 #include "communication.h"
 #include "utils.h"
 
-//Falta trobar lloc per aquesta funció
 void alliberaMemoria();
 void intHandler();
 
@@ -40,7 +28,7 @@ int main(int argc, char const *argv[]) {
     //Comprovem que només s'hagi passat un fitxer
     if (argc != 2) {
         write(1, ERROR_ARG, strlen(ERROR_ARG));
-        return -1;
+        return EXIT_FAILURE;
     } else {
         int error;
 
@@ -48,7 +36,7 @@ int main(int argc, char const *argv[]) {
         if (error) {
             //Com la funció readFile ja ha mostrat l'error específic, només cal
             //acabar l'execució
-            return -1;
+            return EXIT_FAILURE;
         } else {
             signal(SIGINT, intHandler);
             //Printar informació de benvinguda
@@ -131,7 +119,7 @@ int main(int argc, char const *argv[]) {
         }
 
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void alliberaMemoria() {

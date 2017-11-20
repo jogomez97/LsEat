@@ -67,28 +67,3 @@ void * threadPicard(void * arg) {
     }
     return arg;
 }
-
-
-void alliberaMemoria() {
-    int i;
-
-    //Allibera plats
-    for (i = 0; i < menu.nPlats; i++) {
-        free(menu.plats[i].nom);
-    }
-    free(menu.plats);
-
-    //Allibera enterprise
-    free(enterprise.nom);
-    free(enterprise.ipData);
-    free(enterprise.ipPicard);
-
-}
-
-void intHandler() {
-    alliberaMemoria();
-    //També s'han de tancar totes les connexions de Picar existents
-
-    write(1, "\n", sizeof(char));
-    exit(0);
-}
