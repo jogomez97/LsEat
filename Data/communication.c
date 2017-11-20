@@ -206,7 +206,6 @@ void gestionaEnterprise(int clientfd) {
                 end = 0;
                 break;
             default:
-                printf("2\n");
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 break;
         }

@@ -26,7 +26,6 @@ void creaThread() {
 
 void * threadPicard(void * arg) {
 
-    //A partir d'aquí ha de ser un thread per cada picard
     Trama trama;
     int error;
     int end = 0;
@@ -39,14 +38,18 @@ void * threadPicard(void * arg) {
             break;
         }
 
-        char    a[500];
-        sprintf(a, "%X/%s/%u/%s\n", trama.type, trama.header, trama.length, trama.data);
-        write(1, a, strlen(a));
-
         switch (trama.type) {
             case 0x01:
                 if (strcmp(trama.header, PIC_INF) == 0) {
                     writeTrama(*picardfd, 0x01, CONOKb, "");
+
+                    char* nom = strtok(trama.data, "&");
+                    int length = strlen(nom) + strlen("Connectat\n");
+                    char buff[length];
+                    sprintf(buff, "Connectat %s\n", nom);
+                    write(1, nom, strlen(nom));
+                    free(nom);
+
                 } else {
                     writeTrama(*picardfd, 0x01, CONKOb, "");
                 }
@@ -54,6 +57,14 @@ void * threadPicard(void * arg) {
             case 0x02:
                 if (strcmp(trama.header, PIC_NAME) == 0) {
                     writeTrama(*picardfd, 0x02, CONOKb, "");
+
+                    char* nom = strtok(trama.data, "\n");
+                    int length = strlen(nom) + strlen("Desconnectat\n");
+                    char buff[length];
+                    sprintf(buff, "Desconnectat %s\n", nom);
+                    write(1, nom, strlen(nom));
+                    free(nom);
+
                 } else {
                     writeTrama(*picardfd, 0x02, CONKOb, "");
                 }

@@ -28,6 +28,29 @@
 Fleet flota;
 Data d;
 
+void alliberaMemoria() {
+    int i;
+
+    //Allibera flota
+    for (i = 0; i < flota.quants; i++) {
+        free(flota.enterprises[i].nom);
+        //free(flota.enterprises[i].ip);
+    }
+    free(flota.enterprises);
+
+    //Allibera Data
+    free(d.ip);
+
+}
+
+void intHandler() {
+    alliberaMemoria();
+
+    write(1, "\n", sizeof(char));
+    exit(0);
+}
+
+
 int main () {
 
     int error;
@@ -38,13 +61,14 @@ int main () {
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal
         //acabar l'execució
-        return -1;
+        return EXIT_FAILURE;
     } else {
+        signal(SIGINT, intHandler);
 
         //pthread_t tEnterprise;
         creaThread();
         connectPicard();
 
-        return 0;
+        return EXIT_SUCCESS;
     }
 }

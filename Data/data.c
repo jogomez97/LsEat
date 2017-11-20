@@ -10,7 +10,7 @@ int gestionaFlota(char* data) {
 
     flota.enterprises[flota.quants].nom = strtok(data, "&");
     char* aux = strtok(NULL, "&");
-    flota.enterprises[flota.quants].ip = strtok(NULL, "");
+    flota.enterprises[flota.quants].ip = strtok(NULL, "\n");
     if ((flota.enterprises[flota.quants].nom != NULL) & (aux != NULL)
         & (flota.enterprises[flota.quants].ip != NULL)) {
 
