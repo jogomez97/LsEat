@@ -59,7 +59,8 @@ int main(int argc, char const *argv[]) {
                 if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
                     if (!connectat) {
                         int a = connectaServidor(connectat, picard, DATA, NULL);
-                        if (a > 1) {
+                        printf("%d\n", a);
+                        if (a >= 1) {
                             sockfd = a;
                             connectat = 1;
                         }
@@ -132,16 +133,31 @@ void alliberaMemoria() {
 
 void intHandler() {
     alliberaMemoria();
+
     if (connectat) {
+        write(1, "1\n", sizeof("1\n"));
+
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
+        write(1, "2\n", sizeof("2\n"));
+
         int error = 0;
         Trama t  = readTrama(sockfd, &error);
+
+        write(1, "3\n", sizeof("3\n"));
+
         if (error <= 0) {
             write(1, ERROR_DATA, strlen(ERROR_DATA));
             close(sockfd);
         }
-        gestionaTrama(t, ENTERPRISE);
+        if (gestionaTrama(t, ENTERPRISE)) {
+            write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
+            close(sockfd);
+        } else {
+            write(1, ERROR_DISCON_E, strlen(ERROR_DISCON_E));
+            close(sockfd);
+        }
     }
+
     write(1, "\n", sizeof(char));
     exit(0);
 }
