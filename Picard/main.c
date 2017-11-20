@@ -132,6 +132,8 @@ void alliberaMemoria() {
 }
 
 void intHandler() {
+    write(1, "\n", strlen("\n"));
+    write(1, DIS_MSG, strlen(DIS_MSG));
     if (connectat) {
 
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
@@ -151,7 +153,6 @@ void intHandler() {
             close(sockfd);
         }
     }
-
     alliberaMemoria();
     exit(0);
 }
