@@ -159,6 +159,7 @@ int enviaNovaConnexio(int sockfd, int new) {
 void engegaServidor() {
     int sockfd;
     int picardfd;
+    int* picardfds;
 
     /* Obrir servidor */
     //Creació socket
@@ -192,52 +193,24 @@ void engegaServidor() {
     //Accept
     socklen_t len = sizeof(s_addr);
 
+
     while (1) {
         write(1, WAITING, strlen(WAITING));
+        if (enterprise.nConnections == 0) {
+            picardfds = (int*) malloc(sizeof(int));
+        } else {
+            picardfds = (int*) realloc(picardfds, sizeof(int) * (enterprise.nConnections + 1));
+        }
         picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (picardfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
         } else {
+            picardfds[enterprise.nConnections] = picardfd;
+            enterprise.nConnections++;
             write(1, CONNECTED_P, strlen(CONNECTED_P));
 
-            //A partir d'aquí ha de ser un thread per cada picard
-            Trama trama;
-            int error;
-            int end = 0;
-
-            while (!end) {
-                trama = readTrama(picardfd, &error);
-                if (error <= 0) {
-                    write(1, ERROR_DISCONNECTEDP, strlen(ERROR_DISCONNECTEDP));
-                    break;
-                }
-
-                char    a[500];
-                sprintf(a, "%X/%s/%u/%s\n", trama.type, trama.header, trama.length, trama.data);
-                write(1, a, strlen(a));
-
-                switch (trama.type) {
-                    case 0x01:
-                        if (strcmp(trama.header, PIC_INF) == 0) {
-                            writeTrama(picardfd, 0x01, CONOKb, "");
-                        } else {
-                            writeTrama(picardfd, 0x01, CONKOb, "");
-                        }
-                        break;
-                    case 0x02:
-                        if (strcmp(trama.header, PIC_NAME) == 0) {
-                            writeTrama(picardfd, 0x02, CONOKb, "");
-                        } else {
-                            writeTrama(picardfd, 0x02, CONKOb, "");
-                        }
-                        end = 1;
-                        close(picardfd);
-                        break;
-                    default:
-                        write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
-                        break;
-                }
-            }
+            pthread_t id;
+            pthread_create(&id, NULL, threadPicard, &picardfd);
 
         }
     }
