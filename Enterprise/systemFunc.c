@@ -47,7 +47,7 @@ void * threadPicard(void * arg) {
                     int length = strlen(nom) + strlen("Connectat\n");
                     char buff[length];
                     sprintf(buff, "Connectat %s\n", nom);
-                    write(1, nom, strlen(nom));
+                    write(1, buff, strlen(buff));
                     free(nom);
 
                 } else {
@@ -62,7 +62,7 @@ void * threadPicard(void * arg) {
                     int length = strlen(nom) + strlen("Desconnectat\n");
                     char buff[length];
                     sprintf(buff, "Desconnectat %s\n", nom);
-                    write(1, nom, strlen(nom));
+                    write(1, buff, strlen(buff));
                     free(nom);
 
                 } else {

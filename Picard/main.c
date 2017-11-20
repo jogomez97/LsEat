@@ -14,6 +14,8 @@
 #include "communication.h"
 #include "utils.h"
 
+#define DSC_ENTERP  2
+
 void alliberaMemoria();
 void intHandler();
 
@@ -44,78 +46,14 @@ int main(int argc, char const *argv[]) {
             printMoney();
             write(1, INTRO_COMAND, strlen(INTRO_COMAND));
 
-            //Variables pròpies de l'execució
             connectat = 0;
-            char* split;
-            char* num;
-            int   quantitat;
-            char* plat;
-            while (1) {
-                printShell(picard.nom);
-                comanda = readKB();
-                stringToUpper(comanda);
+            int end = 0;
 
-                split = strtok(comanda, " ");
-                if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-                    if (!connectat) {
-                        int a = connectaServidor(connectat, picard, DATA, NULL);
-                        if (a >= 1) {
-                            sockfd = a;
-                            connectat = 1;
-                        }
-                    } else {
-                        write(1, ERROR_ESTABLISHED, strlen(ERROR_ESTABLISHED));
-                    }
-                } else if (strcmp(SHOW, split) == 0) {
-                    split = strtok(NULL, " ");
-                    if (split != NULL && strtok(NULL, " ") == NULL) {
-                        if (strcmp(split, MENU) == 0) {
-                            show(connectat);
-                        } else {
-                            write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                        }
-                    } else {
-                        write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                    }
-                } else if (strcmp(ORDER, split) == 0) {
-                    num = strtok(NULL, " ");
-                    plat = strtok(NULL, "\n");
-                    if (num != NULL && plat != NULL) {
-                        quantitat = atoi(num);
-                        if (quantitat > 0) {
-                            order(connectat);
-                        } else {
-                            write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                        }
-                    } else {
-                        write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                    }
-                } else if (strcmp(DELETE, split) == 0) {
-                    num = strtok(NULL, " ");
-                    plat = strtok(NULL, "\n");
-                    if (num != NULL && plat != NULL) {
-                        quantitat = atoi(num);
-                        if (quantitat > 0) {
-                            delete(connectat);
-                        } else {
-                            write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                        }
-                    } else {
-                        write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                    }
-                } else if (strcmp(PAY, split) == 0 && strtok(NULL, " ") == NULL) {
-                    pay(connectat);
-                } else if (strcmp(DISCONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-                    disconnect(connectat, sockfd);
-                    alliberaMemoria();
-                    exit(0);
-                    return 0;
-                } else {
-                    write(1, ERROR_COMAND, strlen(ERROR_COMAND));
-                }
+            while (!end) {
+                end = gestionaShell();
             }
-            free(comanda);
-            comanda = NULL;
+            alliberaMemoria();
+            return EXIT_SUCCESS;
         }
 
     }
