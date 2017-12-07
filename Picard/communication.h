@@ -95,6 +95,10 @@ void disconnect(int connectat, int sockfd);
 *******************************************************************************/
 int gestionaTrama(Trama t, int mode);
 
+/******************************************************************************/
+/**************************** FUNCIONS GENÈRIQUES *****************************/
+/******************************************************************************/
+
 /*******************************************************************************
 *
 * @Name     readTrama
@@ -111,9 +115,9 @@ Trama readTrama(int clientfd, int* error);
 * @Name     writeTrama
 * @Purpose  Funció escriurà una Trama donat un fd associat a un socket
 * @Param    In: clientfd    Socket al que escriurem la trama
-                type        Type de la trama a enviar
-                header      Header de la trama a enviar
-                data        Data de la trama a enviar
+*               type        Type de la trama a enviar
+*               header      Header de la trama a enviar
+*               data        Data de la trama a enviar
 *           Out: -
 * @return   Retorna la Trama llegida en cas de no haver-hi errors
 *

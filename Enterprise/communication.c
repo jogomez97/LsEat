@@ -1,6 +1,32 @@
+/*******************************************************************************
+*
+* Practica Sistemes Operatius - LsEat - Package Enterprise
+* Curs 2017-2018
+*
+* @File     communication.c
+* @Purpose  Modul que conté les funcions relacionades amb les diferents connexions
+*           de Enterprise a Data i de Picard a Enterprise
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
+*
+*******************************************************************************/
+
+// Llibreries pròpies
 #include "communication.h"
 
-/* Connexio amb Data */
+/******************************************************************************/
+/************************ FUNCIONS CONNEXIÓ AMB DATA **************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readTrama
+* @Purpose  ????????
+* @Param    In: new    ?????
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void gestionaConnexioData(int new) {
     int done = 0;
 
@@ -24,6 +50,16 @@ void gestionaConnexioData(int new) {
     }
 }
 
+/*******************************************************************************
+*
+* @Name     desconnecta
+* @Purpose  ??????????
+* @Param    In: sockfd    ???????
+*               new       ??????
+*           Out: -
+* @return   ?????????????
+*
+*******************************************************************************/
 int desconnecta(int sockfd, int new) {
 
     if (new) {
@@ -59,6 +95,15 @@ int desconnecta(int sockfd, int new) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     connectaData
+* @Purpose  ???????????????
+* @Param    In:  -
+*           Out: -
+* @return   ??????????????
+*
+*******************************************************************************/
 int connectaData() {
     //Creació socket
     int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -87,6 +132,16 @@ int connectaData() {
     return sockfd;
 }
 
+/*******************************************************************************
+*
+* @Name     enviaNovaConnexio
+* @Purpose  ????????????
+* @Param    In: sockfd   ?????????????
+*               new      ????????????
+*           Out: -
+* @return   ??????????
+*
+*******************************************************************************/
 int enviaNovaConnexio(int sockfd, int new) {
     int length;
     Trama trama;
@@ -154,8 +209,19 @@ int enviaNovaConnexio(int sockfd, int new) {
     return 0;
 }
 
-/* Connexio amb Picards */
+/******************************************************************************/
+/************************ FUNCIONS CONNEXIÓ DE PICARDS ************************/
+/******************************************************************************/
 
+/*******************************************************************************
+*
+* @Name     engegaServidor
+* @Purpose  ????????
+* @Param    In: arg    ?????
+*           Out: -
+* @return   ?????????
+*
+*******************************************************************************/
 void* engegaServidor(void* arg) {
     int sockfd;
     int* picardfds;
@@ -217,6 +283,15 @@ void* engegaServidor(void* arg) {
     return arg;
 }
 
+/*******************************************************************************
+*
+* @Name     threadPicard
+* @Purpose  ????????
+* @Param    In: arg    ?????
+*           Out: -
+* @return   ??????????
+*
+*******************************************************************************/
 void * threadPicard(void * arg) {
 
     Trama trama;
@@ -275,7 +350,19 @@ void * threadPicard(void * arg) {
     return arg;
 }
 
-/* Funcions generals */
+/******************************************************************************/
+/**************************** FUNCIONS GENÈRIQUES *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readTrama
+* @Purpose  Funció llegirà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket del que rebrem la trama
+*           Out: error      Variable de control d'errors
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
 Trama readTrama(int clientfd, int* error) {
     Trama trama;
     memset(&trama, 0, sizeof(trama));
@@ -306,6 +393,18 @@ Trama readTrama(int clientfd, int* error) {
     return trama;
 }
 
+/*******************************************************************************
+*
+* @Name     writeTrama
+* @Purpose  Funció escriurà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket al que escriurem la trama
+*               type        Type de la trama a enviar
+*               header      Header de la trama a enviar
+*               data        Data de la trama a enviar
+*           Out: -
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
 void writeTrama(int sockfd, char type, char header[10], char* data) {
     Trama trama;
     int length;

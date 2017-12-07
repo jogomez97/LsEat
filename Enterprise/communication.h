@@ -1,6 +1,20 @@
+/*******************************************************************************
+*
+* Practica Sistemes Operatius - LsEat - Package Enterprise
+* Curs 2017-2018
+*
+* @File     communication.h
+* @Purpose  Modul que conté les funcions relacionades amb les diferents connexions
+*           de Enterprise a Data i de Picard a Enterprise
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
+*
+*******************************************************************************/
+
 #ifndef   _COMMUNICATION_H_
 #define   _COMMUNICATION_H_
 
+// Llibreries del sistema
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdlib.h>
@@ -12,8 +26,10 @@
 #include <unistd.h>
 #include <pthread.h>
 
+// Llibreries pròpies
 #include "dades.h"
 
+// Declaració de constants
 #define ERROR_BIND          "Error en fer el bind!\n"
 #define NCONN               10
 
@@ -45,6 +61,7 @@
 #define UPDATEOK            "[UPDATEOK]"
 #define UPDATEKO            "[UPDATEKO]"
 
+// Definició de tipus propis
 typedef struct {
     char        type;
     char        header[10];
@@ -52,18 +69,53 @@ typedef struct {
     char*       data;
 } Trama;
 
-//Variables globals externes
+// Variables globals externes
 extern Enterprise enterprise;
 extern int connectionFlag;
 extern pthread_mutex_t mtx;
 
+/******************************************************************************/
+/************************ FUNCIONS CONNEXIÓ AMB DATA **************************/
+/******************************************************************************/
 void gestionaConnexioData(int new);
 int desconnecta(int sockfd, int new);
 int connectaData();
 int enviaNovaConnexio(int sockfd, int new);
-Trama readTrama(int sockfd, int* error);
-void writeTrama(int sockfd, char type, char header[10], char* data);
+
+
+/******************************************************************************/
+/************************ FUNCIONS CONNEXIÓ DE PICARDS ************************/
+/******************************************************************************/
 void* engegaServidor(void* arg);
 void* threadPicard(void * arg);
+
+/******************************************************************************/
+/**************************** FUNCIONS GENÈRIQUES *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readTrama
+* @Purpose  Funció llegirà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket del que rebrem la trama
+*           Out: error      Variable de control d'errors
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
+Trama readTrama(int sockfd, int* error);
+
+/*******************************************************************************
+*
+* @Name     writeTrama
+* @Purpose  Funció escriurà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket al que escriurem la trama
+*               type        Type de la trama a enviar
+*               header      Header de la trama a enviar
+*               data        Data de la trama a enviar
+*           Out: -
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
+void writeTrama(int sockfd, char type, char header[10], char* data);
 
 #endif
