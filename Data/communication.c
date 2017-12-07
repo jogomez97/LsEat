@@ -66,19 +66,11 @@ void gestionaPicard(int clientfd) {
         case 0x01:
             //està a data.
 
-            //HARD CODED STUGG
-            /*flota.quants = 1;
-
-            flota.enterprises = (Enterprise*) malloc(sizeof(Enterprise));
-
-            flota.enterprises[0].nom = "ENTERPRISEA\0";
-            flota.enterprises[0].port = 8265;
-            flota.enterprises[0].ip = "127.0.0.1";*/
-
-
-            if (flota.quants > 0) {
+            if (!isEmpty(&flota)) {
+                char* data = getEnterprise();
                 writeTrama(clientfd, 0x01, ENT_INF, getEnterprise());
-                // free(getEnterprise()) alliberar punter;
+                free(data);
+                sortFirstNode(&flota);
             } else {
                 writeTrama(clientfd, 0x01, CONKO, "");
             }

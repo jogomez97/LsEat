@@ -17,6 +17,7 @@
 #include <pthread.h>
 
 #include "io.h"
+#include "list.h"
 #include "data.h"
 #include "communication.h"
 
@@ -25,18 +26,13 @@
 
 #define CONFIGFILE  "Data.dat"
 
-Fleet flota;
 Data d;
+extern  List flota;
 
 void alliberaMemoria() {
-    int i;
 
     //Allibera flota
-    for (i = 0; i < flota.quants; i++) {
-        free(flota.enterprises[i].nom);
-        //free(flota.enterprises[i].ip);
-    }
-    free(flota.enterprises);
+    eraseList(&flota);
 
     //Allibera Data
     free(d.ip);
@@ -55,8 +51,7 @@ int main () {
 
     int error;
 
-    flota.quants = 0;
-
+    flota = createList();
     error = readFile(CONFIGFILE, &d);
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal

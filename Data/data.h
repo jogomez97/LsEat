@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include "list.h"
 
 typedef struct {
     char* ip;
@@ -12,21 +13,8 @@ typedef struct {
     int portEnterprise;
 } Data;
 
-typedef struct {
-    char* nom;
-    int   port;
-    char* ip;
-} Enterprise;
-
-typedef struct {
-    int quants;
-    Enterprise* enterprises;
-} Fleet;
-
-extern Fleet flota;
 
 int gestionaFlota(char* data);
-void printaFlota();
 char* getEnterprise();
 
 #endif

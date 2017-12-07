@@ -14,6 +14,7 @@
 #include <pthread.h>
 
 #include "data.h"
+#include "list.h"
 
 #define CONNECTEDP          "[DATA] Connexió amb picard establerta\n"
 #define DESCONP             "[DATA] Desconnexió de Picard\n"
@@ -48,6 +49,7 @@ typedef struct {
     char*       data;
 } Trama;
 
+extern List flota;
 extern Data d;
 
 int connectPicard();
