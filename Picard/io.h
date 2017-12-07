@@ -16,7 +16,7 @@
 #define ERROR_COMAND    "Comanda no reconeguda\n"
 #define ERROR_CONN      "Error! Ja estàs connectat.\n"
 #define ERROR_NCONN     "Error! No t'has connectat.\n"
-#define ERROR_CONNECT   "Error de connexion con el servidor.\n"
+#define ERROR_CONNECT   "Error de connexió amb el servidor.\n"
 #define ERROR_SOCK      "Error en crear el socket.\n"
 #define CONNECTED_D     "[PICARD] Connexió establerta amb Data\n"
 #define DISCONNECTED_D  "[PICARD] Desconnexió amb data\n"

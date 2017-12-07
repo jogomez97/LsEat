@@ -12,7 +12,6 @@
 #include "io.h"
 #include "dades.h"
 #include "communication.h"
-#include "systemFunc.h"
 
 #define NPARAM          3
 #define ERROR_ARG       "Error! No s'ha passat el nombre de paràmetres que pertoca.\n"
@@ -48,6 +47,12 @@ void intHandler() {
     exit(0);
 }
 
+void alarmSignal() {
+    connectionFlag = 1;
+    signal(SIGALRM, alarmSignal);
+    alarm(enterprise.seg);
+}
+
 int main(int argc, char const *argv[]) {
 
     if (argc != NPARAM) {
@@ -75,8 +80,18 @@ int main(int argc, char const *argv[]) {
 
                 write(1, C_MENU, strlen(C_MENU));
                 gestionaConnexioData(NEW_CONN);
-                creaThread();
-                engegaServidor();
+
+                //Engeguem el thread del servidor de Picards
+                pthread_t id;
+                pthread_create(&id, NULL, engegaServidor, NULL);
+
+                //Reprogramem l'alarma per anar-nos conenctant amb Data periodicament
+                signal(SIGALRM, alarmSignal);
+                alarm(enterprise.seg);
+                while(1) {
+                    pause();
+                    gestionaConnexioData(!NEW_CONN);
+                }
             }
 
         }
