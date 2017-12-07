@@ -1,3 +1,15 @@
+/*
+*
+* Practica Sistemes Operatius - LsEat - Package Picard
+* Curs 2017-2018
+*
+* @file utils.c
+* @purpose  Modul que conté funcions genèriques emprades al programa 
+* @author Jordi Malé Carbonell  (jordi.male.2015)
+* @author Juan Gómez Gómez  (juan.gomez.2015)
+*
+*/
+
 #include "utils.h"
 
 void stringToUpper(char* string) {

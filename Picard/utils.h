@@ -1,3 +1,15 @@
+/*
+*
+* Practica Sistemes Operatius - LsEat - Package Picard
+* Curs 2017-2018
+*
+* @file utils.h
+* @purpose  Modul que conté funcions genèriques emprades al programa
+* @author Jordi Malé Carbonell  (jordi.male.2015)
+* @author Juan Gómez Gómez  (juan.gomez.2015)
+*
+*/
+
 #ifndef   _UTILS_H_
 #define   _UTILS_H_
 
