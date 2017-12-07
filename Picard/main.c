@@ -73,10 +73,10 @@ void intHandler() {
     write(1, "\n", strlen("\n"));
     write(1, DIS_MSG, strlen(DIS_MSG));
     if (connectat) {
-
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
 
         int error = 0;
+
         Trama t  = readTrama(sockfd, &error);
 
         if (error <= 0) {

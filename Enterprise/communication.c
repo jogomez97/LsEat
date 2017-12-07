@@ -158,7 +158,6 @@ int enviaNovaConnexio(int sockfd, int new) {
 
 void engegaServidor() {
     int sockfd;
-    int picardfd;
     int* picardfds;
 
     /* Obrir servidor */
@@ -201,7 +200,7 @@ void engegaServidor() {
         } else {
             picardfds = (int*) realloc(picardfds, sizeof(int) * (enterprise.nConnections + 1));
         }
-        picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
+        int picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (picardfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
         } else {
@@ -210,8 +209,8 @@ void engegaServidor() {
             write(1, CONNECTED_P, strlen(CONNECTED_P));
 
             pthread_t id;
-            pthread_create(&id, NULL, threadPicard, &picardfd);
 
+            pthread_create(&id, NULL, threadPicard, &picardfds[enterprise.nConnections - 1]);
         }
     }
 }
@@ -244,7 +243,9 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
 
     //Afegim les dades a trama
     trama.type = type;
+
     strcpy(trama.header, header);
+
     trama.data = data;
     trama.length = strlen(trama.data);
 
@@ -262,6 +263,4 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
         }
     }
     write(sockfd, buffer2, length);
-
-
 }

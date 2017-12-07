@@ -33,6 +33,7 @@ void * threadPicard(void * arg) {
 
     while (!end) {
         trama = readTrama(*picardfd, &error);
+
         if (error <= 0) {
             write(1, ERROR_DISCONNECTEDP, strlen(ERROR_DISCONNECTEDP));
             break;
@@ -64,7 +65,6 @@ void * threadPicard(void * arg) {
                     sprintf(buff, "Desconnectat %s\n", nom);
                     write(1, buff, strlen(buff));
                     free(nom);
-
                 } else {
                     writeTrama(*picardfd, 0x02, CONKOb, "");
                 }
