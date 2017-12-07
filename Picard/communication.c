@@ -1,3 +1,16 @@
+/*
+*
+* Practica Sistemes Operatius - LsEat - Package Picard
+* Curs 2017-2018
+*
+* @file communication.c
+* @purpose  Modul que conté les funcions relacionades amb les diferents connexions
+*           de Picard a Data i Enterprise
+* @author Jordi Malé Carbonell  (jordi.male.2015)
+* @author Juan Gómez Gómez  (juan.gomez.2015)
+*
+*/
+
 #include "communication.h"
 
 int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
@@ -210,7 +223,6 @@ int gestionaTrama(Trama t, int mode) {
     }
     return 1;
 }
-
 
 /* FUNCIONS GENÈRIQUES */
 
