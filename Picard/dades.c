@@ -11,8 +11,19 @@
 *
 ********************************************************************************/
 
+// Llibreries pròpies
 #include "dades.h"
 
+/*******************************************************************************
+*
+* @Name     getPicardInfo
+* @Purpose  Funció ens retornarà l'info de Picard en el format desitjat
+* @Param    In: picard  Picard del que obtindrem la info
+*           Out: -
+* @return   Retorna la informació de picard en el format necessari pel protocol
+*           de comunicació emprat.
+*
+*******************************************************************************/
 char* getPicardInfo(Picard picard) {
     int length = strlen(picard.nom) + sizeof(picard.saldo) + sizeof(char);
     // S'haura de alliberar somewhere

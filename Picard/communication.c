@@ -11,6 +11,7 @@
 *
 *******************************************************************************/
 
+// Llibreries pròpies
 #include "communication.h"
 
 /*******************************************************************************
@@ -134,7 +135,6 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
     return 1;
 }
 
-/* FUNCIONS DE LES OPCIONS */
 
 void show(int connectat) {
 
@@ -177,7 +177,6 @@ void pay(int connectat) {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
 }
-
 
 /*******************************************************************************
 *
@@ -259,8 +258,6 @@ int gestionaTrama(Trama t, int mode) {
     }
     return 1;
 }
-
-/* FUNCIONS GENÈRIQUES */
 
 /*******************************************************************************
 *
