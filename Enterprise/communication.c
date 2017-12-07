@@ -263,6 +263,9 @@ void * threadPicard(void * arg) {
                 }
                 end = 1;
                 close(*picardfd);
+                pthread_mutex_lock(&mtx);
+                enterprise.nConnections--;
+                pthread_mutex_unlock(&mtx);
                 break;
             default:
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));

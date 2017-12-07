@@ -55,6 +55,7 @@ typedef struct {
 //Variables globals externes
 extern Enterprise enterprise;
 extern int connectionFlag;
+extern pthread_mutex_t mtx;
 
 void gestionaConnexioData(int new);
 int desconnecta(int sockfd, int new);

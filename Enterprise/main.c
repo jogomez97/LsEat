@@ -17,11 +17,17 @@
 #define ERROR_ARG       "Error! No s'ha passat el nombre de paràmetres que pertoca.\n"
 #define C_MENU          "Carregat Menu!\n"
 #define WAIT_CLIENT     "Esperant clients...\n"
-#define ERROR_DATA      "Error en connectar amb Data\n"
 
 Enterprise enterprise;
 Menu menu;
-int connectionFlag;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+
+/* TODO:
+*   - int* de picardfds ha d'estar dins d'una struct de picards on es guardi la info del menjar
+*   - com fem palmar els threads??
+*   - actualitzar data amb el nombre de connexions
+*
+*/
 
 void alliberaMemoria() {
     int i;
@@ -43,12 +49,13 @@ void intHandler() {
     alliberaMemoria();
     //També s'han de tancar totes les connexions de Picar existents (Fase més endavant)
 
+    pthread_mutex_destroy(&mtx);
+
     write(1, "\n", sizeof(char));
     exit(0);
 }
 
 void alarmSignal() {
-    connectionFlag = 1;
     signal(SIGALRM, alarmSignal);
     alarm(enterprise.seg);
 }
@@ -68,7 +75,6 @@ int main(int argc, char const *argv[]) {
         if (error) {
             return EXIT_FAILURE;
         } else {
-            connectionFlag = 0;
             signal(SIGINT, intHandler);
 
             printWelcome();
