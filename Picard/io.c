@@ -1,15 +1,15 @@
-/*
+/*******************************************************************************
 *
 * Practica Sistemes Operatius - LsEat - Package Picard
 * Curs 2017-2018
 *
-* @file io.c
-* @purpose  Modul que conté les funcions relacionades amb la gestió de fitxers i
-            interacció amb l'usuari.
-* @author Jordi Malé Carbonell  (jordi.male.2015)
-* @author Juan Gómez Gómez  (juan.gomez.2015)
+* @File     io.c
+* @Purpose  Modul que conté les funcions relacionades amb la gestió de fitxers i
+*           interacció amb l'usuari.
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
 *
-*/
+********************************************************************************/
 
 #include "io.h"
 

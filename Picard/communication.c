@@ -1,24 +1,35 @@
-/*
+/*******************************************************************************
 *
 * Practica Sistemes Operatius - LsEat - Package Picard
 * Curs 2017-2018
 *
-* @file communication.c
-* @purpose  Modul que conté les funcions relacionades amb les diferents connexions
+* @File     communication.c
+* @Purpose  Modul que conté les funcions relacionades amb les diferents connexions
 *           de Picard a Data i Enterprise
-* @author Jordi Malé Carbonell  (jordi.male.2015)
-* @author Juan Gómez Gómez  (juan.gomez.2015)
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
 *
-*/
+*******************************************************************************/
 
 #include "communication.h"
 
+/*******************************************************************************
+*
+* @Name     connectaServidor
+* @Purpose  Funció que connectarà Picard a Enterprise o Data
+* @Param    In: connectat   Indica si el Picard està o no connectat
+*               picard      Picard a connectar
+*               mode        Indica si hem de connectar a Data o Enterprise
+*               e           Enterprise a la que ens hem de connectar
+*           Out: -
+* @return   Retorna diferents valors, indicant error o èxit en la connexió.
+*           En cas d'èxit, l'enter retornat és el fd a emprar del Picard.
+*
+*******************************************************************************/
 int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
     Trama t;
     if (mode == DATA) {
-        //Aquí s'intentarà connectar amb Data, de moment suposarem que
-        //es fa bé (return 1)
-        //Connect
+        //Connexió amb Data amb el respectiu control d'errors
 
         int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -57,6 +68,8 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             return -1;
         }
 
+        // Gestió de l'intent de connexió amb DATA
+
         error = gestionaTrama(t, DATA);
 
         if (error < 1) {
@@ -67,6 +80,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
         return error;
     } else {
         if (!connectat) {
+            // Connexió amb Enterprise
             int sockfd;
 
             sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -108,6 +122,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             }
 
             if (gestionaTrama(t, ENTERPRISE)) {
+                // Connexió correcta, retornem el fd associat al socket
                 return sockfd;
             }
 
@@ -163,6 +178,17 @@ void pay(int connectat) {
     }
 }
 
+
+/*******************************************************************************
+*
+* @Name     disconnect
+* @Purpose  Funció que desconnectarà Picard d'Enterprise (amb el protocol corresponent)
+* @Param    In: connectat   Indica si el Picard està o no connectat
+*               sockfd      File descriptor del que ens hem de desconnectar
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void disconnect(int connectat, int sockfd) {
     write(1, DIS_MSG, strlen(DIS_MSG));
     if (connectat) {
@@ -185,6 +211,16 @@ void disconnect(int connectat, int sockfd) {
     }
 }
 
+/*******************************************************************************
+*
+* @Name     gestionaTrama
+* @Purpose  Funció interpretarà les trames i actuarà en funció del que calgui realitzar
+* @Param    In: t       Trama a gestionar
+*               mode    Mode de gestió de la trama
+*           Out: -
+* @return   Retorna un enter que indica error o èxit
+*
+*******************************************************************************/
 int gestionaTrama(Trama t, int mode) {
     if (mode == DATA) {
         if (strcmp(t.header, ENT_INF) == 0) {
@@ -226,6 +262,15 @@ int gestionaTrama(Trama t, int mode) {
 
 /* FUNCIONS GENÈRIQUES */
 
+/*******************************************************************************
+*
+* @Name     readTrama
+* @Purpose  Funció llegirà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket del que rebrem la trama
+*           Out: error      Variable de control d'errors
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
 Trama readTrama(int clientfd, int* error) {
     Trama trama;
     memset(&trama, 0, sizeof(trama));
@@ -260,6 +305,18 @@ Trama readTrama(int clientfd, int* error) {
     return trama;
 }
 
+/*******************************************************************************
+*
+* @Name     writeTrama
+* @Purpose  Funció escriurà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket al que escriurem la trama
+                type        Type de la trama a enviar
+                header      Header de la trama a enviar
+                data        Data de la trama a enviar
+*           Out: -
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
 void writeTrama(int clientfd, char type, char header[10], char* data) {
     Trama trama;
     int length;

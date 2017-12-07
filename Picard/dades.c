@@ -1,15 +1,15 @@
-/*
+/*******************************************************************************
 *
 * Practica Sistemes Operatius - LsEat - Package Picard
 * Curs 2017-2018
 *
-* @file dades.c
-* @purpose  Modul que conté les funcions relacionades amb la gestió de la informació
-            del Picard
-* @author Jordi Malé Carbonell  (jordi.male.2015)
-* @author Juan Gómez Gómez  (juan.gomez.2015)
+* @File     dades.c
+* @Purpose  Modul que conté les funcions relacionades amb la gestió de la informació
+*           del Picard
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
 *
-*/
+********************************************************************************/
 
 #include "dades.h"
 
