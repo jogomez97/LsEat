@@ -10,8 +10,18 @@
 *
 ********************************************************************************/
 
+// Llibreries pròpies
 #include "utils.h"
 
+/*******************************************************************************
+*
+* @Name     stringToUpper
+* @Purpose  Funció que passa una String a majúscules
+* @Param    In:  string Cadena de caràcters a passar a majúscules
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void stringToUpper(char* string) {
     int i;
     int fi = strlen(string);
@@ -22,6 +32,16 @@ void stringToUpper(char* string) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     gestionaShell
+* @Purpose  Funció gestionarà el Picard i actuarà en funció del que hagi introduit
+*           l'usuari per teclat
+* @Param    In:  -
+*           Out: -
+* @return   Enter que error o èxit
+*
+*******************************************************************************/
 int gestionaShell() {
     char* split;
     char* num;

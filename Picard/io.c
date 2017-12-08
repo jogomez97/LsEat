@@ -11,9 +11,23 @@
 *
 ********************************************************************************/
 
+// Llibreries pròpies
 #include "io.h"
 
-/* FUNCIONS LECTURA */
+/******************************************************************************/
+/**************************** FUNCIONS DE LECTURA *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readFile
+* @Purpose  Funció llegirà el fitxer de configuració i ens donarà les seves dades
+* @Param    In: path    Path del fitxer a llegir
+*           Out: picard Picard on guardarem les dades del fitxer
+* @return   Retorna un enter que indica els possibles errors a l'hora de llegir
+*           el fitxer
+*
+*******************************************************************************/
 int readFile(char* path, Picard* picard) {
     int fd;
 
@@ -52,6 +66,16 @@ int readFile(char* path, Picard* picard) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     readUntil
+* @Purpose  Funció llegeix fins a un caràcter donat
+* @Param    In: fd  File Descriptor del qual llegirem
+                cFi Caràcter fins el qual llegirem
+*           Out: -
+* @return   Retorna tots els caràcters llegits fins a arribar al cFi
+*
+*******************************************************************************/
 char* readUntil(int fd, char cFi) {
     int i = 0;
     char c = '0';
@@ -71,6 +95,15 @@ char* readUntil(int fd, char cFi) {
     return buffer;
 }
 
+/*******************************************************************************
+*
+* @Name     readKB
+* @Purpose  Funció llegeix el teclat
+* @Param    In:  -
+*           Out: -
+* @return   Retorna els caràcters que l'usuari ha entrat pel teclat.
+*
+*******************************************************************************/
 char* readKB() {
     char c = '0';
     int  count = 0;
@@ -94,6 +127,15 @@ char* readKB() {
     return buffer;
 }
 
+/*******************************************************************************
+*
+* @Name     inputFlush
+* @Purpose  Funció que neteja els caràcters no llegits del teclat
+* @Param    In:  -
+*           Out: -
+* @return   Retorna el nombre de caràcters netejats.
+*
+*******************************************************************************/
 int inputFlush() {
     char c = '0';
     int i = 0;
@@ -105,8 +147,20 @@ int inputFlush() {
     return i;
 }
 
-/* FUNCIONS ESCRIPTURA */
 
+/******************************************************************************/
+/************************** FUNCIONS D'ESCRIPTURA *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     printWelcome
+* @Purpose  Funció que mostrarà per pantalla el missatge de benvinguda
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printWelcome() {
     int mida = strlen("Benvingut.\n") + strlen(picard.nom);
     char buffer[mida];
@@ -114,12 +168,30 @@ void printWelcome() {
     write(1, buffer, strlen(buffer));
 }
 
+/*******************************************************************************
+*
+* @Name     printMoney
+* @Purpose  Funció que mostrarà per pantalla els diners disponibles del Picard
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printMoney() {
     char buffer[strlen("Teeuros disponibles\n") + 3];
     sprintf(buffer, "Té %d euros disponibles\n", picard.saldo);
     write(1, buffer, strlen(buffer));
 }
 
+/*******************************************************************************
+*
+* @Name     printShell
+* @Purpose  Funció que mostrarà per pantalla la Shell de Picard
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printShell() {
     int mida = strlen(picard.nom) + 2;
     char buffer[mida];

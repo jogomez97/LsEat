@@ -11,6 +11,7 @@
 *
 *******************************************************************************/
 
+// Llibreries pròpies
 #include "communication.h"
 
 /*******************************************************************************
@@ -134,7 +135,6 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
     return 1;
 }
 
-/* FUNCIONS DE LES OPCIONS */
 
 void show(int connectat) {
 
@@ -177,7 +177,6 @@ void pay(int connectat) {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
 }
-
 
 /*******************************************************************************
 *
@@ -260,7 +259,9 @@ int gestionaTrama(Trama t, int mode) {
     return 1;
 }
 
-/* FUNCIONS GENÈRIQUES */
+/******************************************************************************/
+/**************************** FUNCIONS GENÈRIQUES *****************************/
+/******************************************************************************/
 
 /*******************************************************************************
 *
@@ -310,9 +311,9 @@ Trama readTrama(int clientfd, int* error) {
 * @Name     writeTrama
 * @Purpose  Funció escriurà una Trama donat un fd associat a un socket
 * @Param    In: clientfd    Socket al que escriurem la trama
-                type        Type de la trama a enviar
-                header      Header de la trama a enviar
-                data        Data de la trama a enviar
+*               type        Type de la trama a enviar
+*               header      Header de la trama a enviar
+*               data        Data de la trama a enviar
 *           Out: -
 * @return   Retorna la Trama llegida en cas de no haver-hi errors
 *

@@ -15,12 +15,14 @@
 #ifndef   _DADES_H_
 #define   _DADES_H_
 
+// Llibreries del sistema
 #include <string.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 
+// Definició de tipus propis
 typedef struct {
     char*   nom;
     int     saldo;
@@ -34,6 +36,16 @@ typedef struct {
     char* ip;
 } Enterprise;
 
+/*******************************************************************************
+*
+* @Name     getPicardInfo
+* @Purpose  Funció ens retornarà l'info de Picard en el format desitjat
+* @Param    In: picard  Picard del que obtindrem la info
+*           Out: -
+* @return   Retorna la informació de picard en el format necessari pel protocol
+*           de comunicació emprat.
+*
+*******************************************************************************/
 char* getPicardInfo(Picard picard);
 
 #endif

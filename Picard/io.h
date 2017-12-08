@@ -14,6 +14,7 @@
 #ifndef   _IO_H_
 #define   _IO_H_
 
+// Llibreries del sistema
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -21,8 +22,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+// Llibreries pròpies
 #include "dades.h"
 
+// Declaració de constants
 #define ERROR_ARG       "Error! No s'ha passat el nombre de paràmetres que pertoca.\n"
 #define INTRO_COMAND    "Introdueixi comandes...\n"
 #define DIS_MSG         "Gràcies per fer servir LsEat. Fins la propera.\n"
@@ -49,21 +52,97 @@
 
 #define COMANDA_OK      "[Comanda OK]\n"
 
-#define ERROR_FILE1 "Error! No s'ha pogut obrir el fitxer especificat.\n"
-#define ERROR_FILE2 "Error! El fitxer especificat està buit o no compleix el format.\n"
+#define ERROR_FILE1   "Error! No s'ha pogut obrir el fitxer especificat.\n"
+#define ERROR_FILE2   "Error! El fitxer especificat està buit o no compleix el format.\n"
 
-//Variables globals
+// Variables globals
 extern Picard picard;
 
-//Funcions de lectura
+/******************************************************************************/
+/**************************** FUNCIONS DE LECTURA *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readFile
+* @Purpose  Funció llegirà el fitxer de configuració i ens donarà les seves dades
+* @Param    In: path    Path del fitxer a llegir
+*           Out: picard Picard on guardarem les dades del fitxer
+* @return   Retorna un enter que indica els possibles errors a l'hora de llegir
+*           el fitxer
+*
+*******************************************************************************/
 int readFile(char* path, Picard* picard);
+
+/*******************************************************************************
+*
+* @Name     readUntil
+* @Purpose  Funció llegeix fins a un caràcter donat
+* @Param    In: fd  File Descriptor del qual llegirem
+                cFi Caràcter fins el qual llegirem
+*           Out: -
+* @return   Retorna tots els caràcters llegits fins a arribar al cFi
+*
+*******************************************************************************/
 char* readUntil(int fd, char cFi);
+
+/*******************************************************************************
+*
+* @Name     readKB
+* @Purpose  Funció llegeix el teclat
+* @Param    In:  -
+*           Out: -
+* @return   Retorna els caràcters que l'usuari ha entrat pel teclat.
+*
+*******************************************************************************/
 char* readKB();
+
+/*******************************************************************************
+*
+* @Name     inputFlush
+* @Purpose  Funció que neteja els caràcters no llegits del teclat
+* @Param    In:  -
+*           Out: -
+* @return   Retorna el nombre de caràcters netejats.
+*
+*******************************************************************************/
 int inputFlush();
 
-//Funcions d'escriptura
+/******************************************************************************/
+/************************** FUNCIONS D'ESCRIPTURA *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     printWelcome
+* @Purpose  Funció que mostrarà per pantalla el missatge de benvinguda
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printWelcome();
+
+/*******************************************************************************
+*
+* @Name     printMoney
+* @Purpose  Funció que mostrarà per pantalla els diners disponibles del Picard
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printMoney();
+
+/*******************************************************************************
+*
+* @Name     printShell
+* @Purpose  Funció que mostrarà per pantalla la Shell de Picard
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printShell();
 
 #endif
