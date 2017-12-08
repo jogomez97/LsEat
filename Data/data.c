@@ -6,16 +6,16 @@ int gestionaFlota(char* data) {
 
     char* nom = strtok(data, "&");
     char* aux = strtok(NULL, "&");
-    char* ip = strtok(NULL, "\n");
+    char* ip = strtok(NULL, "");
     if ((nom != NULL) & (aux != NULL) & (ip != NULL)) {
         Enterprise e;
-        e.nom = nom;
-        e.ip = ip;
+        e.nom = strdup(nom);
+        e.ip = strdup(ip);
         e.port = atoi(aux);
         e.nConnections = 0;
 
         insertNode(&flota, e);
-        printList(&flota);
+        //printList(&flota);
         return 0;
     }
     return -1;

@@ -88,10 +88,11 @@ int insertNodeSorted(List* l, Enterprise e) {
 }
 
 
-
-/**
- * Return 0 uppon success, -1 otherwise
- */
+/*
+* Retorna 0 si ha anat tot ok, -1 altrament.
+* No allibera els punters de enterprise de nom i ip ja que s'han de fer servir
+* per tornar a introduir-los actualitzats!
+*/
 int deleteNode(List* l, Enterprise e) {
     if (isEmpty(l)) {
         return -1;
@@ -109,8 +110,6 @@ int deleteNode(List* l, Enterprise e) {
 
             aux->pre->next = aux->next;
             aux->next->pre = aux->pre;
-            free(aux->enterprise.nom);
-            free(aux->enterprise.ip);
             free(aux);
             return 0;
         }
@@ -127,8 +126,6 @@ int deleteNode(List* l, Enterprise e) {
         }
         aux->pre->next = NULL;
         l->last = aux->pre;
-        free(aux->enterprise.nom);
-        free(aux->enterprise.ip);
         free(aux);
         return 0;
     }
@@ -138,7 +135,7 @@ int deleteNode(List* l, Enterprise e) {
 }
 
 /**
- * Return 0 uppon success, -1 otherwise
+ * Return 0 uppon success, -1 otherwise. Allibera punters de Enterprise
  */
 int deleteFirstNode(List* l) {
     if (isEmpty(l)) {
@@ -151,6 +148,8 @@ int deleteFirstNode(List* l) {
     }
 
     l->first = aux->next;
+    free(aux->enterprise.nom);
+    free(aux->enterprise.ip);
     free(aux);
 
     return 0;
@@ -183,7 +182,7 @@ int isEmpty(List* l) {
 
 void eraseList(List* l) {
     while (!isEmpty(l)) {
-        deleteNode(l, l->first->enterprise);
+        deleteFirstNode(l);
     }
 }
 
@@ -248,6 +247,21 @@ int sortFirstNode(List* l) {
 
     insertNodeSorted(l, e);
 
+    return 0;
+
+}
+
+int updateNode(List* l, Enterprise e) {
+    if (isEmpty(l)) {
+        return -1;
+    }
+
+    Node* aux = searchNode(l, e);
+    e.nom = aux->enterprise.nom;
+    e.ip = aux->enterprise.ip;
+
+    deleteNode(l, e);
+    insertNodeSorted(l, e);
     return 0;
 
 }

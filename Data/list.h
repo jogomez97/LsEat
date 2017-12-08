@@ -43,5 +43,6 @@ Node* searchNode(List* l, Enterprise e);
 Node* searchBiggerNode(List* l, Enterprise e);
 Enterprise checkFirstElement(List* l);
 int sortFirstNode(List* l);
+int updateNode(List* l, Enterprise e);
 
 #endif

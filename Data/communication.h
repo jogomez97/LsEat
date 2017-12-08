@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -51,15 +52,24 @@ typedef struct {
 
 extern List flota;
 extern Data d;
+extern pthread_t threadEnterprise;
+extern int sockfd;
+extern int clientfd;
+extern int sockfdPicard;
+extern int clientfdPicard;
+extern Trama tramaPicard;
+extern Trama trama;
 
 int connectPicard();
 int connectEnterprise();
-void gestionaEnterprise(int clientfd);
-void gestionaPicard(int clientfd);
+void gestionaEnterprise();
+void gestionaPicard();
 Trama readTrama(int clientfd, int* error);
 void writeTrama(int sockfd, char type, char header[10], char* data);
 
 void * threadFunc(void * arg);
 void creaThread();
+
+Enterprise getEnterpriseFromTrama(char* data);
 
 #endif
