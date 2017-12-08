@@ -1,9 +1,28 @@
-//
-// Created by Joan Gomez  on 3/12/17.
-//
+/*******************************************************************************
+*
+* Practica Sistemes Operatius - LsEat - Package Data
+* Curs 2017-2018
+*
+* @File     list.c
+* @Purpose  Modul que conté la llista ordenada i les seves funcions per a implementar
+*           fàcilment el balancejador de càrrega.
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
+*
+********************************************************************************/
 
+// Llibreries pròpies
 #include "list.h"
 
+/*******************************************************************************
+*
+* @Name     createList
+* @Purpose  Funció que crearà la llista i la inicialitzarà
+* @Param    In:  -
+*           Out: -
+* @return   Retorna la llista creada
+*
+*******************************************************************************/
 List createList() {
     List l;
     l.first = NULL;
@@ -11,9 +30,16 @@ List createList() {
     return l;
 }
 
-/**
- * Return 0 uppon success, -1 otherwise
- */
+ /*******************************************************************************
+ *
+ * @Name     insertNode
+ * @Purpose  Funció que afegirà un element a la llista
+ * @Param    In:    l Llista on afegirem l'element
+ *                  e Element a afegir (Enterprise)
+ *           Out: -
+ * @return   Enter de control d'errors. 0 = success, -1 otherwise
+ *
+ *******************************************************************************/
 int insertNode(List* l, Enterprise e) {
     //Create Node
     Node* aux;
@@ -40,6 +66,16 @@ int insertNode(List* l, Enterprise e) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     insertNodeSorted
+* @Purpose  Funció que afegirà un element a la llista de manera ordenada
+* @Param    In:    l Llista on afegirem l'element
+*                  e Element a afegir (Enterprise)
+*           Out: -
+* @return   Enter de control d'errors. 0 = success, -1 otherwise
+*
+*******************************************************************************/
 int insertNodeSorted(List* l, Enterprise e) {
     //Create Node
     Node* aux;
@@ -89,10 +125,19 @@ int insertNodeSorted(List* l, Enterprise e) {
 
 
 /*
-* Retorna 0 si ha anat tot ok, -1 altrament.
 * No allibera els punters de enterprise de nom i ip ja que s'han de fer servir
 * per tornar a introduir-los actualitzats!
 */
+/*******************************************************************************
+*
+* @Name     deleteNode
+* @Purpose  Funció que elimina un element de la llista
+* @Param    In:    l Llista on esborrarem l'element
+*                  e Element a eliminar (Enterprise)
+*           Out: -
+* @return   Enter de control d'errors. 0 = success, -1 otherwise
+*
+*******************************************************************************/
 int deleteNode(List* l, Enterprise e) {
     if (isEmpty(l)) {
         return -1;
@@ -137,6 +182,15 @@ int deleteNode(List* l, Enterprise e) {
 /**
  * Return 0 uppon success, -1 otherwise. Allibera punters de Enterprise
  */
+ /*******************************************************************************
+ *
+ * @Name     deleteFirstNode
+ * @Purpose  Funció que elimina el primer element de la llista
+ * @Param    In:    l Llista on esborrarem l'element
+ *           Out: -
+ * @return   Enter de control d'errors. 0 = success, -1 otherwise
+ *
+ *******************************************************************************/
 int deleteFirstNode(List* l) {
     if (isEmpty(l)) {
         return -1;
@@ -156,6 +210,15 @@ int deleteFirstNode(List* l) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     printList
+* @Purpose  Funció que printa la Llista per pantalla
+* @Param    In:    l Llista a printar
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printList(List* l) {
     if (isEmpty(l)) {
         write(1, ERROR_PRINT, strlen(ERROR_PRINT));
@@ -176,16 +239,44 @@ void printList(List* l) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     isEmpty
+* @Purpose  Funció que ens diu si la llista està o no buida
+* @Param    In:    l Llista a mirar si està buida
+*           Out: -
+* @return   Enter que indica si la llista està buida
+*
+*******************************************************************************/
 int isEmpty(List* l) {
     return l->first == NULL;
 }
 
+/*******************************************************************************
+*
+* @Name     eraseList
+* @Purpose  Funció que destrueix la llista
+* @Param    In:    l Llista a destruir
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void eraseList(List* l) {
     while (!isEmpty(l)) {
         deleteFirstNode(l);
     }
 }
 
+/*******************************************************************************
+*
+* @Name     searchNode
+* @Purpose  Funció que busca una Enterprise a la llista
+* @Param    In:     l  Llista on buscar l'Enterprise
+*                   e  Enterprise a buscar
+*           Out: -
+* @return   Retorna l'element de la llista en cas que el trobi
+*
+*******************************************************************************/
 Node* searchNode(List* l, Enterprise e) {
     Node* aux = l->first;
 
@@ -199,11 +290,21 @@ Node* searchNode(List* l, Enterprise e) {
     if (aux->enterprise.port == e.port) {
         return aux;
     }
-
     return NULL;
-
 }
 
+/*******************************************************************************
+*
+* @Name     searchBiggerNode
+* @Purpose  Funció que busca una Enterprise de la llista amb més connexions que
+*           una Enterprise concreta
+* @Param    In:     l  Llista on buscar l'Enterprise
+*                   e  Enterprise amb el que comparar el nombre de connexions
+*           Out: -
+* @return   Retorna una Enterprise amb més connexions que la donada, en cas que
+*           n'hi hagi
+*
+*******************************************************************************/
 Node* searchBiggerNode(List* l, Enterprise e) {
     Node* aux = l->first;
 
@@ -222,6 +323,16 @@ Node* searchBiggerNode(List* l, Enterprise e) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     checkFirstElement
+* @Purpose  Funció que retorna el primer element (Enterprise) de la llista, sempre
+*           i quan aquesta no estigui buida.
+* @Param    In:     l  Llista on consultar l'Element
+*           Out: -
+* @return   Retorna el primer element (Enterprise) de la llista
+*
+*******************************************************************************/
 Enterprise checkFirstElement(List* l) {
     if (isEmpty(l)) {
         Enterprise e;
@@ -232,9 +343,16 @@ Enterprise checkFirstElement(List* l) {
     }
 }
 
-/*
- * Incrementa en 1 nConnections i reordena el primer l'element
- */
+ /*******************************************************************************
+ *
+ * @Name     sortFirstNode
+ * @Purpose  Funció que afegeix una connexió al primer Enterprise i el torna a inserir
+ *           per a reordenar la llista
+ * @Param    In:     l  Llista a modificar
+ *           Out: -
+ * @return   Enter de control d'errors. 0 = success, -1 otherwise
+ *
+ *******************************************************************************/
 int sortFirstNode(List* l) {
     if (isEmpty(l)) {
         return -1;
@@ -251,6 +369,16 @@ int sortFirstNode(List* l) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     sortFirstNode
+* @Purpose  Funció que actualitza la informació d'un Enterprise
+* @Param    In:     l  Llista on modificar l'Enterprise
+*                   e  Enterprise a actualitzar
+*           Out: -
+* @return   Enter de control d'errors. 0 = success, -1 otherwise
+*
+*******************************************************************************/
 int updateNode(List* l, Enterprise e) {
     if (isEmpty(l)) {
         return -1;
