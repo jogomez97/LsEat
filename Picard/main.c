@@ -22,6 +22,7 @@ void intHandler();
 /* VARIABLES GLOBALS PER A PODER FER EL INTHANDLER */
 Picard picard;
 int connectat;
+char* bufferKB;
 char* comanda;
 int sockfd;
 
@@ -51,6 +52,7 @@ int main(int argc, char const *argv[]) {
 
             while (!end) {
                 end = gestionaShell();
+                free(comanda);
             }
             alliberaMemoria();
             return EXIT_SUCCESS;
@@ -64,6 +66,7 @@ void alliberaMemoria() {
     free(picard.nom);
     free(picard.ip);
     free(comanda);
+    free(bufferKB);
 }
 
 void intHandler() {
