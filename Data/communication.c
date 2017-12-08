@@ -71,10 +71,8 @@ int connectPicard() {
             gestionaPicard(clientfdPicard);
         }
     }
-
     return 0;
 }
-
 
 /*******************************************************************************
 *
@@ -85,11 +83,8 @@ int connectPicard() {
 * @return   -
 *
 *******************************************************************************/
-
 void gestionaPicard() {
-
     int error = 0;
-
 
     write(1, CONNECTED_P, strlen(CONNECTED_P));
 
@@ -128,6 +123,30 @@ void gestionaPicard() {
 
 /*******************************************************************************
 *
+* @Name     getEnterpriseFromTrama
+* @Purpose  Funció que genera una Enterprise a partir de les seves dades
+* @Param    In:  data Dades de l'enterprise
+*           Out: -
+* @return   Enterprise amb les dades introduides per paràmetre
+*
+*******************************************************************************/
+Enterprise getEnterpriseFromTrama(char* data) {
+    Enterprise e;
+    char* port = strtok(data, "&");
+    char* aux = strtok(NULL, "&");
+    if ((port != NULL) & (aux != NULL)) {
+
+        e.port = atoi(port);
+        e.nConnections = atoi(aux);
+
+        return e;
+    }
+    e.nConnections = -1;
+    return e;
+}
+
+/*******************************************************************************
+*
 * @Name     connectEnterprise
 * @Purpose  Funció que realitzarà la connexió estable amb Enterprise per a poder
 *           després gestionar-la.
@@ -136,40 +155,7 @@ void gestionaPicard() {
 * @return   -
 *
 *******************************************************************************/
-
-/* FUNCIONS ENTERPRISE */
-
-/*******************************************************************************
-*
-* @Name     threadFunc
-* @Purpose  Funció que ens realitzarà el thread, encarregada de connectar una
-*           Enterprise a Data.
-* @Param    In: arg Paràmetre que sempre demana les funcions associades a Threads
-*           Out: -
-* @return   -
-*
-*******************************************************************************/
-void * threadFunc(void * arg) {
-    connectEnterprise();
-    return arg;
-}
-
-/*******************************************************************************
-*
-* @Name     creaThread
-* @Purpose  Funció que crea un thread amb la nostra funció assignada a els Threads
-*           de Data.
-* @Param    In:  -
-*           Out: -
-* @return   -
-*
-*******************************************************************************/
-void creaThread() {
-    pthread_create(&threadEnterprise, NULL, threadFunc, NULL);
-}
-
 int connectEnterprise() {
-
     /* Obrir servidor */
     //Creació socket
     sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -216,6 +202,35 @@ int connectEnterprise() {
 
 /*******************************************************************************
 *
+* @Name     threadFunc
+* @Purpose  Funció que ens realitzarà el thread, encarregada de connectar una
+*           Enterprise a Data.
+* @Param    In: arg Paràmetre que sempre demana les funcions associades a Threads
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void * threadFunc(void * arg) {
+    connectEnterprise();
+    return arg;
+}
+
+/*******************************************************************************
+*
+* @Name     creaThread
+* @Purpose  Funció que crea un thread amb la nostra funció assignada a els Threads
+*           de Data.
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void creaThread() {
+    pthread_create(&threadEnterprise, NULL, threadFunc, NULL);
+}
+
+/*******************************************************************************
+*
 * @Name     gestionaEnterprise
 * @Purpose  Funció que ens gestionarà tota la connexió relacionada amb una Enterprise,
 *           escoltant el que envia i responent-li com demana el protocol.
@@ -224,7 +239,6 @@ int connectEnterprise() {
 * @return   -
 *
 *******************************************************************************/
-
 void gestionaEnterprise() {
     Trama trama;
     int error;
@@ -367,19 +381,4 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     }
     write(clientfd, buffer2, length);
 
-}
-
-Enterprise getEnterpriseFromTrama(char* data) {
-    Enterprise e;
-    char* port = strtok(data, "&");
-    char* aux = strtok(NULL, "&");
-    if ((port != NULL) & (aux != NULL)) {
-
-        e.port = atoi(port);
-        e.nConnections = atoi(aux);
-
-        return e;
-    }
-    e.nConnections = -1;
-    return e;
 }

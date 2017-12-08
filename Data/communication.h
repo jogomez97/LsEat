@@ -111,6 +111,17 @@ void gestionaPicard();
 
 /*******************************************************************************
 *
+* @Name     getEnterpriseFromTrama
+* @Purpose  Funció que genera una Enterprise a partir de les seves dades
+* @Param    In:  data Dades de l'enterprise
+*           Out: -
+* @return   Enterprise amb les dades introduides per paràmetre
+*
+*******************************************************************************/
+Enterprise getEnterpriseFromTrama(char* data);
+
+/*******************************************************************************
+*
 * @Name     connectEnterprise
 * @Purpose  Funció que realitzarà la connexió estable amb Enterprise per a poder
 *           després gestionar-la.
@@ -132,9 +143,17 @@ int connectEnterprise();
 *
 *******************************************************************************/
 void gestionaEnterprise();
+
+/*******************************************************************************
+*
+* @Name     gestionaPicard
+* @Purpose  Funció que gestionarà la interacció Data-Picard mitjançant sockets
+* @Param    In:  clientfd   File Descriptor associat al Picard
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void gestionaPicard();
-Trama readTrama(int clientfd, int* error);
-void writeTrama(int sockfd, char type, char header[10], char* data);
 
 /*******************************************************************************
 *
@@ -174,6 +193,7 @@ void creaThread();
 *
 *******************************************************************************/
 Trama readTrama(int clientfd, int* error);
+
 /*******************************************************************************
 *
 * @Name     writeTrama
@@ -187,6 +207,5 @@ Trama readTrama(int clientfd, int* error);
 *
 *******************************************************************************/
 void writeTrama(int sockfd, char type, char header[10], char* data);
-Enterprise getEnterpriseFromTrama(char* data);
 
 #endif

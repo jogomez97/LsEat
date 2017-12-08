@@ -17,6 +17,16 @@
 // Variables globals
 List flota;
 
+/*******************************************************************************
+*
+* @Name     gestionaFlota
+* @Purpose  Funció que afegirà una Enterprise a la nostra llista ordenada per a 
+*           que després Picard s'hi pugui connectar
+* @Param    In:  data   Dades de la Enterprise a connectar
+*           Out: -
+* @return  Enter de control d'errors
+*
+*******************************************************************************/
 int gestionaFlota(char* data) {
     char* nom = strtok(data, "&");
     char* aux = strtok(NULL, "&");
@@ -34,7 +44,6 @@ int gestionaFlota(char* data) {
     }
     return -1;
 }
-
 
 /*******************************************************************************
 *
