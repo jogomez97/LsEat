@@ -1,9 +1,17 @@
-/*∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗
-   @Autor: Juan Gómez Gómez - juan.gomez.2015
-           Jordi Malé Carbonell - jordi.male.2015
-           PORTS: 8180-8189 / 8260-8269
-∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗*/
+/*******************************************************************************
+*
+* Practica Sistemes Operatius - LsEat - Package Data
+* Curs 2017-2018
+*
+* @File     main.c
+* @Purpose  Procediment principal de Data
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
+*
+* Note: PORTS: 8180-8189 / 8260-8269
+********************************************************************************/
 
+// Llibreries del sistema
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
@@ -16,17 +24,23 @@
 #include <string.h>
 #include <pthread.h>
 
+// Llibreries pròpies
 #include "io.h"
 #include "list.h"
 #include "data.h"
 #include "communication.h"
 
+// Declaració de constants
 #define DATA_EXEC         "Executant Data\n"
 #define WAITING_CLIENTS   "Esperant clients...\n"
 
 #define CONFIGFILE  "Data.dat"
 
-/* Variables globals per poder alliberar memoria */
+// Headers de funcions
+void alliberaMemoria();
+void intHandler();
+
+// Variables global
 Data d;
 extern  List flota;
 pthread_t threadEnterprise;
@@ -36,50 +50,6 @@ int sockfdPicard;
 int clientfdPicard;
 Trama tramaPicard;
 Trama trama;
-
-void alliberaMemoria() {
-
-    //Allibera flota
-    eraseList(&flota);
-
-    //Allibera Data
-    free(d.ip);
-
-    if (tramaPicard.data != NULL) {
-        free(tramaPicard.data);
-    }
-
-    if (trama.data != NULL) {
-        free(trama.data);
-    }
-
-
-}
-
-
-void intHandler() {
-    alliberaMemoria();
-
-    //Tanquem tots els fd
-    close(sockfd);
-    close(clientfd);
-    close(sockfdPicard);
-    close(clientfdPicard);
-
-    write(1, "\n", sizeof(char));
-
-
-    //Matem el thread de Enterprise
-    /*
-    if (threadEnterprise > 0) {
-        pthread_cancel(threadEnterprise);
-        pthread_join(threadEnterprise, NULL);
-    }
-    */
-
-    exit(0);
-}
-
 
 int main () {
 
@@ -107,4 +77,66 @@ int main () {
 
         return EXIT_SUCCESS;
     }
+}
+
+/******************************************************************************/
+/***************************** FUNCIONS AUXILIARS *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     alliberaMemoria
+* @Purpose  Funció allibera la memòria emprada pel programa
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void alliberaMemoria() {
+    //Allibera flota
+    eraseList(&flota);
+
+    //Allibera Data
+    free(d.ip);
+
+    if (tramaPicard.data != NULL) {
+        free(tramaPicard.data);
+    }
+
+    if (trama.data != NULL) {
+        free(trama.data);
+    }
+}
+
+/*******************************************************************************
+*
+* @Name     intHandler
+* @Purpose  Funció a executar quan el programa rebi el signal SIGINT.
+*           Data haurà de tancar totes les connexions i haurà d'alliberar la
+*           memòria emprada
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void intHandler() {
+    alliberaMemoria();
+
+    //Tanquem tots els fd
+    close(sockfd);
+    close(clientfd);
+    close(sockfdPicard);
+    close(clientfdPicard);
+
+    write(1, "\n", sizeof(char));
+
+    //Matem el thread de Enterprise
+    /*
+    if (threadEnterprise > 0) {
+        pthread_cancel(threadEnterprise);
+        pthread_join(threadEnterprise, NULL);
+    }
+    */
+
+    exit(0);
 }
