@@ -49,12 +49,10 @@ int readFile(char* path, Picard* picard) {
             aux = readUntil(fd, '\n');
             picard->saldo = atoi(aux);
             free(aux);
-            aux = NULL;
             picard->ip = readUntil(fd, '\n');
             aux = readUntil(fd, '\n');
             picard->port = atoi(aux);
             free(aux);
-            aux = NULL;
 
             close(fd);
             return 0;
@@ -108,23 +106,23 @@ char* readKB() {
     char c = '0';
     int  count = 0;
 
-    char* buffer = (char*) malloc(sizeof(char));
+    bufferKB = (char*) malloc(sizeof(char));
     while (c != '\n') {
         read(1, &c, sizeof(char));
         if (c != '\n') {
-            buffer[count] = c;
-            buffer = (char*) realloc(buffer, sizeof(char) * (count + 1));
+            bufferKB[count] = c;
+            bufferKB = (char*) realloc(bufferKB, sizeof(char) * (count + 1));
         }
         count++;
 
     }
-    buffer[count - 1] = '\0';
+    bufferKB[count - 1] = '\0';
     if (count == 1) {
-        free(buffer);
+        free(bufferKB);
         printShell();
-        buffer = readKB();
+        bufferKB = readKB();
     }
-    return buffer;
+    return bufferKB;
 }
 
 /*******************************************************************************

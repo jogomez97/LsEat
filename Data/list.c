@@ -149,12 +149,16 @@ int deleteNode(List* l, Enterprise e) {
             if (aux == l->first) {
                 aux->next->pre = NULL;
                 l->first = aux->next;
+                free(aux->enterprise.nom);
+                free(aux->enterprise.ip);
                 free(aux);
                 return 0;
             }
 
             aux->pre->next = aux->next;
             aux->next->pre = aux->pre;
+            free(aux->enterprise.nom);
+            free(aux->enterprise.ip);
             free(aux);
             return 0;
         }
@@ -164,6 +168,8 @@ int deleteNode(List* l, Enterprise e) {
     //Si el que s'elimina és l'últim element
     if (aux->enterprise.port == e.port) {
         if (aux == l->first) {
+            free(aux->enterprise.nom);
+            free(aux->enterprise.ip);
             free(aux);
             l->last = NULL;
             l->first = NULL;
@@ -171,6 +177,8 @@ int deleteNode(List* l, Enterprise e) {
         }
         aux->pre->next = NULL;
         l->last = aux->pre;
+        free(aux->enterprise.nom);
+        free(aux->enterprise.ip);
         free(aux);
         return 0;
     }
@@ -385,11 +393,16 @@ int updateNode(List* l, Enterprise e) {
     }
 
     Node* aux = searchNode(l, e);
-    e.nom = aux->enterprise.nom;
-    e.ip = aux->enterprise.ip;
+    if (aux != NULL) {
+        e.nom = aux->enterprise.nom;
+        e.ip = aux->enterprise.ip;
 
-    deleteNode(l, e);
-    insertNodeSorted(l, e);
-    return 0;
+        deleteNode(l, e);
+        insertNodeSorted(l, e);
+        return 0;
+    }
+
+    return -1;
+
 
 }

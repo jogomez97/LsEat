@@ -66,22 +66,21 @@ int main(int argc, char const *argv[]) {
         write(1, ERROR_ARG, strlen(ERROR_ARG));
         return EXIT_FAILURE;
     } else {
+        signal(SIGINT, intHandler);
         int error;
 
         error = readConfig((char*)argv[1], &enterprise);
         enterprise.nConnections = 0;
 
-
         if (error) {
-            return EXIT_FAILURE;
+            raise(SIGINT);
         } else {
-            signal(SIGINT, intHandler);
 
             printWelcome();
             error = readMenu((char*)argv[2], &menu);
 
             if (error) {
-                return EXIT_FAILURE;
+                raise(SIGINT);
             } else {
 
                 write(1, C_MENU, strlen(C_MENU));

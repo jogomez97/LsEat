@@ -20,7 +20,7 @@ List flota;
 /*******************************************************************************
 *
 * @Name     gestionaFlota
-* @Purpose  Funció que afegirà una Enterprise a la nostra llista ordenada per a 
+* @Purpose  Funció que afegirà una Enterprise a la nostra llista ordenada per a
 *           que després Picard s'hi pugui connectar
 * @Param    In:  data   Dades de la Enterprise a connectar
 *           Out: -
@@ -39,7 +39,10 @@ int gestionaFlota(char* data) {
         e.nConnections = 0;
 
         insertNode(&flota, e);
-        //printList(&flota);
+        /*
+        write(1, "ADDED:\n", 7);
+        printList(&flota);
+        */
         return 0;
     }
     return -1;

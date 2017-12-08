@@ -32,14 +32,14 @@ void gestionaConnexioData(int new) {
 
     int sockfd = connectaData();
     if (sockfd < 0) {
-        exit(0);
+        raise(SIGINT);
     } else {
         write(1, CONNECTED_D, strlen(CONNECTED_D));
 
         int error = enviaNovaConnexio(sockfd, new);
         if (error) {
             desconnecta(sockfd, new);
-            exit(0);
+            raise(SIGINT);
         }
         while (!done) {
             done = desconnecta(sockfd, new);

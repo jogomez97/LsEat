@@ -57,6 +57,7 @@
 
 // Variables globals
 extern Picard picard;
+extern char* bufferKB;
 
 /******************************************************************************/
 /**************************** FUNCIONS DE LECTURA *****************************/
