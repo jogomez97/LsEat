@@ -3,7 +3,7 @@
 * Practica Sistemes Operatius - LsEat - Package Data
 * Curs 2017-2018
 *
-* @File     io.c
+* @File     io.h
 * @Purpose  Modul que conté les funcions relacionades amb la gestió de fitxers i
 *           interacció amb l'usuari.
 * @Author   Jordi Malé Carbonell  (jordi.male.2015)

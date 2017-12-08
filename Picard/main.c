@@ -62,11 +62,8 @@ int main(int argc, char const *argv[]) {
 
 void alliberaMemoria() {
     free(picard.nom);
-    picard.nom = NULL;
     free(picard.ip);
-    picard.ip = NULL;
     free(comanda);
-    comanda = NULL;
 }
 
 void intHandler() {

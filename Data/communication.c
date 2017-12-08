@@ -75,7 +75,7 @@ int connectPicard() {
     return 0;
 }
 
-<<<<<<< HEAD
+
 /*******************************************************************************
 *
 * @Name     gestionaPicard
@@ -85,12 +85,9 @@ int connectPicard() {
 * @return   -
 *
 *******************************************************************************/
-void gestionaPicard(int clientfd) {
-    Trama trama;
-=======
+
 void gestionaPicard() {
 
->>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
     int error = 0;
 
 
@@ -125,7 +122,6 @@ void gestionaPicard() {
     close(clientfdPicard);
 }
 
-<<<<<<< HEAD
 /******************************************************************************/
 /*************************** FUNCIONS DE ENTERPRISE ***************************/
 /******************************************************************************/
@@ -140,21 +136,38 @@ void gestionaPicard() {
 * @return   -
 *
 *******************************************************************************/
-=======
+
 /* FUNCIONS ENTERPRISE */
 
+/*******************************************************************************
+*
+* @Name     threadFunc
+* @Purpose  Funció que ens realitzarà el thread, encarregada de connectar una
+*           Enterprise a Data.
+* @Param    In: arg Paràmetre que sempre demana les funcions associades a Threads
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void * threadFunc(void * arg) {
-
     connectEnterprise();
     return arg;
 }
 
+/*******************************************************************************
+*
+* @Name     creaThread
+* @Purpose  Funció que crea un thread amb la nostra funció assignada a els Threads
+*           de Data.
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void creaThread() {
-
     pthread_create(&threadEnterprise, NULL, threadFunc, NULL);
 }
 
->>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
 int connectEnterprise() {
 
     /* Obrir servidor */
@@ -201,7 +214,6 @@ int connectEnterprise() {
     close(sockfd);
 }
 
-<<<<<<< HEAD
 /*******************************************************************************
 *
 * @Name     gestionaEnterprise
@@ -212,10 +224,8 @@ int connectEnterprise() {
 * @return   -
 *
 *******************************************************************************/
-void gestionaEnterprise(int clientfd) {
-=======
+
 void gestionaEnterprise() {
->>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
     Trama trama;
     int error;
     int end = 0;
@@ -280,35 +290,6 @@ void gestionaEnterprise() {
 
 }
 
-/*******************************************************************************
-*
-* @Name     threadFunc
-* @Purpose  Funció que ens realitzarà el thread, encarregada de connectar una
-*           Enterprise a Data.
-* @Param    In: arg Paràmetre que sempre demana les funcions associades a Threads
-*           Out: -
-* @return   -
-*
-*******************************************************************************/
-void * threadFunc(void * arg) {
-    connectEnterprise();
-    return arg;
-}
-
-/*******************************************************************************
-*
-* @Name     creaThread
-* @Purpose  Funció que crea un thread amb la nostra funció assignada a els Threads
-*           de Data.
-* @Param    In:  -
-*           Out: -
-* @return   -
-*
-*******************************************************************************/
-void creaThread() {
-    pthread_t id;
-    pthread_create(&id, NULL, threadFunc, NULL);
-}
 
 /******************************************************************************/
 /**************************** FUNCIONS GENÈRIQUES *****************************/
