@@ -103,7 +103,7 @@ int connectPicard();
 * @return   -
 *
 *******************************************************************************/
-void gestionaPicard(int clientfd);
+void gestionaPicard();
 
 /******************************************************************************/
 /*************************** FUNCIONS DE ENTERPRISE ***************************/
@@ -120,25 +120,21 @@ void gestionaPicard(int clientfd);
 *
 *******************************************************************************/
 int connectEnterprise();
-<<<<<<< HEAD
 
 /*******************************************************************************
 *
 * @Name     gestionaEnterprise
 * @Purpose  Funció que ens gestionarà tota la connexió relacionada amb una Enterprise,
 *           escoltant el que envia i responent-li com demana el protocol.
-* @Param    In: clientfd    File Descriptor del Enterprise al que hem de tractar
+* @Param    In: -
 *           Out: -
 * @return   -
 *
 *******************************************************************************/
-void gestionaEnterprise(int clientfd);
-=======
 void gestionaEnterprise();
 void gestionaPicard();
 Trama readTrama(int clientfd, int* error);
 void writeTrama(int sockfd, char type, char header[10], char* data);
->>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
 
 /*******************************************************************************
 *
@@ -164,7 +160,6 @@ void * threadFunc(void * arg);
 *******************************************************************************/
 void creaThread();
 
-<<<<<<< HEAD
 /******************************************************************************/
 /**************************** FUNCIONS GENÈRIQUES *****************************/
 /******************************************************************************/
@@ -192,8 +187,6 @@ Trama readTrama(int clientfd, int* error);
 *
 *******************************************************************************/
 void writeTrama(int sockfd, char type, char header[10], char* data);
-=======
 Enterprise getEnterpriseFromTrama(char* data);
->>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
 
 #endif
