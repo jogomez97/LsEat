@@ -366,11 +366,13 @@ int sortFirstNode(List* l) {
         return -1;
     }
 
-    Enterprise e = l->first->enterprise;
+    Enterprise e;
+    e.nom = strdup(l->first->enterprise.nom);
+    e.port = l->first->enterprise.port;
+    e.ip =  strdup(l->first->enterprise.ip);
+    e.nConnections = l->first->enterprise.nConnections + 1;
+
     deleteFirstNode(l);
-
-    e.nConnections += 1;
-
     insertNodeSorted(l, e);
 
     return 0;
@@ -394,8 +396,8 @@ int updateNode(List* l, Enterprise e) {
 
     Node* aux = searchNode(l, e);
     if (aux != NULL) {
-        e.nom = aux->enterprise.nom;
-        e.ip = aux->enterprise.ip;
+        e.nom = strdup(aux->enterprise.nom);
+        e.ip = strdup(aux->enterprise.ip);
 
         deleteNode(l, e);
         insertNodeSorted(l, e);

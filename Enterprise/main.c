@@ -39,13 +39,6 @@ Enterprise enterprise;
 Menu menu;
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
-/* TODO:
-*   - int* de picardfds ha d'estar dins d'una struct de picards on es guardi la info del menjar
-*   - com fem palmar els threads??
-*   - actualitzar data amb el nombre de connexions
-*
-*/
-
 int main(int argc, char const *argv[]) {
 
     if (argc != NPARAM) {

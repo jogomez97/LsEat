@@ -44,6 +44,7 @@ void intHandler();
 Data d;
 extern  List flota;
 pthread_t threadEnterprise;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 int sockfd;
 int clientfd;
 int sockfdPicard;
@@ -129,6 +130,8 @@ void intHandler() {
     close(clientfdPicard);
 
     write(1, "\n", sizeof(char));
+
+    pthread_mutex_destroy(&mtx);
 
     //Matem el thread de Enterprise
     /*

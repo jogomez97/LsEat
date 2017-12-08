@@ -25,6 +25,7 @@
 
 // Declaració de constants
 #define ERROR_PRINT "Error en printar. La llista està buida!\n"
+#define DEBUG_LIST  0
 
 // Definició de tipus propis
 typedef struct {

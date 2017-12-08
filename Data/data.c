@@ -39,10 +39,10 @@ int gestionaFlota(char* data) {
         e.nConnections = 0;
 
         insertNode(&flota, e);
-        /*
-        write(1, "ADDED:\n", 7);
-        printList(&flota);
-        */
+        if (DEBUG_LIST) {
+            write(1, "ADDED:\n", 7);
+            printList(&flota);
+        }
         return 0;
     }
     return -1;
@@ -58,7 +58,9 @@ int gestionaFlota(char* data) {
 *
 *******************************************************************************/
 char* getEnterprise() {
+    pthread_mutex_lock(&mtx);
     Enterprise e = checkFirstElement(&flota);
+    pthread_mutex_unlock(&mtx);
 
     int length = strlen(e.nom) + strlen(e.ip)
             + sizeof(e.port) + 2 * sizeof(char);

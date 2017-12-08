@@ -36,8 +36,8 @@
 #define CONNECTEDP          "[DATA] Connexió amb picard establerta\n"
 #define DESCONP             "[DATA] Desconnexió de Picard\n"
 #define WAIT_CONNECTE       "[DATA] Esperant una nova connexió d'Enterprise\n"
-#define WAIT_CONNECTP        "[DATA] Esperant una nova connexió de Picard\n"
-#define CONNECTED_E         "[DATA] Connexió establerta amb enterprise\n"
+#define WAIT_CONNECTP       "[DATA] Esperant una nova connexió de Picard\n"
+#define CONNECTED_E         "[DATA] Connexió establerta amb Enterprise\n"
 #define DISCONNECTED_E      "[DATA] Desconnexió d'enterprise\n"
 #define CONNECTED_P         "[DATA] Connexió amb Picard establerta\n"
 #define DISCONNECTED_P      "[DATA] Desconnexió de Picard\n"
@@ -71,6 +71,7 @@ typedef struct {
 extern List flota;
 extern Data d;
 extern pthread_t threadEnterprise;
+extern pthread_mutex_t mtx;
 extern int sockfd;
 extern int clientfd;
 extern int sockfdPicard;

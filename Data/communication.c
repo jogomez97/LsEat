@@ -105,10 +105,10 @@ void gestionaPicard() {
                 writeTrama(clientfdPicard, 0x01, ENT_INF, getEnterprise());
                 free(data);
                 sortFirstNode(&flota);
-                /*
-                write(1, "SORTED:\n", 8);
-                printList(&flota);
-                */
+                if (DEBUG_LIST) {
+                    write(1, "SORTED:\n", 8);
+                    printList(&flota);
+                }
             } else {
                 writeTrama(clientfdPicard, 0x01, CONKO, "");
             }
@@ -198,7 +198,7 @@ int connectEnterprise() {
         if (clientfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
         } else {
-            gestionaEnterprise(clientfd);
+            gestionaEnterprise();
         }
     }
     close(sockfd);
@@ -284,16 +284,19 @@ void gestionaEnterprise() {
             case 0x07:
                 if (strcmp(trama.header, UPDATE) == 0) {
                     Enterprise e;
-                    getEnterpriseFromTrama(trama.data);
+                    e = getEnterpriseFromTrama(trama.data);
+
                     if (e.nConnections == -1) {
                         writeTrama(clientfd, 0x07, UPDATEKO, "");
                         break;
                     }
+                    pthread_mutex_lock(&mtx);
                     updateNode(&flota, e);
-                    /*
-                    write(1, "UPDATED:\n", 9);
-                    printList(&flota);
-                    */
+                    pthread_mutex_unlock(&mtx);
+                    if (DEBUG_LIST) {
+                        write(1, "UPDATED:\n", 9);
+                        printList(&flota);
+                    }
                     writeTrama(clientfd, 0x07, UPDATEOK, "");
                 } else {
                     writeTrama(clientfd, 0x07, UPDATEKO, "");

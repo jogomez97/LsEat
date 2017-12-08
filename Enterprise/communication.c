@@ -261,22 +261,29 @@ void* engegaServidor(void* arg) {
 
     while (1) {
         write(1, WAITING, strlen(WAITING));
+        pthread_mutex_lock(&mtx);
         if (enterprise.nConnections == 0) {
             picardfds = (int*) malloc(sizeof(int));
         } else {
             picardfds = (int*) realloc(picardfds, sizeof(int) * (enterprise.nConnections + 1));
         }
+        pthread_mutex_unlock(&mtx);
         int picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (picardfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
+            pthread_mutex_unlock(&mtx);
         } else {
+            pthread_mutex_lock(&mtx);
             picardfds[enterprise.nConnections] = picardfd;
+
             enterprise.nConnections++;
+
             write(1, CONNECTED_P, strlen(CONNECTED_P));
 
             pthread_t id;
 
             pthread_create(&id, NULL, threadPicard, &picardfds[enterprise.nConnections - 1]);
+            pthread_mutex_unlock(&mtx);
         }
     }
 

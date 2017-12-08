@@ -24,6 +24,7 @@
 
 // Llibreries pròpies
 #include "dades.h"
+#include "communication.h"
 
 // Declaració de constants
 #define ERROR_ARG       "Error! No s'ha passat el nombre de paràmetres que pertoca.\n"
@@ -32,15 +33,6 @@
 #define ERROR_COMAND    "Comanda no reconeguda\n"
 #define ERROR_CONN      "Error! Ja estàs connectat.\n"
 #define ERROR_NCONN     "Error! No t'has connectat.\n"
-#define ERROR_CONNECT   "Error de connexió amb el servidor.\n"
-#define ERROR_SOCK      "Error en crear el socket.\n"
-#define CONNECTED_D     "[PICARD] Connexió establerta amb Data\n"
-#define DISCONNECTED_D  "[PICARD] Desconnexió amb data\n"
-#define CONNECTED_E     "[PICARD] Connexió establerta amb enterprise\n"
-#define DISCONNECTED_E  "[PICARD] Desconnexió amb enterprise\n"
-#define ERROR_DISCON_E  "[PICARD] Error en la desconnexió amb enterprise\n"
-#define ERROR_DATA      "[PICARD] Error amb la connexió amb Data\n"
-#define ERROR_ESTABLISHED "[PICARD] Connexió amb Enterprise ja realitzada!\n"
 
 #define CONNECT         "CONNECTA"
 #define SHOW            "MOSTRA"
@@ -145,5 +137,18 @@ void printMoney();
 *
 *******************************************************************************/
 void printShell();
+
+
+/*******************************************************************************
+*
+* @Name     gestionaShell
+* @Purpose  Funció gestionarà el Picard i actuarà en funció del que hagi introduit
+*           l'usuari per teclat
+* @Param    In:  -
+*           Out: -
+* @return   Enter que error o èxit
+*
+*******************************************************************************/
+int gestionaShell();
 
 #endif

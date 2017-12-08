@@ -23,13 +23,7 @@
 #include <ctype.h>
 
 // Llibreries pròpies
-#include "communication.h"
 #include "io.h"
-
-// Variables globals
-extern char* comanda;
-extern int   connectat;
-extern int   sockfd;
 
 /*******************************************************************************
 *
@@ -42,16 +36,5 @@ extern int   sockfd;
 *******************************************************************************/
 void stringToUpper(char* string);
 
-/*******************************************************************************
-*
-* @Name     gestionaShell
-* @Purpose  Funció gestionarà el Picard i actuarà en funció del que hagi introduit
-*           l'usuari per teclat
-* @Param    In:  -
-*           Out: -
-* @return   Enter que error o èxit
-*
-*******************************************************************************/
-int gestionaShell();
 
 #endif

@@ -49,7 +49,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
         if (error < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
             return -1;
-        };
+        }
 
         if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -226,21 +226,20 @@ int gestionaTrama(Trama t, int mode) {
             write(1, CONNECTED_D, strlen(CONNECTED_D));
             write(1, DISCONNECTED_D, strlen(DISCONNECTED_D));
 
+            write(1, t.data, strlen(t.data));
+
             Enterprise e;
 
             char * split = strtok(t.data, "&");
-            e.nom = (char*) malloc(sizeof(char) * strlen(split));
-            strcpy(e.nom, split);
+            e.nom = strdup(split);
+
 
             split = strtok(NULL, "&");
             e.port = atoi(split);
 
-            split = strtok(NULL, "&");
+            split = strtok(NULL, "");
 
-            e.ip = (char*) malloc(sizeof(char) * strlen(split));
-            strcpy(e.ip, split);
-
-            //falta alliberar tot aixo
+            e.ip = strdup(split);
 
             return connectaServidor(0, picard, ENTERPRISE, &e);
         } else {

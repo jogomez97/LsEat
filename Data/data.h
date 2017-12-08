@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 // Llibreries pròpies
 #include "list.h"
@@ -30,10 +31,13 @@ typedef struct {
     int portEnterprise;
 } Data;
 
+// Variables globals externes
+extern pthread_mutex_t mtx;
+
 /*******************************************************************************
 *
 * @Name     gestionaFlota
-* @Purpose  Funció afegirà una Enterprise al nostre conjunt 
+* @Purpose  Funció afegirà una Enterprise al nostre conjunt
 * @Param    In: path    Path del fitxer a llegir
 *           Out: -
 * @return   Retorna un enter que indica els possibles errors a l'hora de llegir

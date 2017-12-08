@@ -29,8 +29,19 @@
 // Llibreries pròpies
 #include "io.h"
 #include "dades.h"
+#include "utils.h"
 
 // Declaració de constants
+#define ERROR_CONNECT   "Error de connexió amb el servidor.\n"
+#define ERROR_SOCK      "Error en crear el socket.\n"
+#define CONNECTED_D     "[PICARD] Connexió establerta amb Data\n"
+#define DISCONNECTED_D  "[PICARD] Desconnexió amb data\n"
+#define CONNECTED_E     "[PICARD] Connexió establerta amb Enterprise\n"
+#define DISCONNECTED_E  "[PICARD] Desconnexió amb enterprise\n"
+#define ERROR_DISCON_E  "[PICARD] Error en la desconnexió amb Enterprise\n"
+#define ERROR_DATA      "[PICARD] Error amb la connexió amb Data\n"
+#define ERROR_ESTABLISHED "[PICARD] Connexió amb Enterprise ja realitzada!\n"
+
 #define PIC_NAME    "[PIC_NAME]\0"
 #define PIC_INF     "[PIC_INF]\0"
 #define ENT_INF     "[ENT_INF]\0"
@@ -47,6 +58,11 @@ typedef struct {
     uint16_t    length;
     char*       data;
 } Trama;
+
+// Variables globals
+extern char* comanda;
+extern int   connectat;
+extern int   sockfd;
 
 /*******************************************************************************
 *
