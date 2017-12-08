@@ -1,5 +1,33 @@
+/*******************************************************************************
+*
+* Practica Sistemes Operatius - LsEat - Package Data
+* Curs 2017-2018
+*
+* @File     communication.c
+* @Purpose  Modul que conté les funcions relacionades amb les diferents connexions
+*           de Enterprise a Data i de Picard a Data
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
+*
+*******************************************************************************/
+
+// Llibreries pròpies
 #include "communication.h"
 
+/******************************************************************************/
+/***************************** FUNCIONS DE PICARD *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     connectPicard
+* @Purpose  Funció que realitzarà la connexió amb Picard per a poder després
+*           gestionar-lo
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 int connectPicard() {
     int sockfd;
     int clientfd;
@@ -47,6 +75,15 @@ int connectPicard() {
     }
 }
 
+/*******************************************************************************
+*
+* @Name     gestionaPicard
+* @Purpose  Funció que gestionarà la interacció Data-Picard mitjançant sockets
+* @Param    In:  clientfd   File Descriptor associat al Picard
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void gestionaPicard(int clientfd) {
     Trama trama;
     int error = 0;
@@ -84,19 +121,20 @@ void gestionaPicard(int clientfd) {
     close(clientfd);
 }
 
-/* FUNCIONS ENTERPRISE */
+/******************************************************************************/
+/*************************** FUNCIONS DE ENTERPRISE ***************************/
+/******************************************************************************/
 
-void * threadFunc(void * arg) {
-
-    connectEnterprise();
-    return arg;
-}
-
-void creaThread() {
-    pthread_t id;
-    pthread_create(&id, NULL, threadFunc, NULL);
-}
-
+/*******************************************************************************
+*
+* @Name     connectEnterprise
+* @Purpose  Funció que realitzarà la connexió estable amb Enterprise per a poder
+*           després gestionar-la.
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 int connectEnterprise() {
     int sockfd;
     int clientfd;
@@ -146,6 +184,16 @@ int connectEnterprise() {
     return 0;
 }
 
+/*******************************************************************************
+*
+* @Name     gestionaEnterprise
+* @Purpose  Funció que ens gestionarà tota la connexió relacionada amb una Enterprise,
+*           escoltant el que envia i responent-li com demana el protocol.
+* @Param    In: clientfd    File Descriptor del Enterprise al que hem de tractar
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void gestionaEnterprise(int clientfd) {
     Trama trama;
     int error;
@@ -205,8 +253,49 @@ void gestionaEnterprise(int clientfd) {
 
 }
 
-/* FUNCIONS GENÈRIQUES */
+/*******************************************************************************
+*
+* @Name     threadFunc
+* @Purpose  Funció que ens realitzarà el thread, encarregada de connectar una
+*           Enterprise a Data.
+* @Param    In: arg Paràmetre que sempre demana les funcions associades a Threads
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void * threadFunc(void * arg) {
+    connectEnterprise();
+    return arg;
+}
 
+/*******************************************************************************
+*
+* @Name     creaThread
+* @Purpose  Funció que crea un thread amb la nostra funció assignada a els Threads
+*           de Data.
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void creaThread() {
+    pthread_t id;
+    pthread_create(&id, NULL, threadFunc, NULL);
+}
+
+/******************************************************************************/
+/**************************** FUNCIONS GENÈRIQUES *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readTrama
+* @Purpose  Funció llegirà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket del que rebrem la trama
+*           Out: error      Variable de control d'errors
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
 Trama readTrama(int clientfd, int* error) {
     Trama trama;
     memset(&trama, 0, sizeof(trama));
@@ -237,6 +326,18 @@ Trama readTrama(int clientfd, int* error) {
     return trama;
 }
 
+/*******************************************************************************
+*
+* @Name     writeTrama
+* @Purpose  Funció escriurà una Trama donat un fd associat a un socket
+* @Param    In: clientfd    Socket al que escriurem la trama
+*               type        Type de la trama a enviar
+*               header      Header de la trama a enviar
+*               data        Data de la trama a enviar
+*           Out: -
+* @return   Retorna la Trama llegida en cas de no haver-hi errors
+*
+*******************************************************************************/
 void writeTrama(int clientfd, char type, char header[10], char* data) {
     Trama trama;
     int length;

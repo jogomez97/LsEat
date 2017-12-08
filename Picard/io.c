@@ -71,7 +71,7 @@ int readFile(char* path, Picard* picard) {
 * @Name     readUntil
 * @Purpose  Funció llegeix fins a un caràcter donat
 * @Param    In: fd  File Descriptor del qual llegirem
-                cFi Caràcter fins el qual llegirem
+*               cFi Caràcter fins el qual llegirem
 *           Out: -
 * @return   Retorna tots els caràcters llegits fins a arribar al cFi
 *

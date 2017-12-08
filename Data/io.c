@@ -1,11 +1,33 @@
-/*∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗
-   @Autor: Juan Gómez Gómez - juan.gomez.2015
-           Jordi Malé Carbonell - jordi.male.2015
-∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗∗*/
+/*******************************************************************************
+*
+* Practica Sistemes Operatius - LsEat - Package Data
+* Curs 2017-2018
+*
+* @File     io.c
+* @Purpose  Modul que conté les funcions relacionades amb la gestió de fitxers i
+*           interacció amb l'usuari.
+* @Author   Jordi Malé Carbonell  (jordi.male.2015)
+* @Author   Juan Gómez Gómez  (juan.gomez.2015)
+*
+********************************************************************************/
 
+// Llibreries pròpies
 #include "io.h"
 
-/* FUNCIONS LECTURA */
+/******************************************************************************/
+/**************************** FUNCIONS DE LECTURA *****************************/
+/******************************************************************************/
+
+/*******************************************************************************
+*
+* @Name     readFile
+* @Purpose  Funció llegirà el fitxer de configuració i ens donarà les seves dades
+* @Param    In: path    Path del fitxer a llegir
+*           Out: d      Data on guardarem les dades del fitxer
+* @return   Retorna un enter que indica els possibles errors a l'hora de llegir
+*           el fitxer
+*
+*******************************************************************************/
 int readFile(char* path, Data* d) {
     int fd;
 
@@ -40,6 +62,16 @@ int readFile(char* path, Data* d) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     readUntil
+* @Purpose  Funció llegeix fins a un caràcter donat
+* @Param    In: fd  File Descriptor del qual llegirem
+*               cFi Caràcter fins el qual llegirem
+*           Out: -
+* @return   Retorna tots els caràcters llegits fins a arribar al cFi
+*
+*******************************************************************************/
 char* readUntil(int fd, char cFi) {
     int i = 0;
     char c = '0';
@@ -59,8 +91,19 @@ char* readUntil(int fd, char cFi) {
     return buffer;
 }
 
-/* FUNCIONS ESCRIPTURA */
+/******************************************************************************/
+/************************** FUNCIONS D'ESCRIPTURA *****************************/
+/******************************************************************************/
 
+/*******************************************************************************
+*
+* @Name     printConnection
+* @Purpose  Funció que printa una connexió per pantalla
+* @Param    In: name  Nom de l'usuari que s'ha connectat a Data
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printConnection(char* name) {
     int mida = strlen("Connectant \n") + strlen(name);
     char buffer[mida];
@@ -68,6 +111,15 @@ void printConnection(char* name) {
     write(1, buffer, strlen(buffer));
 }
 
+/*******************************************************************************
+*
+* @Name     printDisconnection
+* @Purpose  Funció que printa una desconnexió per pantalla
+* @Param    In: name  Nom de l'usuari que s'ha desconnectat de Data
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void printDisconnection(char* name) {
     int mida = strlen("Desconnectant \n") + strlen(name);
     char buffer[mida];
