@@ -89,7 +89,7 @@ void gestionaPicard() {
     write(1, CONNECTED_P, strlen(CONNECTED_P));
 
     memset(&trama, 0, sizeof(trama));
-    tramaPicard = readTrama(clientfd, &error);
+    tramaPicard = readTrama(clientfdPicard, &error);
 
 
     if (error <= 0) {
@@ -105,6 +105,10 @@ void gestionaPicard() {
                 writeTrama(clientfdPicard, 0x01, ENT_INF, getEnterprise());
                 free(data);
                 sortFirstNode(&flota);
+                /*
+                write(1, "SORTED:\n", 8);
+                printList(&flota);
+                */
             } else {
                 writeTrama(clientfdPicard, 0x01, CONKO, "");
             }
@@ -286,7 +290,10 @@ void gestionaEnterprise() {
                         break;
                     }
                     updateNode(&flota, e);
+                    /*
+                    write(1, "UPDATED:\n", 9);
                     printList(&flota);
+                    */
                     writeTrama(clientfd, 0x07, UPDATEOK, "");
                 } else {
                     writeTrama(clientfd, 0x07, UPDATEKO, "");
