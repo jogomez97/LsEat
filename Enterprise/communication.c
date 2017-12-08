@@ -368,27 +368,18 @@ Trama readTrama(int clientfd, int* error) {
     memset(&trama, 0, sizeof(trama));
 
     *error = read(clientfd, &trama.type, sizeof(trama.type));
-    if (*error < 0) {
-        return trama;
-    }
-    *error = read(clientfd, &trama.header, sizeof(trama.header));
+    read(clientfd, &trama.header, sizeof(trama.header));
     if (*error < 0) {
         return trama;
     }
     char aux[3];
-    *error = read(clientfd, &aux, sizeof(trama.length));
+    read(clientfd, &aux, sizeof(trama.length));
     aux[2] = '\0';
-    if (*error < 0) {
-        return trama;
-    }
 
     trama.length = (uint16_t)atoi(aux);
 
     trama.data = (char*) malloc(sizeof(char) * trama.length);
-    *error = read(clientfd, trama.data, sizeof(char) * trama.length);
-    if (*error < 0) {
-        return trama;
-    }
+    read(clientfd, trama.data, sizeof(char) * trama.length);
 
     return trama;
 }
@@ -434,4 +425,5 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
         }
     }
     write(sockfd, buffer2, length);
+
 }

@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -69,6 +70,13 @@ typedef struct {
 // Variables globals externes
 extern List flota;
 extern Data d;
+extern pthread_t threadEnterprise;
+extern int sockfd;
+extern int clientfd;
+extern int sockfdPicard;
+extern int clientfdPicard;
+extern Trama tramaPicard;
+extern Trama trama;
 
 /******************************************************************************/
 /***************************** FUNCIONS DE PICARD *****************************/
@@ -112,6 +120,7 @@ void gestionaPicard(int clientfd);
 *
 *******************************************************************************/
 int connectEnterprise();
+<<<<<<< HEAD
 
 /*******************************************************************************
 *
@@ -124,6 +133,12 @@ int connectEnterprise();
 *
 *******************************************************************************/
 void gestionaEnterprise(int clientfd);
+=======
+void gestionaEnterprise();
+void gestionaPicard();
+Trama readTrama(int clientfd, int* error);
+void writeTrama(int sockfd, char type, char header[10], char* data);
+>>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
 
 /*******************************************************************************
 *
@@ -149,6 +164,7 @@ void * threadFunc(void * arg);
 *******************************************************************************/
 void creaThread();
 
+<<<<<<< HEAD
 /******************************************************************************/
 /**************************** FUNCIONS GENÈRIQUES *****************************/
 /******************************************************************************/
@@ -176,5 +192,8 @@ Trama readTrama(int clientfd, int* error);
 *
 *******************************************************************************/
 void writeTrama(int sockfd, char type, char header[10], char* data);
+=======
+Enterprise getEnterpriseFromTrama(char* data);
+>>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
 
 #endif

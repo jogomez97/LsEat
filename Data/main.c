@@ -26,8 +26,16 @@
 
 #define CONFIGFILE  "Data.dat"
 
+/* Variables globals per poder alliberar memoria */
 Data d;
 extern  List flota;
+pthread_t threadEnterprise;
+int sockfd;
+int clientfd;
+int sockfdPicard;
+int clientfdPicard;
+Trama tramaPicard;
+Trama trama;
 
 void alliberaMemoria() {
 
@@ -37,12 +45,38 @@ void alliberaMemoria() {
     //Allibera Data
     free(d.ip);
 
+    if (tramaPicard.data != NULL) {
+        free(tramaPicard.data);
+    }
+
+    if (trama.data != NULL) {
+        free(trama.data);
+    }
+
+
 }
+
 
 void intHandler() {
     alliberaMemoria();
 
+    //Tanquem tots els fd
+    close(sockfd);
+    close(clientfd);
+    close(sockfdPicard);
+    close(clientfdPicard);
+
     write(1, "\n", sizeof(char));
+
+
+    //Matem el thread de Enterprise
+    /*
+    if (threadEnterprise > 0) {
+        pthread_cancel(threadEnterprise);
+        pthread_join(threadEnterprise, NULL);
+    }
+    */
+
     exit(0);
 }
 
@@ -59,10 +93,17 @@ int main () {
         return EXIT_FAILURE;
     } else {
         signal(SIGINT, intHandler);
+        threadEnterprise = 0;
 
-        //pthread_t tEnterprise;
+        //Server Enterprise
         creaThread();
-        connectPicard();
+        //Server Picards
+        int eServer = connectPicard();
+
+        //Només s'executarà si no s'ha pogut crear el servidor de Picards
+        if (eServer < 0) {
+            raise(SIGINT);
+        }
 
         return EXIT_SUCCESS;
     }

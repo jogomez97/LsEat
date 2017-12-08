@@ -48,6 +48,7 @@ int readFile(char* path, Data* d) {
             d->ip = readUntil(fd, '\n');
             aux = readUntil(fd, '\n');
             d->portPicard = atoi(aux);
+            free(aux);
             aux = readUntil(fd, '\n');
             d->portEnterprise = atoi(aux);
 

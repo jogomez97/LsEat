@@ -29,13 +29,11 @@
 *
 *******************************************************************************/
 int connectPicard() {
-    int sockfd;
-    int clientfd;
 
     /* Obrir servidor */
     //Creació socket
-    sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sockfd < 0) {
+    sockfdPicard = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sockfdPicard < 0) {
         write(1, ERROR_SOCK, strlen(ERROR_SOCK));
         return -1;
     }
@@ -50,31 +48,34 @@ int connectPicard() {
 
     if (error < 0) {
         write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-        exit(0);
+        return -1;
     }
 
-    if (bind(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
+    if (bind(sockfdPicard, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
         write(1, ERROR_BIND, strlen(ERROR_BIND));
-        exit(0);
+        return -1;
     }
 
     //Listen
-    listen(sockfd, NCONN);
+    listen(sockfdPicard, NCONN);
 
     //Accept
     socklen_t len = sizeof(s_addr);
 
     while (1) {
         write(1, WAIT_CONNECTP, strlen(WAIT_CONNECTP));
-        clientfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
-        if (clientfd < 0) {
+        clientfdPicard = accept(sockfdPicard, (struct sockaddr*) &s_addr, &len);
+        if (clientfdPicard < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
         } else {
-            gestionaPicard(clientfd);
+            gestionaPicard(clientfdPicard);
         }
     }
+
+    return 0;
 }
 
+<<<<<<< HEAD
 /*******************************************************************************
 *
 * @Name     gestionaPicard
@@ -86,41 +87,45 @@ int connectPicard() {
 *******************************************************************************/
 void gestionaPicard(int clientfd) {
     Trama trama;
+=======
+void gestionaPicard() {
+
+>>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
     int error = 0;
 
 
     write(1, CONNECTED_P, strlen(CONNECTED_P));
 
     memset(&trama, 0, sizeof(trama));
-    trama = readTrama(clientfd, &error);
+    tramaPicard = readTrama(clientfd, &error);
 
 
     if (error <= 0) {
         write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
-        close(clientfd);
+        close(clientfdPicard);
     }
-    switch (trama.type) {
+    switch (tramaPicard.type) {
         case 0x01:
             //està a data.
 
             if (!isEmpty(&flota)) {
                 char* data = getEnterprise();
-                writeTrama(clientfd, 0x01, ENT_INF, getEnterprise());
+                writeTrama(clientfdPicard, 0x01, ENT_INF, getEnterprise());
                 free(data);
                 sortFirstNode(&flota);
             } else {
-                writeTrama(clientfd, 0x01, CONKO, "");
+                writeTrama(clientfdPicard, 0x01, CONKO, "");
             }
             write(1, DISCONNECTED_P, strlen(DISCONNECTED_P));
             break;
         default:
-            printf("1\n");
             write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             break;
     }
-    close(clientfd);
+    close(clientfdPicard);
 }
 
+<<<<<<< HEAD
 /******************************************************************************/
 /*************************** FUNCIONS DE ENTERPRISE ***************************/
 /******************************************************************************/
@@ -135,16 +140,29 @@ void gestionaPicard(int clientfd) {
 * @return   -
 *
 *******************************************************************************/
+=======
+/* FUNCIONS ENTERPRISE */
+
+void * threadFunc(void * arg) {
+
+    connectEnterprise();
+    return arg;
+}
+
+void creaThread() {
+
+    pthread_create(&threadEnterprise, NULL, threadFunc, NULL);
+}
+
+>>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
 int connectEnterprise() {
-    int sockfd;
-    int clientfd;
 
     /* Obrir servidor */
     //Creació socket
     sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sockfd < 0) {
         write(1, ERROR_SOCK, strlen(ERROR_SOCK));
-        exit(0);
+        raise(SIGINT);
     }
 
     //Bind
@@ -157,12 +175,12 @@ int connectEnterprise() {
 
     if (error < 0) {
         write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
-        exit(0);
-    };
+        raise(SIGINT);
+    }
 
     if (bind(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
         write(1, ERROR_BIND, strlen(ERROR_BIND));
-        exit(0);
+        raise(SIGINT);
     }
 
     //Listen
@@ -181,9 +199,9 @@ int connectEnterprise() {
         }
     }
     close(sockfd);
-    return 0;
 }
 
+<<<<<<< HEAD
 /*******************************************************************************
 *
 * @Name     gestionaEnterprise
@@ -195,14 +213,16 @@ int connectEnterprise() {
 *
 *******************************************************************************/
 void gestionaEnterprise(int clientfd) {
+=======
+void gestionaEnterprise() {
+>>>>>>> ef3266b2bae014535078ed4ccac1ec28df65f889
     Trama trama;
     int error;
-    //s'hauria de dir !end, porta a confusió
-    int end = 1;
+    int end = 0;
 
     write(1, CONNECTED_E, strlen(CONNECTED_E));
 
-    while (end) {
+    while (!end) {
         memset(&trama, 0, sizeof(trama));
         error = 0;
         trama = readTrama(clientfd, &error);
@@ -228,14 +248,21 @@ void gestionaEnterprise(int clientfd) {
                     write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
                     writeTrama(clientfd, 0x02, CONOKb, "");
                     close(clientfd);
-                    end = 0;
+                    end = 1;
                 } else {
                     writeTrama(clientfd, 0x02, CONKOb, "");
                 }
                 break;
             case 0x07:
                 if (strcmp(trama.header, UPDATE) == 0) {
-                    //S'haurà de fer gestió de nConnectats per fer el balanceig
+                    Enterprise e;
+                    getEnterpriseFromTrama(trama.data);
+                    if (e.nConnections == -1) {
+                        writeTrama(clientfd, 0x07, UPDATEKO, "");
+                        break;
+                    }
+                    updateNode(&flota, e);
+                    printList(&flota);
                     writeTrama(clientfd, 0x07, UPDATEOK, "");
                 } else {
                     writeTrama(clientfd, 0x07, UPDATEKO, "");
@@ -243,7 +270,7 @@ void gestionaEnterprise(int clientfd) {
                 write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
                 writeTrama(clientfd, 0x07, UPDATEOK, "");
                 close(clientfd);
-                end = 0;
+                end = 1;
                 break;
             default:
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
@@ -304,24 +331,18 @@ Trama readTrama(int clientfd, int* error) {
     if (*error < 0) {
         return trama;
     }
-    *error = read(clientfd, &trama.header, sizeof(trama.header));
-    if (*error < 0) {
-        return trama;
-    }
+    read(clientfd, &trama.header, sizeof(trama.header));
+
     char aux[3];
-    *error = read(clientfd, &aux, sizeof(trama.length));
-    if (*error < 0) {
-        return trama;
-    }
+    read(clientfd, &aux, sizeof(trama.length));
+
     aux[2] = '\0';
 
     trama.length = (uint16_t)atoi(aux);
 
     trama.data = (char*) malloc(sizeof(char) * trama.length);
-    *error = read(clientfd, trama.data, sizeof(char) * trama.length);
-    if (*error < 0) {
-        return trama;
-    }
+    read(clientfd, trama.data, sizeof(char) * trama.length);
+
 
     return trama;
 }
@@ -364,4 +385,20 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
         }
     }
     write(clientfd, buffer2, length);
+
+}
+
+Enterprise getEnterpriseFromTrama(char* data) {
+    Enterprise e;
+    char* port = strtok(data, "&");
+    char* aux = strtok(NULL, "&");
+    if ((port != NULL) & (aux != NULL)) {
+
+        e.port = atoi(port);
+        e.nConnections = atoi(aux);
+
+        return e;
+    }
+    e.nConnections = -1;
+    return e;
 }
