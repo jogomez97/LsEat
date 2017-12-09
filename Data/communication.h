@@ -87,10 +87,10 @@ extern Trama trama;
 *
 * @Name     connectPicard
 * @Purpose  Funció que realitzarà la connexió amb Picard per a poder després
-*           gestionar-lo
+*           gestionar-lo en forma de servidor dedicat
 * @Param    In:  -
 *           Out: -
-* @return   -
+* @return   Retorna -1 si hi ha hagut algun problema en engegar el servidor.
 *
 *******************************************************************************/
 int connectPicard();

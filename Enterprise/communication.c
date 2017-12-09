@@ -20,9 +20,9 @@
 
 /*******************************************************************************
 *
-* @Name     readTrama
-* @Purpose  ????????
-* @Param    In: new    ?????
+* @Name     gestionaConnexioData
+* @Purpose  Funció que gestiona tota la primera connexió amb data
+* @Param    In: new     indica si és la primera connexió (1) o no (0)
 *           Out: -
 * @return   -
 *
@@ -53,11 +53,13 @@ void gestionaConnexioData(int new) {
 /*******************************************************************************
 *
 * @Name     desconnecta
-* @Purpose  ??????????
-* @Param    In: sockfd    ???????
-*               new       ??????
+* @Purpose  Funció que ens permet desconnectar-nos de Data de dues maneres:
+*               - enviant la trama de desconnexió si és la primera connexió
+*               - tancant el socket directament si és un update
+* @Param    In: sockfd    Socket de Data del qual ens volem desconnectar
+*               new       indica si és la primera connexió (1) o no (0)
 *           Out: -
-* @return   ?????????????
+* @return  Retorna 1 si s'ha tancat el socket, 0 altrament
 *
 *******************************************************************************/
 int desconnecta(int sockfd, int new) {
@@ -98,10 +100,11 @@ int desconnecta(int sockfd, int new) {
 /*******************************************************************************
 *
 * @Name     connectaData
-* @Purpose  ???????????????
+* @Purpose  Funció que ens permet establir connexió amb Data mitjançant un Socket
 * @Param    In:  -
 *           Out: -
-* @return   ??????????????
+* @return   Retorna el valor del fd del Socket si s'ha pogut establir connexió,
+*           -1 altrament
 *
 *******************************************************************************/
 int connectaData() {
@@ -135,11 +138,13 @@ int connectaData() {
 /*******************************************************************************
 *
 * @Name     enviaNovaConnexio
-* @Purpose  ????????????
-* @Param    In: sockfd   ?????????????
-*               new      ????????????
+* @Purpose  Funció que permet gestiona l'enviament i tractament de les
+*           diferents Trames de Data, depenent de si és el primer cop que ens
+*           connectem o no.
+* @Param    In: sockfd   Socket de Data al qual estem connectats
+*               new      indica si és la primera connexió (1) o no (0)
 *           Out: -
-* @return   ??????????
+* @return   Retorna 0 si la communicació ha resultat satisfactòria, -1 altrament.
 *
 *******************************************************************************/
 int enviaNovaConnexio(int sockfd, int new) {
@@ -216,10 +221,12 @@ int enviaNovaConnexio(int sockfd, int new) {
 /*******************************************************************************
 *
 * @Name     engegaServidor
-* @Purpose  ????????
-* @Param    In: arg    ?????
+* @Purpose  Thread corresponent al servidor general que atén les noves
+*           peticions de connexió de Picards, tot creant un servidor dedicat
+*           per cadascun d'ells.
+* @Param    In: arg    Argument void* per prototip
 *           Out: -
-* @return   ?????????
+* @return   Retorna un void* per prototip
 *
 *******************************************************************************/
 void* engegaServidor(void* arg) {
@@ -293,10 +300,12 @@ void* engegaServidor(void* arg) {
 /*******************************************************************************
 *
 * @Name     threadPicard
-* @Purpose  ????????
-* @Param    In: arg    ?????
+* @Purpose  Thread en funció de servidor dedicat que gestiona la communicació
+*           amb un sol Picard
+* @Param    In: arg     Argument void* per prototip, es fa servir per
+*                       obtindre el fd del Socket del Picard
 *           Out: -
-* @return   ??????????
+* @return   Retorna un void* per prototip
 *
 *******************************************************************************/
 void * threadPicard(void * arg) {
