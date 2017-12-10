@@ -73,6 +73,7 @@ typedef struct {
 extern Enterprise enterprise;
 extern int connectionFlag;
 extern pthread_mutex_t mtx;
+extern int* picardfds;
 
 /******************************************************************************/
 /************************ FUNCIONS CONNEXIÓ AMB DATA **************************/

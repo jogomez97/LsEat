@@ -82,12 +82,18 @@ int desconnecta(int sockfd, int new) {
             case 0x02:
                 if (strcmp(trama.header, CONOKb) == 0) {
                     close(sockfd);
+                    free(trama.data);
+                    trama.data = NULL;
                     return 1;
                 }
+                free(trama.data);
+                trama.data = NULL;
                 return 0;
                 break;
             default:
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                free(trama.data);
+                trama.data = NULL;
                 return 0;
         }
     } else {
@@ -169,14 +175,22 @@ int enviaNovaConnexio(int sockfd, int new) {
         switch(trama.type) {
             case 0x01:
                 if (strcmp(trama.header, CONOK) == 0) {
+                    free(trama.data);
+                    trama.data = NULL;
                     return 0;
                 } else if (strcmp(trama.header, CONKO) == 0) {
+                    free(trama.data);
+                    trama.data = NULL;
                     return -1;
                 } else {
+                    free(trama.data);
+                    trama.data = NULL;
                     return -1;
                 }
                 break;
             default:
+                free(trama.data);
+                trama.data = NULL;
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 return -1;
         }
@@ -196,14 +210,22 @@ int enviaNovaConnexio(int sockfd, int new) {
         switch(trama.type) {
             case 0x07:
                 if (strcmp(trama.header, UPDATEOK) == 0) {
+                    free(trama.data);
+                    trama.data = NULL;
                     return 0;
                 } else if (strcmp(trama.header, UPDATEKO) == 0) {
+                    free(trama.data);
+                    trama.data = NULL;
                     return -1;
                 } else {
+                    free(trama.data);
+                    trama.data = NULL;
                     return -1;
                 }
                 break;
             default:
+                free(trama.data);
+                trama.data = NULL;
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 return -1;
         }
@@ -231,7 +253,6 @@ int enviaNovaConnexio(int sockfd, int new) {
 *******************************************************************************/
 void* engegaServidor(void* arg) {
     int sockfd;
-    int* picardfds;
 
     /* Obrir servidor */
     //Creació socket
@@ -362,6 +383,8 @@ void * threadPicard(void * arg) {
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 break;
         }
+        free(trama.data);
+        trama.data = NULL;
     }
     return arg;
 }

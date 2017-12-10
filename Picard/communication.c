@@ -226,8 +226,6 @@ int gestionaTrama(Trama t, int mode) {
             write(1, CONNECTED_D, strlen(CONNECTED_D));
             write(1, DISCONNECTED_D, strlen(DISCONNECTED_D));
 
-            write(1, t.data, strlen(t.data));
-
             Enterprise e;
 
             char * split = strtok(t.data, "&");

@@ -131,7 +131,7 @@ Enterprise getEnterpriseFromTrama(char* data);
 * @return   -
 *
 *******************************************************************************/
-int connectEnterprise();
+void connectEnterprise();
 
 /*******************************************************************************
 *

@@ -38,6 +38,7 @@ void alarmSignal();
 Enterprise enterprise;
 Menu menu;
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+int* picardfds;
 
 int main(int argc, char const *argv[]) {
 
@@ -110,6 +111,8 @@ void alliberaMemoria() {
     free(enterprise.nom);
     free(enterprise.ipData);
     free(enterprise.ipPicard);
+
+    free(picardfds);
 
 }
 

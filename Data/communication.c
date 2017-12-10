@@ -88,7 +88,7 @@ void gestionaPicard() {
 
     write(1, CONNECTED_P, strlen(CONNECTED_P));
 
-    memset(&trama, 0, sizeof(trama));
+    memset(&tramaPicard, 0, sizeof(tramaPicard));
     tramaPicard = readTrama(clientfdPicard, &error);
 
 
@@ -102,7 +102,7 @@ void gestionaPicard() {
 
             if (!isEmpty(&flota)) {
                 char* data = getEnterprise();
-                writeTrama(clientfdPicard, 0x01, ENT_INF, getEnterprise());
+                writeTrama(clientfdPicard, 0x01, ENT_INF, data);
                 free(data);
                 sortFirstNode(&flota);
                 if (DEBUG_LIST) {
@@ -118,6 +118,8 @@ void gestionaPicard() {
             write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             break;
     }
+    free(tramaPicard.data);
+    tramaPicard.data = NULL;
     close(clientfdPicard);
 }
 
@@ -159,7 +161,7 @@ Enterprise getEnterpriseFromTrama(char* data) {
 * @return   -
 *
 *******************************************************************************/
-int connectEnterprise() {
+void connectEnterprise() {
     /* Obrir servidor */
     //Creació socket
     sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -244,7 +246,6 @@ void creaThread() {
 *
 *******************************************************************************/
 void gestionaEnterprise() {
-    Trama trama;
     int error;
     int end = 0;
 
@@ -310,6 +311,8 @@ void gestionaEnterprise() {
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 break;
         }
+        free(trama.data);
+        trama.data = NULL;
     }
 
 }
@@ -329,27 +332,27 @@ void gestionaEnterprise() {
 *
 *******************************************************************************/
 Trama readTrama(int clientfd, int* error) {
-    Trama trama;
-    memset(&trama, 0, sizeof(trama));
+    Trama tramaRead;
+    memset(&tramaRead, 0, sizeof(tramaRead));
 
-    *error = read(clientfd, &trama.type, sizeof(trama.type));
+    *error = read(clientfd, &tramaRead.type, sizeof(tramaRead.type));
     if (*error < 0) {
-        return trama;
+        return tramaRead;
     }
-    read(clientfd, &trama.header, sizeof(trama.header));
+    read(clientfd, &tramaRead.header, sizeof(tramaRead.header));
 
     char aux[3];
-    read(clientfd, &aux, sizeof(trama.length));
+    read(clientfd, &aux, sizeof(tramaRead.length));
 
     aux[2] = '\0';
 
-    trama.length = (uint16_t)atoi(aux);
+    tramaRead.length = (uint16_t)atoi(aux);
 
-    trama.data = (char*) malloc(sizeof(char) * trama.length);
-    read(clientfd, trama.data, sizeof(char) * trama.length);
+    tramaRead.data = (char*) malloc(sizeof(char) * tramaRead.length);
+    read(clientfd, tramaRead.data, sizeof(char) * tramaRead.length);
 
 
-    return trama;
+    return tramaRead;
 }
 
 /*******************************************************************************
@@ -365,24 +368,25 @@ Trama readTrama(int clientfd, int* error) {
 *
 *******************************************************************************/
 void writeTrama(int clientfd, char type, char header[10], char* data) {
-    Trama trama;
+    Trama tramaWrite;
     int length;
     int i;
 
-    memset(&trama, 0, sizeof(trama));
+    memset(&tramaWrite, 0, sizeof(tramaWrite));
 
     //Afegim les dades a trama
-    trama.type = type;
-    strcpy(trama.header, header);
-    trama.data = data;
-    trama.length = strlen(trama.data);
+    tramaWrite.type = type;
+    strcpy(tramaWrite.header, header);
+    tramaWrite.data = data;
+    tramaWrite.length = strlen(tramaWrite.data);
 
     //Enviem Trama
-    length = sizeof(trama.type) + sizeof(trama.header)
-            + sizeof(trama.length) + strlen(trama.data);
+    length = sizeof(tramaWrite.type) + sizeof(tramaWrite.header)
+            + sizeof(tramaWrite.length) + strlen(tramaWrite.data);
 
     char buffer2[length];
-    sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
+    sprintf(buffer2, "%c%-10s%-2u%s", tramaWrite.type, tramaWrite.header,
+            tramaWrite.length, tramaWrite.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
         if (buffer2[i] == ' ') {
