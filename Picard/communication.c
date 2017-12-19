@@ -321,7 +321,7 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     length = sizeof(trama.type) + sizeof(trama.header)
             + sizeof(trama.length) + strlen(trama.data);
 
-    char buffer2[length];
+    char* buffer2 = (char*) malloc(sizeof(char) * length);
     sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
@@ -331,4 +331,5 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     }
 
     write(clientfd, buffer2, length);
+    free(buffer2);
 }

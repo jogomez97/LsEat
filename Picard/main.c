@@ -112,7 +112,6 @@ void intHandler() {
     write(1, "\n", strlen("\n"));
     write(1, DIS_MSG, strlen(DIS_MSG));
     if (connectat) {
-        write(1, "HOLA1\n", 6);
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
 
         int error = 0;

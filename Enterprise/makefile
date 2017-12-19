@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra
+CFLAGS=-Wall -Wextra -g
 LDFLAGS=-lpthread
 SOURCES=main.c io.c dades.c communication.c
 OBJECTS=$(SOURCES:.c=.o)

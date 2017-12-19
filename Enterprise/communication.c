@@ -161,10 +161,11 @@ int enviaNovaConnexio(int sockfd, int new) {
     if (new) {
         length = strlen(enterprise.nom) + strlen(enterprise.ipData)
                 + sizeof(enterprise.portPicard) + 2 * sizeof(char);
-        char buffer[length];
+        char* buffer = (char*)malloc(sizeof(char) * length);
         sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portPicard, enterprise.ipPicard);
 
         writeTrama(sockfd, 0x01, ENT_INF, buffer);
+        free(buffer);
         trama = readTrama(sockfd, &error);
         if (error <= 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -196,10 +197,11 @@ int enviaNovaConnexio(int sockfd, int new) {
         }
     } else {
         length = sizeof(int) + sizeof(char) + sizeof(enterprise.portPicard);
-        char buffer[length];
+        char* buffer = (char*)malloc(sizeof(char) * length);
         sprintf(buffer, "%d&%d", enterprise.portPicard, enterprise.nConnections);
 
         writeTrama(sockfd, 0x07, UPDATE, buffer);
+        free(buffer);
         trama = readTrama(sockfd, &error);
         if (error <= 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -351,10 +353,10 @@ void * threadPicard(void * arg) {
 
                     char* nom = strtok(trama.data, "&");
                     int length = strlen(nom) + strlen("Connectat\n");
-                    char buff[length];
+                    char* buff = (char*)malloc(sizeof(char) * length);
                     sprintf(buff, "Connectat %s\n", nom);
                     write(1, buff, strlen(buff));
-                    free(nom);
+                    free(buff);
 
                 } else {
                     writeTrama(*picardfd, 0x01, CONKOb, "");
@@ -366,10 +368,10 @@ void * threadPicard(void * arg) {
 
                     char* nom = strtok(trama.data, "\n");
                     int length = strlen(nom) + strlen("Desconnectat\n");
-                    char buff[length];
+                    char* buff = (char*)malloc(sizeof(char) * length);
                     sprintf(buff, "Desconnectat %s\n", nom);
                     write(1, buff, strlen(buff));
-                    free(nom);
+                    free(buff);
                 } else {
                     writeTrama(*picardfd, 0x02, CONKOb, "");
                 }
@@ -455,7 +457,7 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
             + sizeof(trama.length) + strlen(trama.data);
 
 
-    char buffer2[length];
+    char* buffer2 = (char*)malloc(sizeof(char) * length);
     sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
@@ -464,5 +466,6 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
         }
     }
     write(sockfd, buffer2, length);
+    free(buffer2);
 
 }

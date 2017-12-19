@@ -58,6 +58,8 @@ int main () {
 
     flota = createList();
     error = readFile(CONFIGFILE, &d);
+    tramaPicard.data = NULL;
+    trama.data = NULL;
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal
         //acabar l'execució
@@ -98,7 +100,9 @@ void alliberaMemoria() {
     eraseList(&flota);
 
     //Allibera Data
-    free(d.ip);
+    if (d.ip != NULL) {
+        free(d.ip);
+    }
 
     if (tramaPicard.data != NULL) {
         free(tramaPicard.data);
