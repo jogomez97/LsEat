@@ -38,11 +38,13 @@ int gestionaFlota(char* data) {
         e.port = atoi(aux);
         e.nConnections = 0;
 
+        pthread_mutex_lock(&mtx);
         insertNode(&flota, e);
         if (DEBUG_LIST) {
             write(1, "ADDED:\n", 7);
             printList(&flota);
         }
+        pthread_mutex_unlock(&mtx);
         return 0;
     }
     return -1;

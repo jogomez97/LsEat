@@ -128,7 +128,15 @@ void alliberaMemoria() {
 *
 *******************************************************************************/
 void intHandler() {
+
+    //Enviem la trama de desconnexió a Data si aquest no ha caigut
+    int sockfd = connectaData();
+    if (sockfd > 0) {
+        desconnecta(sockfd, 1);
+    }
+
     alliberaMemoria();
+
     //També s'han de tancar totes les connexions de Picar existents (Fase més endavant)
 
     pthread_mutex_destroy(&mtx);

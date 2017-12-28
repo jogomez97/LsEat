@@ -38,11 +38,10 @@ void gestionaConnexioData(int new) {
 
         int error = enviaNovaConnexio(sockfd, new);
         if (error) {
-            desconnecta(sockfd, new);
             raise(SIGINT);
         }
         while (!done) {
-            done = desconnecta(sockfd, new);
+            done = desconnecta(sockfd, 0);
             if (done) {
                 write(1, DISCONNECTED_D, strlen(DISCONNECTED_D));
             }
@@ -57,16 +56,16 @@ void gestionaConnexioData(int new) {
 *               - enviant la trama de desconnexió si és la primera connexió
 *               - tancant el socket directament si és un update
 * @Param    In: sockfd    Socket de Data del qual ens volem desconnectar
-*               new       indica si és la primera connexió (1) o no (0)
+*               dead      indica si hem de communicar-nos amb Data (1) o no (0)
 *           Out: -
 * @return  Retorna 1 si s'ha tancat el socket, 0 altrament
 *
 *******************************************************************************/
-int desconnecta(int sockfd, int new) {
+int desconnecta(int sockfd, int dead) {
 
-    if (new) {
-        char data[sizeof(int) + 1];
-        sprintf(data, "%d", enterprise.portData);
+    if (dead) {
+        char* data = (char*) malloc(sizeof(int) + 1);
+        sprintf(data, "%d", enterprise.portPicard);
         writeTrama(sockfd, 0x02, ENT_INF, data);
 
         int read = 0;

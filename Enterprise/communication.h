@@ -97,7 +97,7 @@ void gestionaConnexioData(int new);
 *               - enviant la trama de desconnexió si és la primera connexió
 *               - tancant el socket directament si és un update
 * @Param    In: sockfd    Socket de Data del qual ens volem desconnectar
-*               new       indica si és la primera connexió (1) o no (0)
+*               dead      indica si hem de communicar-nos amb Data (1) o no (0)
 *           Out: -
 * @return  Retorna 1 si s'ha tancat el socket, 0 altrament
 *

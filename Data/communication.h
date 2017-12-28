@@ -123,6 +123,17 @@ Enterprise getEnterpriseFromTrama(char* data);
 
 /*******************************************************************************
 *
+* @Name     getPortFromTrama
+* @Purpose  Funció que retorna el port d'un Enterprise partir de les dades d'una trama
+* @Param    In:  data  dada del port de l'enterprise
+*           Out: -
+* @return   Port de l'enterprise
+*
+*******************************************************************************/
+int getPortFromTrama(char* data);
+
+/*******************************************************************************
+*
 * @Name     connectEnterprise
 * @Purpose  Funció que realitzarà la connexió estable amb Enterprise per a poder
 *           després gestionar-la.

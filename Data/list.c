@@ -124,28 +124,24 @@ int insertNodeSorted(List* l, Enterprise e) {
 }
 
 
-/*
-* No allibera els punters de enterprise de nom i ip ja que s'han de fer servir
-* per tornar a introduir-los actualitzats!
-*/
 /*******************************************************************************
 *
 * @Name     deleteNode
 * @Purpose  Funció que elimina un element de la llista
-* @Param    In:    l Llista on esborrarem l'element
-*                  e Element a eliminar (Enterprise)
+* @Param    In:    l    Llista on esborrarem l'element
+*                  int  Port de l'Element a eliminar (Enterprise)
 *           Out: -
 * @return   Enter de control d'errors. 0 = success, -1 otherwise
 *
 *******************************************************************************/
-int deleteNode(List* l, Enterprise e) {
+int deleteNode(List* l, int port) {
     if (isEmpty(l)) {
         return -1;
     }
     Node* aux = l->first;
 
     while (aux != l->last) {
-        if (aux->enterprise.port == e.port) {
+        if (aux->enterprise.port == port) {
             if (aux == l->first) {
                 aux->next->pre = NULL;
                 l->first = aux->next;
@@ -166,7 +162,7 @@ int deleteNode(List* l, Enterprise e) {
     }
 
     //Si el que s'elimina és l'últim element
-    if (aux->enterprise.port == e.port) {
+    if (aux->enterprise.port == port) {
         if (aux == l->first) {
             free(aux->enterprise.nom);
             free(aux->enterprise.ip);
@@ -187,9 +183,7 @@ int deleteNode(List* l, Enterprise e) {
 
 }
 
-/**
- * Return 0 uppon success, -1 otherwise. Allibera punters de Enterprise
- */
+
  /*******************************************************************************
  *
  * @Name     deleteFirstNode
@@ -399,7 +393,7 @@ int updateNode(List* l, Enterprise e) {
         e.nom = strdup(aux->enterprise.nom);
         e.ip = strdup(aux->enterprise.ip);
 
-        deleteNode(l, e);
+        deleteNode(l, e.port);
         insertNodeSorted(l, e);
         return 0;
     }

@@ -25,7 +25,7 @@
 
 // Declaració de constants
 #define ERROR_PRINT "Error en printar. La llista està buida!\n"
-#define DEBUG_LIST  0
+#define DEBUG_LIST  1
 
 // Definició de tipus propis
 typedef struct {
@@ -85,13 +85,13 @@ int insertNodeSorted(List* l, Enterprise e);
 *
 * @Name     deleteNode
 * @Purpose  Funció que elimina un element de la llista
-* @Param    In:    l Llista on esborrarem l'element
-*                  e Element a eliminar (Enterprise)
+* @Param    In:    l    Llista on esborrarem l'element
+*                  int  Port de l'Element a eliminar (Enterprise)
 *           Out: -
 * @return   Enter de control d'errors. 0 = success, -1 otherwise
 *
 *******************************************************************************/
-int deleteNode(List* l, Enterprise e);
+int deleteNode(List* l, int port);
 
 /*******************************************************************************
 *

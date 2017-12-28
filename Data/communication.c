@@ -98,17 +98,16 @@ void gestionaPicard() {
     }
     switch (tramaPicard.type) {
         case 0x01:
-            //està a data.
-
             if (!isEmpty(&flota)) {
                 char* data = getEnterprise();
                 writeTrama(clientfdPicard, 0x01, ENT_INF, data);
-                free(data);
+                pthread_mutex_lock(&mtx);
                 sortFirstNode(&flota);
                 if (DEBUG_LIST) {
                     write(1, "SORTED:\n", 8);
                     printList(&flota);
                 }
+                pthread_mutex_unlock(&mtx);
             } else {
                 writeTrama(clientfdPicard, 0x01, CONKO, "");
             }
@@ -149,6 +148,25 @@ Enterprise getEnterpriseFromTrama(char* data) {
     }
     e.nConnections = -1;
     return e;
+}
+
+/*******************************************************************************
+*
+* @Name     getPortFromTrama
+* @Purpose  Funció que retorna el port d'un Enterprise partir de les dades d'una trama
+* @Param    In:  data  dada del port de l'enterprise
+*           Out: -
+* @return   Port de l'enterprise
+*
+*******************************************************************************/
+int getPortFromTrama(char* data) {
+    char* port = strtok(data, "[");
+    int   nPort = -1;
+    if (port != NULL) {
+        nPort = atoi(port);
+        return nPort;
+    }
+    return nPort;
 }
 
 /*******************************************************************************
@@ -247,21 +265,19 @@ void creaThread() {
 *******************************************************************************/
 void gestionaEnterprise() {
     int error;
-    int end = 0;
 
     write(1, CONNECTED_E, strlen(CONNECTED_E));
 
-    while (!end) {
-        memset(&trama, 0, sizeof(trama));
-        error = 0;
-        trama = readTrama(clientfd, &error);
+    memset(&trama, 0, sizeof(trama));
+    error = 0;
+    trama = readTrama(clientfd, &error);
 
-        if (error <= 0) {
-            write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
-            close(clientfd);
-            break;
-        }
-
+    if (error <= 0) {
+        write(1, ERROR_DISCONNECTED, strlen(ERROR_DISCONNECTED));
+        close(clientfd);
+    } else {
+        //Si no hi ha hagut cap error gestionem l'única trama de Enterprise,
+        //ja que la connexió sempre és efímera
         switch (trama.type) {
             case 0x01:
                 //està a data.c
@@ -275,9 +291,19 @@ void gestionaEnterprise() {
             case 0x02:
                 if (strcmp(trama.header, ENT_INF) == 0) {
                     write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
-                    writeTrama(clientfd, 0x02, CONOKb, "");
-                    close(clientfd);
-                    end = 1;
+                    int port = getPortFromTrama(trama.data);
+                    if (port != -1) {
+                        pthread_mutex_lock(&mtx);
+                        deleteNode(&flota, port);
+                        if (DEBUG_LIST) {
+                            write(1, "DELETED:\n", strlen("DELETED:\n"));
+                            printList(&flota);
+                        }
+                        pthread_mutex_unlock(&mtx);
+                        writeTrama(clientfd, 0x02, CONOKb, "");
+                    } else {
+                        writeTrama(clientfd, 0x02, CONKOb, "");
+                    }
                 } else {
                     writeTrama(clientfd, 0x02, CONKOb, "");
                 }
@@ -289,7 +315,6 @@ void gestionaEnterprise() {
 
                     if (e.nConnections == -1) {
                         writeTrama(clientfd, 0x07, UPDATEKO, "");
-                        break;
                     }
                     pthread_mutex_lock(&mtx);
                     updateNode(&flota, e);
@@ -304,8 +329,6 @@ void gestionaEnterprise() {
                 }
                 write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
                 writeTrama(clientfd, 0x07, UPDATEOK, "");
-                close(clientfd);
-                end = 1;
                 break;
             default:
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
@@ -313,7 +336,9 @@ void gestionaEnterprise() {
         }
         free(trama.data);
         trama.data = NULL;
+        close(clientfd);
     }
+
 
 }
 
