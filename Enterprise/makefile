@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -g
 LDFLAGS=-lpthread
-SOURCES=main.c io.c dades.c communication.c
+SOURCES=main.c list.c io.c dades.c communication.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=executable
 

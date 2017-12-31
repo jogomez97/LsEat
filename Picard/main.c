@@ -95,6 +95,7 @@ void alliberaMemoria() {
         free(comanda);
         free(bufferKB);
     }
+
 }
 
 /*******************************************************************************
@@ -119,10 +120,9 @@ void intHandler() {
         Trama t  = readTrama(sockfd, &error);
 
         if (error <= 0) {
-            write(1, ERROR_DATA, strlen(ERROR_DATA));
+            write(1, ERROR_DISCON_E, strlen(ERROR_DISCON_E));
             close(sockfd);
-        }
-        if (gestionaTrama(t, DSC_ENTERP)) {
+        } else if (gestionaTrama(t, DSC_ENTERP)) {
             write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
             close(sockfd);
         } else {

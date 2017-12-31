@@ -101,6 +101,7 @@ void gestionaPicard() {
             if (!isEmpty(&flota)) {
                 char* data = getEnterprise();
                 writeTrama(clientfdPicard, 0x01, ENT_INF, data);
+                free(data);
                 pthread_mutex_lock(&mtx);
                 sortFirstNode(&flota);
                 if (DEBUG_LIST) {
@@ -109,7 +110,7 @@ void gestionaPicard() {
                 }
                 pthread_mutex_unlock(&mtx);
             } else {
-                writeTrama(clientfdPicard, 0x01, CONKO, "");
+                writeTrama(clientfdPicard, 0x01, CONKOb, "");
             }
             write(1, DISCONNECTED_P, strlen(DISCONNECTED_P));
             break;
@@ -205,6 +206,10 @@ void connectEnterprise() {
         write(1, ERROR_BIND, strlen(ERROR_BIND));
         raise(SIGINT);
     }
+
+    //Com s'ha pogut engegar el servidor Enterprise, també podrem intentar engegar
+    //el de Picards
+    pthread_barrier_wait(&barrier);
 
     //Listen
     listen(sockfd, NCONN);

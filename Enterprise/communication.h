@@ -28,6 +28,7 @@
 
 // Llibreries pròpies
 #include "dades.h"
+#include "list.h"
 
 // Declaració de constants
 #define ERROR_BIND          "Error en fer el bind!\n"
@@ -60,6 +61,9 @@
 #define UPDATE              "[UPDATE]"
 #define UPDATEOK            "[UPDATEOK]"
 #define UPDATEKO            "[UPDATEKO]"
+#define SHW_MENU            "[SHW_MENU]\0"
+#define DISH                "[DISH]\0"
+#define END_MENU            "[END_MENU]\0"
 
 // Definició de tipus propis
 typedef struct {
@@ -73,7 +77,7 @@ typedef struct {
 extern Enterprise enterprise;
 extern int connectionFlag;
 extern pthread_mutex_t mtx;
-extern int* picardfds;
+extern List clients;
 
 /******************************************************************************/
 /************************ FUNCIONS CONNEXIÓ AMB DATA **************************/

@@ -55,7 +55,6 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
             return -1;
         }
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
 
         writeTrama(sockfd, 0x01, PIC_NAME, picard.nom);
 
@@ -74,9 +73,13 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
         error = gestionaTrama(t, DATA);
 
         if (error < 1) {
+            free(t.data);
+            t.data = NULL;
             close(sockfd);
             return -1;
         }
+        free(t.data);
+        t.data = NULL;
 
         return error;
     } else {
@@ -100,19 +103,22 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
             int error = inet_aton(e->ip, &s_addr.sin_addr);
 
+            free(e->ip);
+            free(e->nom);
+
             if (error < 0) {
                 write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
                 return -1;
-            };
+            }
 
             if (connect(sockfd, (struct sockaddr*) &s_addr, sizeof(s_addr)) < 0) {
                 write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
                 return -1;
             }
 
-            write(1, COMANDA_OK, strlen(COMANDA_OK));
-
-            writeTrama(sockfd, 0x01, PIC_INF, getPicardInfo(picard));
+            char* aux = getPicardInfo(picard);
+            writeTrama(sockfd, 0x01, PIC_INF, aux);
+            free(aux);
 
             t = readTrama(sockfd, &error);
 
@@ -124,8 +130,12 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 
             if (gestionaTrama(t, ENTERPRISE)) {
                 // Connexió correcta, retornem el fd associat al socket
+                free(t.data);
+                t.data = NULL;
                 return sockfd;
             }
+            free(t.data);
+            t.data = NULL;
 
             return -1;
         } else {
@@ -136,11 +146,78 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 }
 
 
-void show(int connectat) {
+/*******************************************************************************
+*
+* @Name     showDishFromTrama
+* @Purpose  Funció que mostrarà un plat per pantalla que li ha enviat enterprise
+* @Param    In: data  informació de la trama que ha enviat Enterprise
+*           Out: -
+* @return   Retorna 0 si la trama era correcta, -1 altrament
+*
+*******************************************************************************/
+int showDishFromTrama(char* data) {
 
+    char* name = strtok(data, "&");
+    char* price = strtok(NULL, "&");
+    char* stock = strtok(NULL, "");
+    if ((name != NULL) & (price != NULL) & (stock != NULL)) {
+        if (atoi(stock) > 0) {
+            char* line = (char*) malloc(strlen(name) + strlen(price) + strlen(".....(.euros)\n"));
+            sprintf(line, "· %s (%s euros)\n", name, price);
+            write(1, line, strlen(line));
+            free(line);
+            return 0;
+        }
+        return 0;
+    }
+
+    return -1;
+}
+
+
+void show() {
     if (connectat) {
         //Fem tot el pertinent per mostrar el menú
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
+        writeTrama(sockfd, M_MENU, SHW_MENU, "");
+
+        Trama trama;
+        int error;
+        write(1, MENU_DISP, strlen(MENU_DISP));
+        while (1) {
+            trama = readTrama(sockfd, &error);
+            if (error <= 0) {
+                //Aquí segurament gestionarem una nova connexió a un Enterprise
+                write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+                close(sockfd);
+                connectat = 0;
+                break;
+            } else {
+                if (trama.type == M_MENU) {
+                    if (strcmp(trama.header, DISH) == 0) {
+                        error = showDishFromTrama(trama.data);
+                        if (error < 0) {
+                            write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                            free(trama.data);
+                            trama.data = NULL;
+                            break;
+                        }
+                    } else {
+                        free(trama.data);
+                        trama.data = NULL;
+                        break;
+                    }
+                } else {
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    free(trama.data);
+                    trama.data = NULL;
+                    break;
+                }
+                free(trama.data);
+                trama.data = NULL;
+            }
+        }
+
+
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
@@ -201,9 +278,13 @@ void disconnect(int connectat, int sockfd) {
             close(sockfd);
         }
         if (gestionaTrama(t, DSC_ENTERP)) {
+            free(t.data);
+            t.data = NULL;
             write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
             close(sockfd);
         } else {
+            free(t.data);
+            t.data = NULL;
             write(1, ERROR_DISCON_E, strlen(ERROR_DISCON_E));
             close(sockfd);
         }
@@ -241,6 +322,10 @@ int gestionaTrama(Trama t, int mode) {
 
             return connectaServidor(0, picard, ENTERPRISE, &e);
         } else {
+            if (strcmp(t.header, CONKO) == 0) {
+                write(1, ERROR_NO_E_AVAIL, strlen(ERROR_NO_E_AVAIL));
+                return -1;
+            }
             write(1, ERROR_DATA, strlen(ERROR_DATA));
             return -1;
         }

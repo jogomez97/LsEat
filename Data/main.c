@@ -45,6 +45,7 @@ Data d;
 extern  List flota;
 pthread_t threadEnterprise;
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_barrier_t barrier;
 int sockfd;
 int clientfd;
 int sockfdPicard;
@@ -60,6 +61,8 @@ int main () {
     error = readFile(CONFIGFILE, &d);
     tramaPicard.data = NULL;
     trama.data = NULL;
+    //Ens serveix per esperar a que s'hagi creat el servidor d'enterprise correctament
+    pthread_barrier_init(&barrier, NULL, 2);
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal
         //acabar l'execució
@@ -70,7 +73,8 @@ int main () {
 
         //Server Enterprise
         creaThread();
-        //Server Picards
+        //Server Picards (ens esperem a que s'hagi engegat el server Enteprise)
+        pthread_barrier_wait(&barrier);
         int eServer = connectPicard();
 
         //Només s'executarà si no s'ha pogut crear el servidor de Picards
@@ -136,15 +140,9 @@ void intHandler() {
     write(1, "\n", sizeof(char));
 
     pthread_mutex_destroy(&mtx);
+    pthread_barrier_destroy(&barrier);
 
     //Matem el thread de Enterprise
-    /*
-    if (threadEnterprise > 0) {
-        pthread_cancel(threadEnterprise);
-        pthread_join(threadEnterprise, NULL);
-    }
-    */
-
 
     exit(0);
 }

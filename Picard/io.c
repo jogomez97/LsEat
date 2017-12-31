@@ -111,7 +111,7 @@ char* readKB() {
         read(1, &c, sizeof(char));
         if (c != '\n') {
             bufferKB[count] = c;
-            bufferKB = (char*) realloc(bufferKB, sizeof(char) * (count + 1));
+            bufferKB = (char*) realloc(bufferKB, sizeof(char) * (count + 2));
         }
         count++;
 
@@ -217,7 +217,6 @@ int gestionaShell() {
     printShell(picard.nom);
     comanda = readKB();
     stringToUpper(comanda);
-
     split = strtok(comanda, " ");
     if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
         if (!connectat) {

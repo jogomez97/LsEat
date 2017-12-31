@@ -25,6 +25,12 @@
 // Definició de tipus propis
 typedef struct {
     char*   nom;
+    int     quants;
+    int     preu;
+} Plat;
+
+typedef struct {
+    char*   nom;
     int     saldo;
     char*   ip;
     int     port;

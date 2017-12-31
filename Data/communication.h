@@ -72,6 +72,7 @@ extern List flota;
 extern Data d;
 extern pthread_t threadEnterprise;
 extern pthread_mutex_t mtx;
+extern pthread_barrier_t barrier;
 extern int sockfd;
 extern int clientfd;
 extern int sockfdPicard;

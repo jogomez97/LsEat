@@ -1,11 +1,11 @@
 /*******************************************************************************
 *
-* Practica Sistemes Operatius - LsEat - Package Data
+* Practica Sistemes Operatius - LsEat - Package Picard
 * Curs 2017-2018
 *
 * @File     list.h
-* @Purpose  Modul que conté la llista ordenada i les seves funcions per a implementar
-*           fàcilment el balancejador de càrrega.
+* @Purpose  Modul que conté la llista no ordenada i les seves funcions per a poder
+            gestionar els clients picard
 * @Author   Jordi Malé Carbonell  (jordi.male.2015)
 * @Author   Juan Gómez Gómez  (juan.gomez.2015)
 *
@@ -21,7 +21,6 @@
 #include <unistd.h>
 
 // Llibreries pròpies
-#include "data.h"
 
 // Declaració de constants
 #define ERROR_PRINT "Error en printar. La llista està buida!\n"
@@ -29,14 +28,21 @@
 
 // Definició de tipus propis
 typedef struct {
-    char* nom;
-    int   port;
-    char* ip;
-    int   nConnections;
-} Enterprise;
+    char*   nom;
+    int     quants;
+    int     preu;
+} Plat;
+
+typedef struct {
+    char*   nom;
+    int     fd;
+    int     compte;
+    int     nPlats;
+    Plat*   plats;
+} Picard;
 
 typedef struct node_t {
-    Enterprise  enterprise;
+    Picard      picard;
     struct      node_t* next;
     struct      node_t* pre;
 } Node;
@@ -62,41 +68,40 @@ List createList();
 * @Name     insertNode
 * @Purpose  Funció que afegirà un element a la llista
 * @Param    In:    l Llista on afegirem l'element
-*                  e Element a afegir (Enterprise)
+*                  p Element a afegir (Picard)
 *           Out: -
 * @return   Enter de control d'errors. 0 = success, -1 otherwise
 *
 *******************************************************************************/
-int insertNode(List* l, Enterprise e);
-
-/*******************************************************************************
-*
-* @Name     insertNodeSorted
-* @Purpose  Funció que afegirà un element a la llista de manera ordenada
-* @Param    In:    l Llista on afegirem l'element
-*                  e Element a afegir (Enterprise)
-*           Out: -
-* @return   Enter de control d'errors. 0 = success, -1 otherwise
-*
-*******************************************************************************/
-int insertNodeSorted(List* l, Enterprise e);
+int insertNode(List* l, Picard p);
 
 /*******************************************************************************
 *
 * @Name     deleteNode
 * @Purpose  Funció que elimina un element de la llista
 * @Param    In:    l    Llista on esborrarem l'element
-*                  int  Port de l'Element a eliminar (Enterprise)
+*                  fd   file descriptor de l'Element a eliminar (Picard)
 *           Out: -
 * @return   Enter de control d'errors. 0 = success, -1 otherwise
 *
 *******************************************************************************/
-int deleteNode(List* l, int port);
+int deleteNode(List* l, int fd);
+
+/*******************************************************************************
+*
+* @Name     freeNodeInfo
+* @Purpose  Funció que allibera tots els recursos d'un Picard
+* @Param    In:    Node* node del qual volem alliberar recursos
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void freeNodeInfo(Node* aux);
 
 /*******************************************************************************
 *
 * @Name     deleteFirstNode
-* @Purpose  Funció que elimina el primer element de la llista
+* @Purpose  Funció que elimina el primer element de la llista tot tancant el fd
 * @Param    In:    l Llista on esborrarem l'element
 *           Out: -
 * @return   Enter de control d'errors. 0 = success, -1 otherwise
@@ -140,63 +145,45 @@ void eraseList(List* l);
 /*******************************************************************************
 *
 * @Name     searchNode
-* @Purpose  Funció que busca una Enterprise a la llista
-* @Param    In:     l  Llista on buscar l'Enterprise
-*                   e  Enterprise a buscar
+* @Purpose  Funció que busca un Picard a la llista
+* @Param    In:     l  Llista on buscar l'Picard
+*                   fd file descriptor del Picard a trobar
 *           Out: -
 * @return   Retorna l'element de la llista en cas que el trobi
 *
 *******************************************************************************/
-Node* searchNode(List* l, Enterprise e);
-
-/*******************************************************************************
-*
-* @Name     searchBiggerNode
-* @Purpose  Funció que busca una Enterprise de la llista amb més connexions que
-*           una Enterprise concreta
-* @Param    In:     l  Llista on buscar l'Enterprise
-*                   e  Enterprise amb el que comparar el nombre de connexions
-*           Out: -
-* @return   Retorna una Enterprise amb més connexions que la donada, en cas que
-*           n'hi hagi
-*
-*******************************************************************************/
-Node* searchBiggerNode(List* l, Enterprise e);
+Node* searchNode(List* l, int fd);
 
 /*******************************************************************************
 *
 * @Name     checkFirstElement
-* @Purpose  Funció que retorna el primer element (Enterprise) de la llista, sempre
+* @Purpose  Funció que retorna el primer element (Picard) de la llista, sempre
 *           i quan aquesta no estigui buida.
 * @Param    In:     l  Llista on consultar l'Element
 *           Out: -
-* @return   Retorna el primer element (Enterprise) de la llista
+* @return   Retorna el primer element (Picard) de la llista
 *
 *******************************************************************************/
-Enterprise checkFirstElement(List* l);
+Picard checkFirstElement(List* l);
 
 /*******************************************************************************
 *
-* @Name     sortFirstNode
-* @Purpose  Funció que afegeix una connexió al primer Enterprise i el torna a inserir
-*           per a reordenar la llista
-* @Param    In:     l  Llista a modificar
+* @Name     checkLastElement
+* @Purpose  Funció que retorna el fd de l'ultim element (Picard) de la llista, sempre
+*           i quan aquesta no estigui buida.
+* @Param    In:     l  Llista on consultar l'Element
 *           Out: -
-* @return   Enter de control d'errors. 0 = success, -1 otherwise
+* @return   Retorna el fd l'ultim element (Picard) de la llista
 *
 *******************************************************************************/
-int sortFirstNode(List* l);
+int* checkLastElementFd(List* l);
 
-/*******************************************************************************
-*
-* @Name     sortFirstNode
-* @Purpose  Funció que actualitza la informació d'un Enterprise
-* @Param    In:     l  Llista on modificar l'Enterprise
-*                   e  Enterprise a actualitzar
-*           Out: -
-* @return   Enter de control d'errors. 0 = success, -1 otherwise
-*
-*******************************************************************************/
-int updateNode(List* l, Enterprise e);
+
+/******************************************************************************/
+/************************ FUNCIONS ACTUALITZACIÓ PICARD ***********************/
+/******************************************************************************/
+
+int addNameToElement(List* l, int fd, char* name);
+
 
 #endif

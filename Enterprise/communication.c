@@ -67,6 +67,7 @@ int desconnecta(int sockfd, int dead) {
         char* data = (char*) malloc(sizeof(int) + 1);
         sprintf(data, "%d", enterprise.portPicard);
         writeTrama(sockfd, 0x02, ENT_INF, data);
+        free(data);
 
         int read = 0;
 
@@ -290,28 +291,23 @@ void* engegaServidor(void* arg) {
 
     while (1) {
         write(1, WAITING, strlen(WAITING));
-        pthread_mutex_lock(&mtx);
-        if (enterprise.nConnections == 0) {
-            picardfds = (int*) malloc(sizeof(int));
-        } else {
-            picardfds = (int*) realloc(picardfds, sizeof(int) * (enterprise.nConnections + 1));
-        }
-        pthread_mutex_unlock(&mtx);
+
+
         int picardfd = accept(sockfd, (struct sockaddr*) &s_addr, &len);
         if (picardfd < 0) {
             write(1, ERROR_ACCEPT, strlen(ERROR_ACCEPT));
-            pthread_mutex_unlock(&mtx);
         } else {
-            pthread_mutex_lock(&mtx);
-            picardfds[enterprise.nConnections] = picardfd;
 
-            enterprise.nConnections++;
-
-            write(1, CONNECTED_P, strlen(CONNECTED_P));
-
+            Picard p = createPicard(picardfd);
             pthread_t id;
 
-            pthread_create(&id, NULL, threadPicard, &picardfds[enterprise.nConnections - 1]);
+            pthread_mutex_lock(&mtx);
+
+            enterprise.nConnections++;
+            insertNode(&clients, p);
+            int* fd = checkLastElementFd(&clients);
+            pthread_create(&id, NULL, threadPicard, fd);
+
             pthread_mutex_unlock(&mtx);
         }
     }
@@ -351,6 +347,13 @@ void * threadPicard(void * arg) {
                     writeTrama(*picardfd, 0x01, CONOKb, "");
 
                     char* nom = strtok(trama.data, "&");
+                    pthread_mutex_lock(&mtx);
+                    addNameToElement(&clients, *picardfd, nom);
+                    if (DEBUG_LIST) {
+                        write(1, "ADDED:\n", 7);
+                        printList(&clients);
+                    }
+                    pthread_mutex_unlock(&mtx);
                     int length = strlen(nom) + strlen("Connectat\n");
                     char* buff = (char*)malloc(sizeof(char) * length);
                     sprintf(buff, "Connectat %s\n", nom);
@@ -378,7 +381,28 @@ void * threadPicard(void * arg) {
                 close(*picardfd);
                 pthread_mutex_lock(&mtx);
                 enterprise.nConnections--;
+                deleteNode(&clients, *picardfd);
+                if (DEBUG_LIST) {
+                    write(1, "DELETED:\n", 9);
+                    printList(&clients);
+                }
                 pthread_mutex_unlock(&mtx);
+                break;
+            case 0x03:
+                if (strcmp(trama.header, SHW_MENU) == 0) {
+                    int i;
+                    char* aux;
+                    for (i = 0; i < menu.nPlats; i++) {
+                        aux = getDishInFormat(i);
+                        writeTrama(*picardfd, 0x03, DISH, aux);
+                        free(aux);
+                        aux = NULL;
+                    }
+                    writeTrama(*picardfd, 0x03, END_MENU, "");
+                } else {
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    break;
+                }
                 break;
             default:
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));

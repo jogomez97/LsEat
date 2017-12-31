@@ -22,6 +22,7 @@
 #include "io.h"
 #include "dades.h"
 #include "communication.h"
+#include "list.h"
 
 // Declaració de constants
 #define NPARAM          3
@@ -37,8 +38,11 @@ void alarmSignal();
 // Variables globals
 Enterprise enterprise;
 Menu menu;
+//Mutex d'acces a la llista i al nombre de Picards connectats
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
-int* picardfds;
+//Mutex d'acces al menu
+pthread_mutex_t mtxMenu = PTHREAD_MUTEX_INITIALIZER;
+List clients;
 
 int main(int argc, char const *argv[]) {
 
@@ -50,6 +54,7 @@ int main(int argc, char const *argv[]) {
         int error;
 
         error = readConfig((char*)argv[1], &enterprise);
+        clients = createList();
         enterprise.nConnections = 0;
 
         if (error) {
@@ -112,7 +117,6 @@ void alliberaMemoria() {
     free(enterprise.ipData);
     free(enterprise.ipPicard);
 
-    free(picardfds);
 
 }
 
@@ -137,9 +141,13 @@ void intHandler() {
 
     alliberaMemoria();
 
-    //També s'han de tancar totes les connexions de Picar existents (Fase més endavant)
+
+
+    //Abans d'eliminar s'ha d'enviar la informació dels Picards (fase 5)
+    eraseList(&clients);
 
     pthread_mutex_destroy(&mtx);
+    pthread_mutex_destroy(&mtxMenu);
 
     write(1, "\n", sizeof(char));
     exit(0);

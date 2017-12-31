@@ -32,21 +32,29 @@
 #include "utils.h"
 
 // Declaració de constants
-#define ERROR_CONNECT   "Error de connexió amb el servidor.\n"
-#define ERROR_SOCK      "Error en crear el socket.\n"
-#define CONNECTED_D     "[PICARD] Connexió establerta amb Data\n"
-#define DISCONNECTED_D  "[PICARD] Desconnexió amb data\n"
-#define CONNECTED_E     "[PICARD] Connexió establerta amb Enterprise\n"
-#define DISCONNECTED_E  "[PICARD] Desconnexió amb enterprise\n"
-#define ERROR_DISCON_E  "[PICARD] Error en la desconnexió amb Enterprise\n"
-#define ERROR_DATA      "[PICARD] Error amb la connexió amb Data\n"
-#define ERROR_ESTABLISHED "[PICARD] Connexió amb Enterprise ja realitzada!\n"
+#define ERROR_CONNECT       "Error de connexió amb el servidor.\n"
+#define ERROR_SOCK          "Error en crear el socket.\n"
+#define ERROR_TRAMA         "Error en la trama!\n"
+#define CONNECTED_D         "[PICARD] Connexió establerta amb Data\n"
+#define DISCONNECTED_D      "[PICARD] Desconnexió amb data\n"
+#define CONNECTED_E         "[PICARD] Connexió establerta amb Enterprise\n"
+#define DISCONNECTED_E      "[PICARD] Desconnexió amb Enterprise\n"
+#define ERROR_DISCON_E      "[PICARD] Error en la desconnexió amb Enterprise\n"
+#define ERROR_DATA          "[PICARD] Error amb la connexió amb Data\n"
+#define ERROR_ESTABLISHED   "[PICARD] Connexió amb Enterprise ja realitzada!\n"
+#define ERROR_E_DOWN        "[PICARD] Error! Enterprise ha caigut\n"
+#define ERROR_NO_E_AVAIL    "[PICARD] Error! No hi ha cap Enterprise disponible\n"
+#define MENU_DISP           "**** MENU DISPONIBLE ****\n"
 
 #define PIC_NAME    "[PIC_NAME]\0"
 #define PIC_INF     "[PIC_INF]\0"
 #define ENT_INF     "[ENT_INF]\0"
 #define CONOK       "[CONOK]\0"
 #define CONKO       "[CONKO]\0"
+#define SHW_MENU    "[SHW_MENU]\0"
+#define DISH        "[DISH]\0"
+#define END_MENU    "[END_MENU]\0"
+#define M_MENU      3
 #define DSC_ENTERP  2
 #define DATA        1
 #define ENTERPRISE  0
@@ -79,7 +87,18 @@ extern int   sockfd;
 *******************************************************************************/
 int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e);
 
-void show(int connectat);
+/*******************************************************************************
+*
+* @Name     showDishFromTrama
+* @Purpose  Funció que mostrarà un plat per pantalla que li ha enviat enterprise
+* @Param    In: data  informació de la trama que ha enviat Enterprise
+*           Out: -
+* @return   Retorna 0 si la trama era correcta, -1 altrament
+*
+*******************************************************************************/
+int showDishFromTrama(char* data);
+
+void show();
 
 void order(int connectat);
 
