@@ -31,3 +31,12 @@ char* getPicardInfo(Picard picard) {
     sprintf(buffer, "%s&%d", picard.nom, picard.saldo);
     return buffer;
 }
+
+
+char* getInfoComanda(char* plat, char* units) {
+    int length = strlen(plat) + strlen(units) + sizeof(char);
+    // S'haura de alliberar somewhere
+    char* buffer = (char*)malloc(sizeof(char) * length);
+    sprintf(buffer, "%s&%s", plat, units);
+    return buffer;
+}

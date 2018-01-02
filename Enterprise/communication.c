@@ -14,6 +14,16 @@
 // Llibreries pròpies
 #include "communication.h"
 
+
+void stringToUpper(char* string) {
+    int i;
+    int fi = strlen(string);
+
+    for (i = 0; i < fi; i++) {
+        string[i] = toupper(string[i]);
+    }
+}
+
 /******************************************************************************/
 /************************ FUNCIONS CONNEXIÓ AMB DATA **************************/
 /******************************************************************************/
@@ -399,6 +409,61 @@ void * threadPicard(void * arg) {
                         aux = NULL;
                     }
                     writeTrama(*picardfd, 0x03, END_MENU, "");
+                } else {
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    break;
+                }
+                break;
+            case 0x04:
+                if (strcmp(trama.header, NEW_ORD) == 0) {
+                    int error = 1;
+                    int i;
+                    int quants;
+                    char* nom = strtok(trama.data, "&");
+                    for (i = 0; i < menu.nPlats; i++) {
+                        char* aux = (char*)malloc(strlen(menu.plats[i].nom));
+                        strcpy(aux, menu.plats[i].nom);
+                        stringToUpper(aux);
+                        if (strcmp(aux, nom) == 0) {
+                            nom = strtok(NULL, "");
+                            quants = atoi(nom);
+                            pthread_mutex_lock(&mtxMenu);
+                            if (menu.plats[i].quants >= quants) {
+                                // APUNTAR AQUÍ LA RESERVA
+
+                                menu.plats[i].quants = menu.plats[i].quants - quants;
+
+                                pthread_mutex_unlock(&mtxMenu);
+                                writeTrama(*picardfd, 0x04, ORDOK, "");
+                                error = 0;
+                                break;
+                            } else {
+                                pthread_mutex_unlock(&mtxMenu);
+                                error = 2;
+                                break;
+                            }
+                        }
+                        free(aux);
+                    }
+                    if (error == 1) {
+
+                        writeTrama(*picardfd, 0x04, ORDKO, "");
+                    } else if (error == 2) {
+    
+                        writeTrama(*picardfd, 0x04, ORDKO2, "");
+                    }
+                    break;
+                } else {
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                    break;
+                }
+                break;
+            case 0x05:
+                if (strcmp(trama.header, DEL_ORD) == 0) {
+                    /**
+                        BORRAR
+                    */
+                    writeTrama(*picardfd, 0x05, ORDOK, "");
                 } else {
                     write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                     break;

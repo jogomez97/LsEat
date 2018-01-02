@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <ctype.h>
 
 // Llibreries pròpies
 #include "dades.h"
@@ -64,6 +65,11 @@
 #define SHW_MENU            "[SHW_MENU]\0"
 #define DISH                "[DISH]\0"
 #define END_MENU            "[END_MENU]\0"
+#define NEW_ORD             "[NEW_ORD]\0"
+#define ORDOK               "[ORDOK]\0"
+#define ORDKO               "[ORDKO]\0"
+#define ORDKO2              "[ORDKO2]\0"
+#define DEL_ORD             "[DEL_ORD]\0"
 
 // Definició de tipus propis
 typedef struct {
@@ -77,6 +83,7 @@ typedef struct {
 extern Enterprise enterprise;
 extern int connectionFlag;
 extern pthread_mutex_t mtx;
+extern pthread_mutex_t mtxMenu;
 extern List clients;
 
 /******************************************************************************/

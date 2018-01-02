@@ -45,6 +45,10 @@
 #define ERROR_E_DOWN        "[PICARD] Error! Enterprise ha caigut\n"
 #define ERROR_NO_E_AVAIL    "[PICARD] Error! No hi ha cap Enterprise disponible\n"
 #define MENU_DISP           "**** MENU DISPONIBLE ****\n"
+#define ORD_CORRECT         "Rebut. S'ha reservat la seva comanda\n"
+#define ORD_INCORRECT       "Error! No és possible servir aquesta comanda\n"
+#define ORD_KO              "El plat demanat no es troba dins del Menu\n"
+#define ORD_KO2             "No queden suficients unitats per abastir la comanda\n"
 
 #define PIC_NAME    "[PIC_NAME]\0"
 #define PIC_INF     "[PIC_INF]\0"
@@ -54,6 +58,13 @@
 #define SHW_MENU    "[SHW_MENU]\0"
 #define DISH        "[DISH]\0"
 #define END_MENU    "[END_MENU]\0"
+#define ORDOK       "[ORDOK]\0"
+#define ORDKO       "[ORDKO]\0"
+#define ORDKO2      "[ORDKO2]\0"
+#define NEW_ORD     "[NEW_ORD]\0"
+#define NEL_ORD     "[NEW_ORD]\0"
+#define ELIMINA     5
+#define DEMANA      4
 #define M_MENU      3
 #define DSC_ENTERP  2
 #define DATA        1
@@ -100,7 +111,7 @@ int showDishFromTrama(char* data);
 
 void show();
 
-void order(int connectat);
+void order(char* plat, char* units);
 
 void delete(int connectat);
 

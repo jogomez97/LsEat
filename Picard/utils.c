@@ -29,5 +29,4 @@ void stringToUpper(char* string) {
     for (i = 0; i < fi; i++) {
         string[i] = toupper(string[i]);
     }
-
 }

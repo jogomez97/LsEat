@@ -232,7 +232,7 @@ int gestionaShell() {
         split = strtok(NULL, " ");
         if (split != NULL && strtok(NULL, " ") == NULL) {
             if (strcmp(split, MENU) == 0) {
-                show(connectat);
+                show();
             } else {
                 write(1, ERROR_COMAND, strlen(ERROR_COMAND));
             }
@@ -245,7 +245,7 @@ int gestionaShell() {
         if (num != NULL && plat != NULL) {
             quantitat = atoi(num);
             if (quantitat > 0) {
-                order(connectat);
+                order(plat, num);
             } else {
                 write(1, ERROR_COMAND, strlen(ERROR_COMAND));
             }

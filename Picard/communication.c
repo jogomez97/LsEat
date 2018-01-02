@@ -157,7 +157,7 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
 *******************************************************************************/
 int showDishFromTrama(char* data) {
 
-    char* name = strtok(data, "&");
+    char* name  =  strtok(data, "&");
     char* price = strtok(NULL, "&");
     char* stock = strtok(NULL, "");
     if ((name != NULL) & (price != NULL) & (stock != NULL)) {
@@ -170,7 +170,6 @@ int showDishFromTrama(char* data) {
         }
         return 0;
     }
-
     return -1;
 }
 
@@ -216,19 +215,30 @@ void show() {
                 trama.data = NULL;
             }
         }
-
-
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
 
 }
 
-void order(int connectat) {
-
+void order(char* plat, char* units) {
     if (connectat) {
-        //Fem tot el pertinent per fer una comanda
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
+        writeTrama(sockfd, DEMANA, NEW_ORD, getInfoComanda(plat, units));
+        int error;
+        Trama trama = readTrama(sockfd, &error);
+        if (error <= 0) {
+            // Error
+        } else {
+            if (strcmp(trama.header, ORDOK) == 0) {
+                write(1, ORD_CORRECT, strlen(ORD_CORRECT));
+            } else if (strcmp(trama.header, ORDKO) == 0) {
+                write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
+                write(1, ORD_KO, strlen(ORD_KO));
+            } else if (strcmp(trama.header, ORDKO2) == 0) {
+                write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
+                write(1, ORD_KO2, strlen(ORD_KO2));
+            }
+        }
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
@@ -414,7 +424,6 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
             buffer2[i] = '\0';
         }
     }
-
     write(clientfd, buffer2, length);
     free(buffer2);
 }

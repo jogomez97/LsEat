@@ -54,4 +54,6 @@ typedef struct {
 *******************************************************************************/
 char* getPicardInfo(Picard picard);
 
+char* getInfoComanda(char* plat, char* units);
+
 #endif
