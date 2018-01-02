@@ -379,8 +379,9 @@ Trama readTrama(int clientfd, int* error) {
 
     tramaRead.length = (uint16_t)atoi(aux);
 
-    tramaRead.data = (char*) malloc(sizeof(char) * tramaRead.length);
-    read(clientfd, tramaRead.data, sizeof(char) * tramaRead.length);
+    trama.data = (char*) malloc(sizeof(char) * trama.length + 1);
+    read(clientfd, trama.data, sizeof(char) * trama.length);
+    trama.data[trama.length] = '\0';
 
 
     return tramaRead;
