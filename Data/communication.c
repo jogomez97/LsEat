@@ -101,7 +101,8 @@ void gestionaPicard() {
             if (!isEmpty(&flota)) {
                 char* data = getEnterprise();
                 writeTrama(clientfdPicard, 0x01, ENT_INF, data);
-                free(data);
+                //free(data);
+                //data = NULL;
                 pthread_mutex_lock(&mtx);
                 sortFirstNode(&flota);
                 if (DEBUG_LIST) {

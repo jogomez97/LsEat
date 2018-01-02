@@ -226,16 +226,16 @@ void printList(List* l) {
         write(1, ERROR_PRINT, strlen(ERROR_PRINT));
     } else {
         int i = 1;
-        char buff[10];
+        char buff[100];
         Node *aux = l->first;
 
         while (aux != l->last){
-            sprintf(buff, "(%d)%d-", aux->enterprise.port, aux->enterprise.nConnections);
+            sprintf(buff, "(%d)%d(%s.%s)-", aux->enterprise.port, aux->enterprise.nConnections,  aux->enterprise.nom, aux->enterprise.ip);
             write(1, buff, strlen(buff));
             aux = aux->next;
             i++;
         }
-        sprintf(buff, "(%d)%d\n", aux->enterprise.port, aux->enterprise.nConnections);
+        sprintf(buff, "(%d)%d(%s.%s)\n", aux->enterprise.port, aux->enterprise.nConnections, aux->enterprise.nom, aux->enterprise.ip);
         write(1, buff, strlen(buff));
     }
 
