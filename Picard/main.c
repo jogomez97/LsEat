@@ -23,8 +23,6 @@
 #include "communication.h"
 #include "utils.h"
 
-// Declaració de constants
-#define DSC_ENTERP  2
 
 // Headers de funcions
 void alliberaMemoria();
@@ -53,6 +51,7 @@ int main(int argc, char const *argv[]) {
             return EXIT_FAILURE;
         } else {
             signal(SIGINT, intHandler);
+            signal(SIGTERM, intHandler);
             //Printar informació de benvinguda
             printWelcome();
             printMoney();

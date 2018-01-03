@@ -47,6 +47,7 @@ int gestionaFlota(char* data) {
         pthread_mutex_unlock(&mtx);
         return 0;
     }
+
     return -1;
 }
 

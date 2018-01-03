@@ -69,6 +69,7 @@ int main () {
         return EXIT_FAILURE;
     } else {
         signal(SIGINT, intHandler);
+        signal(SIGTERM, intHandler);
         threadEnterprise = 0;
 
         //Server Enterprise

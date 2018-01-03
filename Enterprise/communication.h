@@ -49,6 +49,8 @@
 #define CONNECTED_P         "[ENTERPRISE] Connexió establerta amb Picard\n"
 #define DISCONNECTED_P      "[ENTERPRISE] Desconnexió de Picard\n"
 #define WAITING             "Esperant clients...\n"
+#define SENDING_MENU        "Enviant Menu...\n"
+#define SENT_MENU           "Menu enviat\n"
 
 #define NEW_CONN            1
 
@@ -69,7 +71,11 @@
 #define ORDOK               "[ORDOK]\0"
 #define ORDKO               "[ORDKO]\0"
 #define ORDKO2              "[ORDKO2]\0"
+#define ORDKO3              "[ORDKO3]\0"
 #define DEL_ORD             "[DEL_ORD]\0"
+#define PAY_C               "[PAY]\0"
+#define PAYOK               "[PAYOK]\0"
+#define PAYKO               "[PAYKO]\0"
 
 // Definició de tipus propis
 typedef struct {
@@ -171,6 +177,17 @@ void* engegaServidor(void* arg);
 *
 *******************************************************************************/
 void* threadPicard(void * arg);
+
+/*******************************************************************************
+*
+* @Name     getPlatFromTrama
+* @Purpose  Funció que retornarà un plat a partir de dades d'una trama
+* @Param    In:  data       dades de la trama
+*           Out: -
+* @return   Retorna el plat amb les dades de la trama
+*
+*******************************************************************************/
+Plat getPlatFromTrama(char* data);
 
 /******************************************************************************/
 /**************************** FUNCIONS GENÈRIQUES *****************************/

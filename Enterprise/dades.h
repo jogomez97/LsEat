@@ -13,6 +13,11 @@
 #ifndef   _DADES_H_
 #define   _DADES_H_
 
+// Llibreries del sistema
+#include <string.h>
+#include <ctype.h>
+#include <pthread.h>
+
 // Llibreries pròpies
 #include "list.h"
 
@@ -34,6 +39,9 @@ typedef struct {
 
 // Variables globals externes
 extern Menu menu;
+extern pthread_mutex_t mtx;
+extern pthread_mutex_t mtxMenu;
+extern List clients;
 
 /*******************************************************************************
 *
@@ -56,5 +64,29 @@ Picard createPicard(int fd);
 *
 *******************************************************************************/
 char* getDishInFormat(int i);
+
+/*******************************************************************************
+*
+* @Name     stringToUpper
+* @Purpose  Funció que passa una String a majúscules
+* @Param    In:  string Cadena de caràcters a passar a majúscules
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void stringToUpper(char* string);
+
+/*******************************************************************************
+*
+* @Name     reestableixMenu
+* @Purpose  Funció que torna al menú totes les unitats que un Picard no ha comprat
+* @Param    In:     fd      file descriptor propi del Picard
+*           Out:    -
+* @return   -
+*
+*******************************************************************************/
+void reestableixMenu(int fd);
+
+void mostraMenu();
 
 #endif

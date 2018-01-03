@@ -31,6 +31,7 @@
 #define INTRO_COMAND    "Introdueixi comandes...\n"
 #define DIS_MSG         "Gràcies per fer servir LsEat. Fins la propera.\n"
 #define ERROR_COMAND    "Comanda no reconeguda\n"
+#define ERROR_DEMANA    "Error! No pots demanar un nombre negatiu de plats.\n"
 #define ERROR_CONN      "Error! Ja estàs connectat.\n"
 #define ERROR_NCONN     "Error! No t'has connectat.\n"
 
@@ -138,6 +139,16 @@ void printMoney();
 *******************************************************************************/
 void printShell();
 
+/*******************************************************************************
+*
+* @Name     printBill
+* @Purpose  Funció que mostrarà per pantalla el total a pagar
+* @Param    In:  money  total a pagar
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void printBill(int money);
 
 /*******************************************************************************
 *

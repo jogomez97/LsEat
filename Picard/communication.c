@@ -228,6 +228,9 @@ void order(char* plat, char* units) {
         Trama trama = readTrama(sockfd, &error);
         if (error <= 0) {
             // Error
+            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+            close(sockfd);
+            connectat = 0;
         } else {
             if (strcmp(trama.header, ORDOK) == 0) {
                 write(1, ORD_CORRECT, strlen(ORD_CORRECT));
@@ -237,6 +240,11 @@ void order(char* plat, char* units) {
             } else if (strcmp(trama.header, ORDKO2) == 0) {
                 write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
                 write(1, ORD_KO2, strlen(ORD_KO2));
+            } else if (strcmp(trama.header, ORDKO3) == 0) {
+                write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
+                write(1, ORD_KO3, strlen(ORD_KO3));
+            } else {
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             }
         }
     } else {
@@ -244,22 +252,65 @@ void order(char* plat, char* units) {
     }
 }
 
-void delete(int connectat) {
+void delete(char* plat, char* units) {
 
     if (connectat) {
-        //Fem tot el pertinent esborrar una comanda
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
+        writeTrama(sockfd, ELIMINA, DEL_ORD, getInfoComanda(plat, units));
+        int error;
+        Trama trama = readTrama(sockfd, &error);
+        if (error <= 0) {
+            // Error
+            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+            close(sockfd);
+            connectat = 0;
+        } else {
+            if (strcmp(trama.header, ORDOK) == 0) {
+                write(1, DEL_CORRECT, strlen(DEL_CORRECT));
+            } else if (strcmp(trama.header, ORDKO) == 0) {
+                write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
+                write(1, DEL_KO, strlen(DEL_KO));
+            } else if (strcmp(trama.header, ORDKO2) == 0) {
+                write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
+                write(1, DEL_KO2, strlen(DEL_KO2));
+            } else {
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+            }
+        }
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
 
 }
 
-void pay(int connectat) {
+void pay() {
 
     if (connectat) {
         //Fem tot el pertinent per a pagar
-        write(1, COMANDA_OK, strlen(COMANDA_OK));
+
+        writeTrama(sockfd, PAGAR, PAY_C, "");
+        int error;
+        Trama trama = readTrama(sockfd, &error);
+        if (error <= 0) {
+            // Error
+            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+            close(sockfd);
+            connectat = 0;
+        } else {
+            if (strcmp(trama.header, PAYOK) == 0) {
+                char* p = strtok(trama.data, "");
+                if (p != NULL) {
+                    int compte = atoi(p);
+                    picard.saldo -= compte;
+                    printBill(compte);
+                } else {
+                    write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+                }
+            } else if (strcmp(trama.header, PAYKO) == 0) {
+                write(1, PAY_KO, strlen(PAY_KO));
+            } else {
+                write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
+            }
+        }
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }

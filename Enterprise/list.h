@@ -24,7 +24,9 @@
 
 // Declaració de constants
 #define ERROR_PRINT "Error en printar. La llista està buida!\n"
+#define NO_DISHES   "Aquest Picard no té cap plat reservat\n"
 #define DEBUG_LIST  0
+#define DEBUG_LIST2 0
 
 // Definició de tipus propis
 typedef struct {
@@ -36,6 +38,7 @@ typedef struct {
 typedef struct {
     char*   nom;
     int     fd;
+    int     targeta;
     int     compte;
     int     nPlats;
     Plat*   plats;
@@ -51,6 +54,11 @@ typedef struct {
     Node*   last;
     Node*   first;
 } List;
+
+typedef struct {
+    int   nPlats;
+    Plat* plats;
+} Plats;
 
 /*******************************************************************************
 *
@@ -183,7 +191,93 @@ int* checkLastElementFd(List* l);
 /************************ FUNCIONS ACTUALITZACIÓ PICARD ***********************/
 /******************************************************************************/
 
-int addNameToElement(List* l, int fd, char* name);
+/*******************************************************************************
+*
+* @Name     addNameToElement
+* @Purpose  Funció que afegirà el nom a l'element que coincideixi amb el fd
+* @Param    In:     l       Llista on consultar l'Element
+                    fd      file descriptor propi de l'Element (Picard)
+                    name    nom que volem atribuir a l'Element
+                    money   diners al compte bancari que té un Element
+*           Out:    int en control d'errors
+* @return   Retorna el fd l'ultim element (Picard) de la llista
+*
+*******************************************************************************/
+int addNameToElement(List* l, int fd, char* name, int money);
 
+/*******************************************************************************
+*
+* @Name     addDishToElement
+* @Purpose  Funció que afegirà el plat a l'element que coincideixi amb el fd
+* @Param    In:     l       Llista on consultar l'Element
+                    fd      file descriptor propi de l'Element (Picard)
+                    p       Plat que volem afegir a la reserva de l'Element
+*           Out:    -
+* @return   retorna un int en control d'errors (-1), 0 si tot va bé
+*
+*******************************************************************************/
+int addDishToElement(List* l, int fd, Plat p);
+
+/*******************************************************************************
+*
+* @Name     removeDishFromElement
+* @Purpose  Funció que eliminara el plat a l'element que coincideixi amb el fd
+* @Param    In:     l       Llista on consultar l'Element
+                    fd      file descriptor propi de l'Element (Picard)
+                    p       Plat que volem eliminar de la reserva de l'Element
+*           Out:    -
+* @return   retorna 0 si s'ha pogut eliminar el plat correctament, -1 altrament
+*
+*******************************************************************************/
+int removeDishFromElement(List* l, int fd, Plat p);
+
+/*******************************************************************************
+*
+* @Name     searchForDish
+* @Purpose  Funció que consultarà si un plat ja s'havia demanat amb anterioritat
+* @Param    In:     aux     punter a l'element on volem consultar el plat
+                    name    nom del plat amb el que volem comparar
+*           Out:    -
+* @return   retorna -1 si el plat no es troba encara reservat, 0 altrament
+*
+*******************************************************************************/
+int searchForDish(Node* aux, char* name);
+
+/*******************************************************************************
+*
+* @Name     payToAccount
+* @Purpose  Funció que cobra l'import dels plats i elimina la reserva
+* @Param    In:     l       Llista on consultar l'Element
+                    fd      file descriptor propi de l'Element (Picard)
+*           Out:    -
+* @return   retorna l'import si s'ha pogut pagar, -1 altrament
+*
+*******************************************************************************/
+int payToAccount(List* l, int fd);
+
+/*******************************************************************************
+*
+* @Name     getDishInfo
+* @Purpose  Funció que retorna la informació de tots els plats que ha demanat un
+*           Picard
+* @Param    In:     l       Llista on consultar l'Element
+                    fd      file descriptor propi de l'Element (Picard)
+*           Out:    -
+* @return   retorna l'struct amb la informació dels plats
+*
+*******************************************************************************/
+Plats getDishInfo(List* l, int fd);
+
+/*******************************************************************************
+*
+* @Name     printDishes
+* @Purpose  Funció pinta tots els plats reservats d'un picard
+* @Param    In:     l       Llista on consultar l'Element
+                    fd      file descriptor propi de l'Element (Picard)
+*           Out:    -
+* @return   retorna -1 si hi ha algun error, 0 altrament
+*
+*******************************************************************************/
+int printDishes(List* l, int fd);
 
 #endif

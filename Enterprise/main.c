@@ -51,6 +51,7 @@ int main(int argc, char const *argv[]) {
         return EXIT_FAILURE;
     } else {
         signal(SIGINT, intHandler);
+        signal(SIGTERM, intHandler);
         int error;
 
         error = readConfig((char*)argv[1], &enterprise);

@@ -36,7 +36,7 @@
 #define ERROR_SOCK          "Error en crear el socket.\n"
 #define ERROR_TRAMA         "Error en la trama!\n"
 #define CONNECTED_D         "[PICARD] Connexió establerta amb Data\n"
-#define DISCONNECTED_D      "[PICARD] Desconnexió amb data\n"
+#define DISCONNECTED_D      "[PICARD] Desconnexió de Data\n"
 #define CONNECTED_E         "[PICARD] Connexió establerta amb Enterprise\n"
 #define DISCONNECTED_E      "[PICARD] Desconnexió amb Enterprise\n"
 #define ERROR_DISCON_E      "[PICARD] Error en la desconnexió amb Enterprise\n"
@@ -49,6 +49,11 @@
 #define ORD_INCORRECT       "Error! No és possible servir aquesta comanda\n"
 #define ORD_KO              "El plat demanat no es troba dins del Menu\n"
 #define ORD_KO2             "No queden suficients unitats per abastir la comanda\n"
+#define ORD_KO3             "No pots demanar un nombre negatiu de plats.\n"
+#define DEL_CORRECT         "OK! Anotat el canvi en la comanda\n"
+#define DEL_KO              "El plat no havia estat reservat\n"
+#define DEL_KO2             "No s'havien reservat tantes unitats d'aquest plat\n"
+#define PAY_KO              "Error en processar el pagament\n"
 
 #define PIC_NAME    "[PIC_NAME]\0"
 #define PIC_INF     "[PIC_INF]\0"
@@ -61,11 +66,17 @@
 #define ORDOK       "[ORDOK]\0"
 #define ORDKO       "[ORDKO]\0"
 #define ORDKO2      "[ORDKO2]\0"
+#define ORDKO3      "[ORDKO3]\0"
 #define NEW_ORD     "[NEW_ORD]\0"
-#define NEL_ORD     "[NEW_ORD]\0"
-#define ELIMINA     5
-#define DEMANA      4
-#define M_MENU      3
+#define DEL_ORD     "[DEL_ORD]\0"
+#define PAY_C       "[PAY]\0"
+#define PAYOK       "[PAYOK]\0"
+#define PAYKO       "[PAYKO]\0"
+
+#define PAGAR       0x06
+#define ELIMINA     0x05
+#define DEMANA      0x04
+#define M_MENU      0x03
 #define DSC_ENTERP  2
 #define DATA        1
 #define ENTERPRISE  0
@@ -113,9 +124,9 @@ void show();
 
 void order(char* plat, char* units);
 
-void delete(int connectat);
+void delete(char* plat, char* units);
 
-void pay(int connectat);
+void pay();
 
 /*******************************************************************************
 *

@@ -49,3 +49,70 @@ char* getDishInFormat(int i) {
     sprintf(data, "%s&%d&%d", p.nom, p.preu, p.quants);
     return data;
 }
+
+/*******************************************************************************
+*
+* @Name     stringToUpper
+* @Purpose  Funció que passa una String a majúscules
+* @Param    In:  string Cadena de caràcters a passar a majúscules
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void stringToUpper(char* string) {
+    int i;
+    int fi = strlen(string);
+
+    for (i = 0; i < fi; i++) {
+        string[i] = toupper(string[i]);
+    }
+}
+
+/*******************************************************************************
+*
+* @Name     reestableixMenu
+* @Purpose  Funció que torna al menú totes les unitats que un Picard no ha comprat
+* @Param    In:     fd      file descriptor propi del Picard
+*           Out:    -
+* @return   -
+*
+*******************************************************************************/
+void reestableixMenu(int fd) {
+    int i, j;
+
+    Plats p = getDishInfo(&clients, fd);
+    Plat* plats = p.plats;
+    if (p.nPlats != 0) {
+        for (i = 0; i < p.nPlats; i++) {
+            for (j = 0; j < menu.nPlats; j++) {
+                char* aux = strdup(menu.plats[j].nom);
+                stringToUpper(aux);
+                if (strcmp(plats[i].nom, aux) == 0) {
+                    pthread_mutex_lock(&mtxMenu);
+                    menu.plats[j].quants += plats[i].quants;
+                    pthread_mutex_unlock(&mtxMenu);
+                    free(aux);
+                    aux = NULL;
+                    break;
+                }
+                free(aux);
+                aux = NULL;
+            }
+        }
+    }
+
+}
+
+void mostraMenu() {
+    int i;
+    char b[100];
+    write(1, "**** MENU ****\n", strlen("**** MENU ****\n"));
+    pthread_mutex_lock(&mtxMenu);
+    for (i = 0; i < menu.nPlats; i++) {
+        sprintf(b, "· %s (%d€) (%d u)\n", menu.plats[i].nom, menu.plats[i].preu, menu.plats[i].quants);
+        write(1, b, strlen(b));
+    }
+    pthread_mutex_unlock(&mtxMenu);
+    write(1, "\n", 1);
+
+}

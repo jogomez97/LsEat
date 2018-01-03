@@ -192,9 +192,27 @@ void printMoney() {
 *******************************************************************************/
 void printShell() {
     int mida = strlen(picard.nom) + 2;
-    char buffer[mida];
+    char* buffer = (char*) malloc(mida);
     sprintf(buffer, "%s> ", picard.nom);
     write(1, buffer, strlen(buffer));
+    free(buffer);
+}
+
+/*******************************************************************************
+*
+* @Name     printBill
+* @Purpose  Funció que mostrarà per pantalla el total a pagar
+* @Param    In:  money  total a pagar
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void printBill(int money) {
+    int mida = strlen("Son euros. Carregat en el seu compte. \n") + sizeof(int);
+    char* buffer = (char*) malloc(mida);
+    sprintf(buffer, "Son %d euros. Carregat en el seu compte.\n", money);
+    write(1, buffer, strlen(buffer));
+    free(buffer);
 }
 
 
@@ -246,8 +264,10 @@ int gestionaShell() {
             quantitat = atoi(num);
             if (quantitat > 0) {
                 order(plat, num);
-            } else {
+            } else if (quantitat == 0) {
                 write(1, ERROR_COMAND, strlen(ERROR_COMAND));
+            } else {
+                write(1, ERROR_DEMANA, strlen(ERROR_DEMANA));
             }
         } else {
             write(1, ERROR_COMAND, strlen(ERROR_COMAND));
@@ -258,7 +278,7 @@ int gestionaShell() {
         if (num != NULL && plat != NULL) {
             quantitat = atoi(num);
             if (quantitat > 0) {
-                delete(connectat);
+                delete(plat, num);
             } else {
                 write(1, ERROR_COMAND, strlen(ERROR_COMAND));
             }
@@ -266,7 +286,7 @@ int gestionaShell() {
             write(1, ERROR_COMAND, strlen(ERROR_COMAND));
         }
     } else if (strcmp(PAY, split) == 0 && strtok(NULL, " ") == NULL) {
-        pay(connectat);
+        pay();
     } else if (strcmp(DISCONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
         disconnect(connectat, sockfd);
         return 1;
