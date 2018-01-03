@@ -101,8 +101,8 @@ void gestionaPicard() {
             if (!isEmpty(&flota)) {
                 char* data = getEnterprise();
                 writeTrama(clientfdPicard, 0x01, ENT_INF, data);
-                //free(data);
-                //data = NULL;
+                free(data);
+                data = NULL;
                 pthread_mutex_lock(&mtx);
                 sortFirstNode(&flota);
                 if (DEBUG_LIST) {
@@ -415,8 +415,8 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     length = sizeof(tramaWrite.type) + sizeof(tramaWrite.header)
             + sizeof(tramaWrite.length) + strlen(tramaWrite.data);
 
-    char* buffer2 = (char*) malloc(sizeof(char) * length);
-    sprintf(buffer2, "%c%-10s%-2u%s", tramaWrite.type, tramaWrite.header,
+    char* buffer2;
+    asprintf(&buffer2, "%c%-10s%-2u%s", tramaWrite.type, tramaWrite.header,
             tramaWrite.length, tramaWrite.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
@@ -426,5 +426,6 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     }
     write(clientfd, buffer2, length);
     free(buffer2);
+    buffer2 = NULL;
 
 }

@@ -160,10 +160,10 @@ int inputFlush() {
 *
 *******************************************************************************/
 void printWelcome() {
-    int mida = strlen("Benvingut.\n") + strlen(picard.nom);
-    char buffer[mida];
-    sprintf(buffer, "Benvingut %s.\n", picard.nom);
+    char* buffer;
+    asprintf(&buffer, "Benvingut %s.\n", picard.nom);
     write(1, buffer, strlen(buffer));
+    free(buffer);
 }
 
 /*******************************************************************************
@@ -176,9 +176,10 @@ void printWelcome() {
 *
 *******************************************************************************/
 void printMoney() {
-    char buffer[strlen("Teeuros disponibles\n") + 3];
-    sprintf(buffer, "Té %d euros disponibles\n", picard.saldo);
+    char* buffer;
+    asprintf(&buffer, "Té %d euros disponibles\n", picard.saldo);
     write(1, buffer, strlen(buffer));
+    free(buffer);
 }
 
 /*******************************************************************************
@@ -191,9 +192,8 @@ void printMoney() {
 *
 *******************************************************************************/
 void printShell() {
-    int mida = strlen(picard.nom) + 2;
-    char* buffer = (char*) malloc(mida);
-    sprintf(buffer, "%s> ", picard.nom);
+    char* buffer;
+    asprintf(&buffer, "%s> ", picard.nom);
     write(1, buffer, strlen(buffer));
     free(buffer);
 }
@@ -208,9 +208,8 @@ void printShell() {
 *
 *******************************************************************************/
 void printBill(int money) {
-    int mida = strlen("Son euros. Carregat en el seu compte. \n") + sizeof(int);
-    char* buffer = (char*) malloc(mida);
-    sprintf(buffer, "Son %d euros. Carregat en el seu compte.\n", money);
+    char* buffer;
+    asprintf(&buffer, "Son %d euros. Carregat en el seu compte.\n", money);
     write(1, buffer, strlen(buffer));
     free(buffer);
 }
@@ -238,10 +237,12 @@ int gestionaShell() {
     split = strtok(comanda, " ");
     if (strcmp(CONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
         if (!connectat) {
+            write(1, CONNECTING, strlen(CONNECTING));
             int a = connectaServidor(connectat, picard, DATA, NULL);
             if (a >= 1) {
                 sockfd = a;
                 connectat = 1;
+                write(1, CONNECTED, strlen(CONNECTED));
             }
         } else {
             write(1, ERROR_ESTABLISHED, strlen(ERROR_ESTABLISHED));

@@ -14,6 +14,8 @@
 #ifndef   _IO_H_
 #define   _IO_H_
 
+#define   _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <sys/types.h>
 #include <fcntl.h>
@@ -34,6 +36,8 @@
 #define ERROR_DEMANA    "Error! No pots demanar un nombre negatiu de plats.\n"
 #define ERROR_CONN      "Error! Ja estàs connectat.\n"
 #define ERROR_NCONN     "Error! No t'has connectat.\n"
+#define CONNECTING      "Connectant amb LsEat...\n"
+#define CONNECTED       "Connexió realitzada!\n"
 
 #define CONNECT         "CONNECTA"
 #define SHOW            "MOSTRA"

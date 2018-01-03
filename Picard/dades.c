@@ -25,18 +25,26 @@
 *
 *******************************************************************************/
 char* getPicardInfo(Picard picard) {
-    int length = strlen(picard.nom) + sizeof(picard.saldo) + sizeof(char);
-    // S'haura de alliberar somewhere
-    char* buffer = (char*)malloc(sizeof(char) * length);
-    sprintf(buffer, "%s&%d", picard.nom, picard.saldo);
+    char* buffer;
+
+    asprintf(&buffer, "%s&%d", picard.nom, picard.saldo);
     return buffer;
 }
 
-
+/*******************************************************************************
+*
+* @Name     getInfoComanda
+* @Purpose  Funció ens retornarà l'info d'una comanda en el format desitjat
+* @Param    In: plat    char* nom del plat que volem demanar
+                units   char* nombre d'unitats que volem demanar
+*           Out: -
+* @return   Retorna la informació d'una comanda en el format necessari pel protocol
+*           de comunicació emprat.
+*
+*******************************************************************************/
 char* getInfoComanda(char* plat, char* units) {
-    int length = strlen(plat) + strlen(units) + sizeof(char);
-    // S'haura de alliberar somewhere
-    char* buffer = (char*)malloc(sizeof(char) * length);
-    sprintf(buffer, "%s&%s", plat, units);
+    char* buffer;
+
+    asprintf(&buffer, "%s&%s", plat, units);
     return buffer;
 }

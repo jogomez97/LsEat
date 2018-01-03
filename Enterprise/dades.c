@@ -44,9 +44,9 @@ Picard createPicard(int fd) {
 *******************************************************************************/
 char* getDishInFormat(int i) {
     Plat p = menu.plats[i];
-    char* data = (char*) malloc(strlen(p.nom) + sizeof(int) * 2 + 4);
+    char* data;
 
-    sprintf(data, "%s&%d&%d", p.nom, p.preu, p.quants);
+    asprintf(&data, "%s&%d&%d", p.nom, p.preu, p.quants);
     return data;
 }
 
@@ -100,19 +100,5 @@ void reestableixMenu(int fd) {
             }
         }
     }
-
-}
-
-void mostraMenu() {
-    int i;
-    char b[100];
-    write(1, "**** MENU ****\n", strlen("**** MENU ****\n"));
-    pthread_mutex_lock(&mtxMenu);
-    for (i = 0; i < menu.nPlats; i++) {
-        sprintf(b, "· %s (%d€) (%d u)\n", menu.plats[i].nom, menu.plats[i].preu, menu.plats[i].quants);
-        write(1, b, strlen(b));
-    }
-    pthread_mutex_unlock(&mtxMenu);
-    write(1, "\n", 1);
 
 }

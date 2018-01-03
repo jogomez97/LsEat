@@ -64,10 +64,11 @@ void gestionaConnexioData(int new) {
 int desconnecta(int sockfd, int dead) {
 
     if (dead) {
-        char* data = (char*) malloc(sizeof(int) + 1);
-        sprintf(data, "%d", enterprise.portPicard);
+        char* data;
+        asprintf(&data, "%d", enterprise.portPicard);
         writeTrama(sockfd, 0x02, ENT_INF, data);
         free(data);
+        data = NULL;
 
         int read = 0;
 
@@ -154,17 +155,15 @@ int connectaData() {
 *
 *******************************************************************************/
 int enviaNovaConnexio(int sockfd, int new) {
-    int length;
     Trama trama;
     int error;
 
     if (new) {
-        length = strlen(enterprise.nom) + strlen(enterprise.ipData)
-                + sizeof(enterprise.portPicard) + 2 * sizeof(char);
-        char* buffer = (char*)malloc(sizeof(char) * length);
-        sprintf(buffer, "%s&%d&%s", enterprise.nom, enterprise.portPicard, enterprise.ipPicard);
+        char* buffer;
+        asprintf(&buffer, "%s&%d&%s", enterprise.nom, enterprise.portPicard, enterprise.ipPicard);
         writeTrama(sockfd, 0x01, ENT_INF, buffer);
         free(buffer);
+        buffer = NULL;
         trama = readTrama(sockfd, &error);
         if (error <= 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -179,6 +178,7 @@ int enviaNovaConnexio(int sockfd, int new) {
                     trama.data = NULL;
                     return 0;
                 } else if (strcmp(trama.header, CONKO) == 0) {
+                    write(1, REJECTED_D, strlen(REJECTED_D));
                     free(trama.data);
                     trama.data = NULL;
                     return -1;
@@ -195,12 +195,13 @@ int enviaNovaConnexio(int sockfd, int new) {
                 return -1;
         }
     } else {
-        length = sizeof(int) + sizeof(char) + sizeof(enterprise.portPicard);
-        char* buffer = (char*)malloc(sizeof(char) * length);
-        sprintf(buffer, "%d&%d", enterprise.portPicard, enterprise.nConnections);
+
+        char* buffer;
+        asprintf(&buffer, "%d&%d", enterprise.portPicard, enterprise.nConnections);
 
         writeTrama(sockfd, 0x07, UPDATE, buffer);
         free(buffer);
+        buffer = NULL;
         trama = readTrama(sockfd, &error);
         if (error <= 0) {
             write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -355,9 +356,8 @@ void * threadPicard(void * arg) {
                         printList(&clients);
                     }
                     pthread_mutex_unlock(&mtx);
-                    int length = strlen(nom) + strlen("Connectat\n");
-                    char* buff = (char*)malloc(sizeof(char) * length);
-                    sprintf(buff, "Connectat %s\n", nom);
+                    char* buff;
+                    asprintf(&buff, "Connectat %s\n", nom);
                     write(1, buff, strlen(buff));
                     free(buff);
                 } else {
@@ -367,12 +367,12 @@ void * threadPicard(void * arg) {
             case 0x02:
                 if (strcmp(trama.header, PIC_NAME) == 0) {
                     writeTrama(*picardfd, 0x02, CONOKb, "");
-                    char* nom = strtok(trama.data, "\n");
-                    int length = strlen(nom) + strlen("Desconnectat\n");
-                    char* buff = (char*)malloc(sizeof(char) * length);
-                    sprintf(buff, "Desconnectat %s\n", nom);
+                    char* nom = strtok(trama.data, "");
+                    char* buff;
+                    asprintf(&buff, "Desconnectat %s\n", nom);
                     write(1, buff, strlen(buff));
                     free(buff);
+                    buff = NULL;
                 } else {
                     writeTrama(*picardfd, 0x02, CONKOb, "");
                 }
@@ -436,10 +436,11 @@ void * threadPicard(void * arg) {
                                     }
                                     pthread_mutex_unlock(&mtx);
 
-                                    char* info = (char*) malloc(strlen("Anotant  ")
-                                    + strlen(menu.plats[i].nom) + sizeof(int) + 2 * sizeof(char));
-                                    sprintf(info, "Anotant %d %s\n", p.quants, menu.plats[i].nom);
+                                    char* info;
+                                    asprintf(&info, "Anotant %d %s\n", p.quants, menu.plats[i].nom);
                                     write(1, info, strlen(info));
+                                    free(info);
+                                    info = NULL;
 
                                     writeTrama(*picardfd, 0x04, ORDOK, "");
                                     error = 0;
@@ -457,9 +458,9 @@ void * threadPicard(void * arg) {
                             free(aux);
                             aux = NULL;
                         }
-                        free(p.nom);
-                        p.nom = NULL;
                     }
+                    free(p.nom);
+                    p.nom = NULL;
                     //Si no s'ha trobat el plat al menú
                     if (error == 1) {
                         writeTrama(*picardfd, 0x04, ORDKO, "");
@@ -491,31 +492,40 @@ void * threadPicard(void * arg) {
                     if (!error) {
                         int i;
                         for (i = 0; i < menu.nPlats; i++) {
-                            char* aux = (char*)malloc(strlen(menu.plats[i].nom));
-                            strcpy(aux, menu.plats[i].nom);
+                            char* aux = strdup(menu.plats[i].nom);
                             stringToUpper(aux);
                             if (strcmp(aux, p.nom) == 0) {
                                 pthread_mutex_lock(&mtxMenu);
                                 menu.plats[i].quants = menu.plats[i].quants + p.quants;
                                 pthread_mutex_unlock(&mtxMenu);
+                                free(aux);
+                                aux = NULL;
                                 break;
                             }
-
+                            free(aux);
+                            aux = NULL;
                         }
 
-                        char* info = (char*) malloc(strlen("Eliminat  ")
-                        + strlen(menu.plats[i].nom) + sizeof(int) + 2 * sizeof(char));
-                        sprintf(info, "Eliminat %d %s\n", p.quants, menu.plats[i].nom);
+                        char* info;
+                        asprintf(&info, "Eliminat %d %s\n", p.quants, menu.plats[i].nom);
                         write(1, info, strlen(info));
+                        free(info);
+                        info = NULL;
 
                         writeTrama(*picardfd, 0x05, ORDOK, "");
+
+                        free(p.nom);
+                        p.nom = NULL;
                         break;
                     }
                     if (error == -2) {
+                        free(p.nom);
+                        p.nom = NULL;
                         writeTrama(*picardfd, 0x05, ORDKO2, "");
                         break;
                     }
-
+                    free(p.nom);
+                    p.nom = NULL;
                     writeTrama(*picardfd, 0x05, ORDKO, "");
                     break;
                 } else {
@@ -529,15 +539,14 @@ void * threadPicard(void * arg) {
                     int money = payToAccount(&clients, *picardfd);
                     pthread_mutex_unlock(&mtx);
                     if (money >= 0) {
-                        char* auxM = (char*) malloc(sizeof(int));
-                        sprintf(auxM, "%d", money);
+                        char* auxM;
+                        asprintf(&auxM, "%d", money);
                         writeTrama(*picardfd, 0x06, PAYOK, auxM);
                         free(auxM);
                         auxM = NULL;
 
-                        char* info = (char*) malloc(strlen("Notificant factura: euros")
-                        + sizeof(int) + 2 * sizeof(char));
-                        sprintf(info, "Notificant factura: %d euros\n", money);
+                        char* info;
+                        asprintf(&info, "Notificant factura: %d euros\n", money);
                         write(1, info, strlen(info));
                         free(info);
                         info = NULL;
@@ -649,8 +658,8 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
             + sizeof(trama.length) + strlen(trama.data);
 
 
-    char* buffer2 = (char*)malloc(sizeof(char) * length);
-    sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
+    char* buffer2;
+    asprintf(&buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
         if (buffer2[i] == ' ') {
@@ -659,5 +668,6 @@ void writeTrama(int sockfd, char type, char header[10], char* data) {
     }
     write(sockfd, buffer2, length);
     free(buffer2);
+    buffer2 = NULL;
 
 }

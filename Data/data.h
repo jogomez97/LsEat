@@ -14,6 +14,8 @@
 #ifndef   _DATA_H_
 #define   _DATA_H_
 
+#define _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <stdio.h>
 #include <unistd.h>

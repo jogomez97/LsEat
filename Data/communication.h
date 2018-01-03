@@ -14,6 +14,8 @@
 #ifndef   _COMMUNICATION_H_
 #define   _COMMUNICATION_H_
 
+#define _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <sys/types.h>
 #include <fcntl.h>

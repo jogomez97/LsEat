@@ -162,10 +162,11 @@ int showDishFromTrama(char* data) {
     char* stock = strtok(NULL, "");
     if ((name != NULL) & (price != NULL) & (stock != NULL)) {
         if (atoi(stock) > 0) {
-            char* line = (char*) malloc(strlen(name) + strlen(price) + strlen(".....(.euros)\n"));
-            sprintf(line, "· %s (%s euros)\n", name, price);
+            char* line;
+            asprintf(&line, "· %s (%s euros)\n", name, price);
             write(1, line, strlen(line));
             free(line);
+            line = NULL;
             return 0;
         }
         return 0;
@@ -223,7 +224,10 @@ void show() {
 
 void order(char* plat, char* units) {
     if (connectat) {
-        writeTrama(sockfd, DEMANA, NEW_ORD, getInfoComanda(plat, units));
+        char* aux = getInfoComanda(plat, units);
+        writeTrama(sockfd, DEMANA, NEW_ORD, aux);
+        free(aux);
+        aux = NULL;
         int error;
         Trama trama = readTrama(sockfd, &error);
         if (error <= 0) {
@@ -246,6 +250,8 @@ void order(char* plat, char* units) {
             } else {
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             }
+            free(trama.data);
+            trama.data = NULL;
         }
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
@@ -255,7 +261,10 @@ void order(char* plat, char* units) {
 void delete(char* plat, char* units) {
 
     if (connectat) {
-        writeTrama(sockfd, ELIMINA, DEL_ORD, getInfoComanda(plat, units));
+        char* aux = getInfoComanda(plat, units);
+        writeTrama(sockfd, ELIMINA, DEL_ORD, aux);
+        free(aux);
+        aux = NULL;
         int error;
         Trama trama = readTrama(sockfd, &error);
         if (error <= 0) {
@@ -275,6 +284,8 @@ void delete(char* plat, char* units) {
             } else {
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             }
+            free(trama.data);
+            trama.data = NULL;
         }
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
@@ -310,6 +321,8 @@ void pay() {
             } else {
                 write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
             }
+            free(trama.data);
+            trama.data = NULL;
         }
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
@@ -337,8 +350,7 @@ void disconnect(int connectat, int sockfd) {
         if (error <= 0) {
             write(1, ERROR_DATA, strlen(ERROR_DATA));
             close(sockfd);
-        }
-        if (gestionaTrama(t, DSC_ENTERP)) {
+        } else if (gestionaTrama(t, DSC_ENTERP)) {
             free(t.data);
             t.data = NULL;
             write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
@@ -468,8 +480,8 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     length = sizeof(trama.type) + sizeof(trama.header)
             + sizeof(trama.length) + strlen(trama.data);
 
-    char* buffer2 = (char*) malloc(sizeof(char) * length);
-    sprintf(buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
+    char* buffer2;
+    asprintf(&buffer2, "%c%-10s%-2u%s", trama.type, trama.header, trama.length, trama.data);
     //Plenem el que falta de header amb '\0'
     for (i = 1; i < 11; i++) {
         if (buffer2[i] == ' ') {
@@ -478,4 +490,5 @@ void writeTrama(int clientfd, char type, char header[10], char* data) {
     }
     write(clientfd, buffer2, length);
     free(buffer2);
+    buffer2 = NULL;
 }

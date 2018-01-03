@@ -13,6 +13,8 @@
 #ifndef   _DADES_H_
 #define   _DADES_H_
 
+#define   _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <string.h>
 #include <ctype.h>
@@ -87,6 +89,5 @@ void stringToUpper(char* string);
 *******************************************************************************/
 void reestableixMenu(int fd);
 
-void mostraMenu();
 
 #endif

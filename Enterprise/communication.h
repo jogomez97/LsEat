@@ -14,6 +14,8 @@
 #ifndef   _COMMUNICATION_H_
 #define   _COMMUNICATION_H_
 
+#define   _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -48,6 +50,7 @@
 #define DISCONNECTED_D      "[ENTERPRISE] Desconnexió de Data\n"
 #define CONNECTED_P         "[ENTERPRISE] Connexió establerta amb Picard\n"
 #define DISCONNECTED_P      "[ENTERPRISE] Desconnexió de Picard\n"
+#define REJECTED_D          "[ENTERPRISE] Data ha rebutjat la teva peticio\n"
 #define WAITING             "Esperant clients...\n"
 #define SENDING_MENU        "Enviant Menu...\n"
 #define SENT_MENU           "Menu enviat\n"

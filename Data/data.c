@@ -39,13 +39,13 @@ int gestionaFlota(char* data) {
         e.nConnections = 0;
 
         pthread_mutex_lock(&mtx);
-        insertNode(&flota, e);
+        int error = insertNode(&flota, e);
         if (DEBUG_LIST) {
             write(1, "ADDED:\n", 7);
             printList(&flota);
         }
         pthread_mutex_unlock(&mtx);
-        return 0;
+        return error;
     }
 
     return -1;
@@ -61,14 +61,11 @@ int gestionaFlota(char* data) {
 *
 *******************************************************************************/
 char* getEnterprise() {
+    char* buffer;
     pthread_mutex_lock(&mtx);
     Enterprise e = checkFirstElement(&flota);
+    
+    asprintf(&buffer, "%s&%d&%s", e.nom, e.port, e.ip);
     pthread_mutex_unlock(&mtx);
-
-    int length = strlen(e.nom) + strlen(e.ip)
-            + sizeof(e.port) + 2 * sizeof(char);
-
-    char* buffer = (char*)malloc(sizeof(char) * length);
-    sprintf(buffer, "%s&%d&%s", e.nom, e.port, e.ip);
     return buffer;
 }

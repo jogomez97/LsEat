@@ -15,6 +15,8 @@
 #ifndef   _DADES_H_
 #define   _DADES_H_
 
+#define   _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <string.h>
 #include <fcntl.h>
@@ -54,6 +56,17 @@ typedef struct {
 *******************************************************************************/
 char* getPicardInfo(Picard picard);
 
+/*******************************************************************************
+*
+* @Name     getInfoComanda
+* @Purpose  Funció ens retornarà l'info d'una comanda en el format desitjat
+* @Param    In: plat    char* nom del plat que volem demanar
+                units   char* nombre d'unitats que volem demanar
+*           Out: -
+* @return   Retorna la informació d'una comanda en el format necessari pel protocol
+*           de comunicació emprat.
+*
+*******************************************************************************/
 char* getInfoComanda(char* plat, char* units);
 
 #endif

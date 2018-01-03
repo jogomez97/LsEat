@@ -472,7 +472,9 @@ int payToAccount(List* l, int fd) {
             free(aux->picard.plats[i].nom);
         }
 
-        free(aux->picard.plats);
+        if (aux->picard.nPlats > 0) {
+            free(aux->picard.plats);
+        }
         aux->picard.nPlats = 0;
         return money;
     }
