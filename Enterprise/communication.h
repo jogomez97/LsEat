@@ -79,6 +79,8 @@
 #define PAY_C               "[PAY]\0"
 #define PAYOK               "[PAYOK]\0"
 #define PAYKO               "[PAYKO]\0"
+#define ENT_KO              "[ENT_KO]\0"
+#define DISH_KO             "[DISH_KO]\0"
 
 // Definició de tipus propis
 typedef struct {
@@ -220,5 +222,16 @@ Trama readTrama(int sockfd, int* error);
 *
 *******************************************************************************/
 void writeTrama(int sockfd, char type, char header[10], char* data);
+
+/*******************************************************************************
+*
+* @Name     saveTheDishes
+* @Purpose  Funció que enviarà a cada picard connectat els seus plats reservats
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
+void saveTheDishes();
 
 #endif

@@ -36,6 +36,8 @@ typedef struct {
     int     saldo;
     char*   ip;
     int     port;
+    int     nPlats;    
+    Plat*   plats;
 } Picard;
 
 typedef struct {

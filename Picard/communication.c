@@ -186,7 +186,6 @@ void show() {
         while (1) {
             trama = readTrama(sockfd, &error);
             if (error <= 0) {
-                //Aquí segurament gestionarem una nova connexió a un Enterprise
                 write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
                 close(sockfd);
                 connectat = 0;
@@ -437,6 +436,13 @@ Trama readTrama(int clientfd, int* error) {
     }
 
     read(clientfd, &trama.header, sizeof(trama.header));
+
+    if (strcmp(trama.header, ENT_KO) == 0) {
+        //fes tants reads com calgui de plats
+        //reconnecta (anar a data a preguntar)
+        //envia tots els encarrecs
+        //error el posem a -1 per a q es torni a introduir la comanda
+    }
 
     char aux[3];
     read(clientfd, &aux, sizeof(trama.length));

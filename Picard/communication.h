@@ -74,6 +74,8 @@
 #define PAY_C       "[PAY]\0"
 #define PAYOK       "[PAYOK]\0"
 #define PAYKO       "[PAYKO]\0"
+#define ENT_KO      "[ENT_KO]\0"
+#define DISH_KO     "[DISH_KO]\0"
 
 #define PAGAR       0x06
 #define ELIMINA     0x05

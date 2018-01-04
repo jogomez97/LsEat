@@ -140,15 +140,15 @@ void intHandler() {
         desconnecta(sockfd, 1);
     }
 
-    alliberaMemoria();
-
-
-
-    //Abans d'eliminar s'ha d'enviar la informació dels Picards (fase 5)
-    eraseList(&clients);
+    //Bloquegem ja que no volem que ningú més faci servir la llista ja
+    pthread_mutex_lock(&mtx);
+    saveTheDishes();
+    pthread_mutex_unlock(&mtx);
 
     pthread_mutex_destroy(&mtx);
     pthread_mutex_destroy(&mtxMenu);
+
+    alliberaMemoria();
 
     write(1, "\n", sizeof(char));
     exit(0);
