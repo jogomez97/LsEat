@@ -223,15 +223,4 @@ Trama readTrama(int sockfd, int* error);
 *******************************************************************************/
 void writeTrama(int sockfd, char type, char header[10], char* data);
 
-/*******************************************************************************
-*
-* @Name     saveTheDishes
-* @Purpose  Funció que enviarà a cada picard connectat els seus plats reservats
-* @Param    In:  -
-*           Out: -
-* @return   -
-*
-*******************************************************************************/
-void saveTheDishes();
-
 #endif

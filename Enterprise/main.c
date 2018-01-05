@@ -142,7 +142,7 @@ void intHandler() {
 
     //Bloquegem ja que no volem que ningú més faci servir la llista ja
     pthread_mutex_lock(&mtx);
-    saveTheDishes();
+    eraseList(&clients);
     pthread_mutex_unlock(&mtx);
 
     pthread_mutex_destroy(&mtx);
