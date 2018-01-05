@@ -26,7 +26,7 @@
 #define ERROR_PRINT "Error en printar. La llista està buida!\n"
 #define NO_DISHES   "Aquest Picard no té cap plat reservat\n"
 #define DEBUG_LIST  0
-#define DEBUG_LIST2 0
+#define DEBUG_LIST2 1
 
 // Definició de tipus propis
 typedef struct {
@@ -39,7 +39,6 @@ typedef struct {
     char*   nom;
     int     fd;
     int     targeta;
-    int     compte;
     int     nPlats;
     Plat*   plats;
 } Picard;

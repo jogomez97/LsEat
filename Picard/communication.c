@@ -186,9 +186,7 @@ void show() {
         while (1) {
             trama = readTrama(sockfd, &error);
             if (error <= 0) {
-                write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
-                close(sockfd);
-                connectat = 0;
+                write(1, REPEAT, strlen(REPEAT));
                 break;
             } else {
                 if (trama.type == M_MENU) {
@@ -230,12 +228,13 @@ void order(char* plat, char* units) {
         int error;
         Trama trama = readTrama(sockfd, &error);
         if (error <= 0) {
-            // Error
-            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
-            close(sockfd);
-            connectat = 0;
+            write(1, REPEAT, strlen(REPEAT));
         } else {
             if (strcmp(trama.header, ORDOK) == 0) {
+                Plat p;
+                p.nom =  plat;
+                p.quants = atoi(units);
+                addDish(p);
                 write(1, ORD_CORRECT, strlen(ORD_CORRECT));
             } else if (strcmp(trama.header, ORDKO) == 0) {
                 write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
@@ -267,12 +266,13 @@ void delete(char* plat, char* units) {
         int error;
         Trama trama = readTrama(sockfd, &error);
         if (error <= 0) {
-            // Error
-            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
-            close(sockfd);
-            connectat = 0;
+            write(1, REPEAT, strlen(REPEAT));
         } else {
             if (strcmp(trama.header, ORDOK) == 0) {
+                Plat p;
+                p.nom =  plat;
+                p.quants = atoi(units);
+                removeDish(p);
                 write(1, DEL_CORRECT, strlen(DEL_CORRECT));
             } else if (strcmp(trama.header, ORDKO) == 0) {
                 write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
@@ -301,10 +301,7 @@ void pay() {
         int error;
         Trama trama = readTrama(sockfd, &error);
         if (error <= 0) {
-            // Error
-            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
-            close(sockfd);
-            connectat = 0;
+            write(1, REPEAT, strlen(REPEAT));
         } else {
             if (strcmp(trama.header, PAYOK) == 0) {
                 char* p = strtok(trama.data, "");
@@ -312,6 +309,7 @@ void pay() {
                     int compte = atoi(p);
                     picard.saldo -= compte;
                     printBill(compte);
+                    eliminaReserva();
                 } else {
                     write(1, ERROR_TRAMA, strlen(ERROR_TRAMA));
                 }
@@ -326,6 +324,28 @@ void pay() {
     } else {
         write(1, ERROR_NCONN, strlen(ERROR_NCONN));
     }
+}
+
+void enviaTotsElsPlats() {
+    int i;
+    int n = picard.nPlats;
+    char* aux;
+
+    for (i = 0; i < n; i++) {
+        if (picard.plats[i].quants > 0) {
+            asprintf(&aux, "Recuperant %d unitats del plat: %s\n", picard.plats[i].quants,
+                    picard.plats[i].nom);
+            write(1, aux, strlen(aux));
+            free(aux);
+            aux = NULL;
+
+            asprintf(&aux, "%d", picard.plats[i].quants);
+            order(picard.plats[i].nom, aux);
+            free(aux);
+            aux = NULL;
+        }
+    }
+
 }
 
 /*******************************************************************************
@@ -431,7 +451,18 @@ Trama readTrama(int clientfd, int* error) {
     memset(&trama, 0, sizeof(trama));
 
     *error = read(clientfd, &trama.type, sizeof(trama.type));
-    if (*error < 0) {
+    if (*error <= 0) {
+        connectat = 0;
+        close(sockfd);
+        write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+        write(1, CONNECTING, strlen(CONNECTING));
+        int a = connectaServidor(connectat, picard, DATA, NULL);
+        if (a >= 1) {
+            sockfd = a;
+            write(1, CONNECTED, strlen(CONNECTED));
+            connectat = 1;
+            enviaTotsElsPlats();
+        }
         return trama;
     }
 

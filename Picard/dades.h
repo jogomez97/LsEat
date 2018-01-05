@@ -28,7 +28,6 @@
 typedef struct {
     char*   nom;
     int     quants;
-    int     preu;
 } Plat;
 
 typedef struct {
@@ -36,7 +35,7 @@ typedef struct {
     int     saldo;
     char*   ip;
     int     port;
-    int     nPlats;    
+    int     nPlats;
     Plat*   plats;
 } Picard;
 
@@ -45,6 +44,9 @@ typedef struct {
     int   port;
     char* ip;
 } Enterprise;
+
+// Variables globals
+extern Picard picard;
 
 /*******************************************************************************
 *
@@ -70,5 +72,51 @@ char* getPicardInfo(Picard picard);
 *
 *******************************************************************************/
 char* getInfoComanda(char* plat, char* units);
+
+/*******************************************************************************
+*
+* @Name     searchForDish
+* @Purpose  Funció que consultarà si un plat ja s'havia demanat amb anterioritat
+* @Param    In:     name    nom del plat amb el que volem comparar
+*           Out:    -
+* @return   retorna -1 si el plat no es troba encara reservat, 0 altrament
+*
+*******************************************************************************/
+int searchForDish(char* name);
+
+/*******************************************************************************
+*
+* @Name     addDish
+* @Purpose  Funció que afegirà un plat
+* @Param    In:     p       Plat que volem afegir a la reserva
+*           Out:    -
+* @return   -
+*
+*******************************************************************************/
+void addDish(Plat p);
+
+/*******************************************************************************
+*
+* @Name     removeDish
+* @Purpose  Funció que eliminara el plat
+* @Param    In:     p       Plat que volem eliminar
+*           Out:    -
+* @return   retorna un int en control d'errors (-1), 0 altrament
+*
+*******************************************************************************/
+int removeDish(Plat p);
+
+/*******************************************************************************
+*
+* @Name     printDishes
+* @Purpose  Funció pinta tots els plats reservats
+* @Param    In:     -
+*           Out:    -
+* @return   -
+*
+*******************************************************************************/
+void printDishes();
+
+void eliminaReserva();
 
 #endif

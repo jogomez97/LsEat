@@ -26,7 +26,6 @@ Picard createPicard(int fd) {
     Picard p;
     p.nom = NULL;
     p.fd = fd;
-    p.compte = 0;
     p.nPlats = 0;
     p.plats = NULL;
 

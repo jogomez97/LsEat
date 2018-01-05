@@ -360,6 +360,7 @@ void * threadPicard(void * arg) {
                     asprintf(&buff, "Connectat %s\n", nom);
                     write(1, buff, strlen(buff));
                     free(buff);
+                    buff = NULL;
                 } else {
                     writeTrama(*picardfd, 0x01, CONKOb, "");
                 }
@@ -609,10 +610,12 @@ Trama readTrama(int clientfd, int* error) {
     memset(&trama, 0, sizeof(trama));
 
     *error = read(clientfd, &trama.type, sizeof(trama.type));
-    read(clientfd, &trama.header, sizeof(trama.header));
-    if (*error < 0) {
+    if (*error <= 0) {
         return trama;
     }
+
+    read(clientfd, &trama.header, sizeof(trama.header));
+
     char aux[3];
     read(clientfd, &aux, sizeof(trama.length));
     aux[2] = '\0';

@@ -35,12 +35,12 @@
 #include "list.h"
 
 // Declaració de constants
-#define CONNECTEDP          "[DATA] Connexió amb picard establerta\n"
+#define CONNECTEDP          "[DATA] Connexió amb Picard establerta\n"
 #define DESCONP             "[DATA] Desconnexió de Picard\n"
 #define WAIT_CONNECTE       "[DATA] Esperant una nova connexió d'Enterprise\n"
 #define WAIT_CONNECTP       "[DATA] Esperant una nova connexió de Picard\n"
 #define CONNECTED_E         "[DATA] Connexió establerta amb Enterprise\n"
-#define DISCONNECTED_E      "[DATA] Desconnexió d'enterprise\n"
+#define DISCONNECTED_E      "[DATA] Desconnexió d'Enterprise\n"
 #define CONNECTED_P         "[DATA] Connexió amb Picard establerta\n"
 #define DISCONNECTED_P      "[DATA] Desconnexió de Picard\n"
 #define ERROR_SOCK          "Error en crear el socket!\n"

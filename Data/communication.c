@@ -367,7 +367,7 @@ Trama readTrama(int clientfd, int* error) {
     memset(&tramaRead, 0, sizeof(tramaRead));
 
     *error = read(clientfd, &tramaRead.type, sizeof(tramaRead.type));
-    if (*error < 0) {
+    if (*error <= 0) {
         return tramaRead;
     }
     read(clientfd, &tramaRead.header, sizeof(tramaRead.header));

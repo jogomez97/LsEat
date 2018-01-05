@@ -56,6 +56,7 @@
 #define DEL_KO              "El plat no havia estat reservat\n"
 #define DEL_KO2             "No s'havien reservat tantes unitats d'aquest plat\n"
 #define PAY_KO              "Error en processar el pagament\n"
+#define REPEAT              "\nSi us plau, torni a introduir la comanda\n"
 
 #define PIC_NAME    "[PIC_NAME]\0"
 #define PIC_INF     "[PIC_INF]\0"
@@ -132,6 +133,8 @@ void delete(char* plat, char* units);
 
 void pay();
 
+void enviaTotsElsPlats();
+
 /*******************************************************************************
 *
 * @Name     disconnect
@@ -143,6 +146,7 @@ void pay();
 *
 *******************************************************************************/
 void disconnect(int connectat, int sockfd);
+
 
 /*******************************************************************************
 *

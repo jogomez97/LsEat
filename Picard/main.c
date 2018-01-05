@@ -95,6 +95,16 @@ void alliberaMemoria() {
         free(bufferKB);
     }
 
+    int i;
+    int n = picard.nPlats;
+    if (n > 0) {
+        for (i = 0; i < n; i++) {
+            free(picard.plats[i].nom);
+        }
+        free(picard.plats);
+        picard.nPlats = 0;
+    }
+
 }
 
 /*******************************************************************************
