@@ -452,16 +452,18 @@ Trama readTrama(int clientfd, int* error) {
 
     *error = read(clientfd, &trama.type, sizeof(trama.type));
     if (*error <= 0) {
-        connectat = 0;
-        close(sockfd);
-        write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
-        write(1, CONNECTING, strlen(CONNECTING));
-        int a = connectaServidor(connectat, picard, DATA, NULL);
-        if (a >= 1) {
-            sockfd = a;
-            write(1, CONNECTED, strlen(CONNECTED));
-            connectat = 1;
-            enviaTotsElsPlats();
+        if (connectat) {
+            connectat = 0;
+            close(sockfd);
+            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+            write(1, CONNECTING, strlen(CONNECTING));
+            int a = connectaServidor(connectat, picard, DATA, NULL);
+            if (a >= 1) {
+                sockfd = a;
+                write(1, CONNECTED, strlen(CONNECTED));
+                connectat = 1;
+                enviaTotsElsPlats();
+            }
         }
         return trama;
     }

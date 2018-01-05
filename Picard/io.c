@@ -230,6 +230,7 @@ int gestionaShell() {
     char* num;
     int   quantitat;
     char* plat;
+    int   error;
 
     printShell(picard.nom);
     comanda = readKB();
@@ -266,10 +267,16 @@ int gestionaShell() {
         plat = strtok(NULL, "\n");
         if (num != NULL && plat != NULL) {
             quantitat = atoi(num);
-            if (quantitat > 0) {
+            error = isAllSpaces(plat);
+            if (quantitat > 0 && !error) {
+                plat = deleteExtraSpaces(plat);
                 order(plat, num);
-            } else if (quantitat == 0) {
-                write(1, ERROR_COMAND, strlen(ERROR_COMAND));
+                free(plat);
+                plat = NULL;
+            } else if (quantitat == 0 && !error) {
+                write(1, ERROR_DEMANA2, strlen(ERROR_DEMANA2));
+            } else if (error) {
+                write(1, ERROR_DEMANA3, strlen(ERROR_DEMANA3));
             } else {
                 write(1, ERROR_DEMANA, strlen(ERROR_DEMANA));
             }
@@ -281,10 +288,18 @@ int gestionaShell() {
         plat = strtok(NULL, "\n");
         if (num != NULL && plat != NULL) {
             quantitat = atoi(num);
-            if (quantitat > 0) {
+            error = isAllSpaces(plat);
+            if (quantitat > 0 && !error) {
+                plat = deleteExtraSpaces(plat);
                 delete(plat, num);
+                free(plat);
+                plat = NULL;
+            } else if (quantitat == 0 && !error) {
+                write(1, ERROR_ELIMINA2, strlen(ERROR_ELIMINA2));
+            } else if (error) {
+                write(1, ERROR_ELIMINA3, strlen(ERROR_ELIMINA3));
             } else {
-                write(1, ERROR_COMAND, strlen(ERROR_COMAND));
+                write(1, ERROR_ELIMINA, strlen(ERROR_ELIMINA));
             }
         } else {
             write(1, ERROR_COMAND, strlen(ERROR_COMAND));

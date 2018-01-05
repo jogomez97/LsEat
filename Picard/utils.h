@@ -13,6 +13,8 @@
 #ifndef   _UTILS_H_
 #define   _UTILS_H_
 
+#define   _GNU_SOURCE 1
+
 // Llibreries del sistema
 #include <fcntl.h>
 #include <stdio.h>
@@ -36,5 +38,17 @@
 *******************************************************************************/
 void stringToUpper(char* string);
 
+/*******************************************************************************
+*
+* @Name     isAllSpaces
+* @Purpose  Funció que mira si tots els caracters d'una cadena són espais
+* @Param    In:  string Cadena de caràcters a comprovar
+*           Out: -
+* @return   retorna -1 si són tot espais, 0 altrament
+*
+*******************************************************************************/
+int isAllSpaces(char* string);
+
+char* deleteExtraSpaces(char* string);
 
 #endif

@@ -63,7 +63,10 @@ int main(int argc, char const *argv[]) {
 
             while (!end) {
                 end = gestionaShell();
-                free(comanda);
+                if (!end) {
+                    free(comanda);
+                    comanda = NULL;
+                }
             }
             alliberaMemoria();
             return EXIT_SUCCESS;
@@ -88,12 +91,17 @@ int main(int argc, char const *argv[]) {
 *******************************************************************************/
 void alliberaMemoria() {
     free(picard.nom);
+    picard.nom = NULL;
     free(picard.ip);
+    picard.ip = NULL;
     if (bufferKB == comanda) {
         free(comanda);
+        comanda = NULL;
     } else {
         free(comanda);
+        comanda = NULL;
         free(bufferKB);
+        bufferKB = NULL;
     }
 
     int i;
@@ -101,8 +109,10 @@ void alliberaMemoria() {
     if (n > 0) {
         for (i = 0; i < n; i++) {
             free(picard.plats[i].nom);
+            picard.plats[i].nom = NULL;
         }
         free(picard.plats);
+        picard.plats = NULL;
         picard.nPlats = 0;
     }
 
@@ -126,13 +136,18 @@ void intHandler() {
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
 
         int error = 0;
-
+        connectat = 0;  //Ens servirà per a que no s'intenti tornar a connectar
         Trama t  = readTrama(sockfd, &error);
-
         if (error <= 0) {
             write(1, ERROR_DISCON_E, strlen(ERROR_DISCON_E));
             close(sockfd);
-        } else if (gestionaTrama(t, DSC_ENTERP)) {
+            alliberaMemoria();
+            exit(0);
+        }
+        free(t.data);
+        t.data = NULL;
+
+        if (gestionaTrama(t, DSC_ENTERP)) {
             write(1, DISCONNECTED_E, strlen(DISCONNECTED_E));
             close(sockfd);
         } else {
