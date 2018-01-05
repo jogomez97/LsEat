@@ -136,6 +136,15 @@ int removeDish(Plat p) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     eliminaReserva
+* @Purpose  Funció que eliminara tots els plats ja que s'ha pagat
+* @Param    In:     -
+*           Out:    -
+* @return   -
+*
+*******************************************************************************/
 void eliminaReserva() {
     int i;
     int n = picard.nPlats;

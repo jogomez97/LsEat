@@ -108,8 +108,19 @@ int removeDish(Plat p);
 
 /*******************************************************************************
 *
+* @Name     eliminaReserva
+* @Purpose  Funció que eliminara tots els plats ja que s'ha pagat
+* @Param    In:     -
+*           Out:    -
+* @return   -
+*
+*******************************************************************************/
+void eliminaReserva();
+
+/*******************************************************************************
+*
 * @Name     printDishes
-* @Purpose  Funció pinta tots els plats reservats
+* @Purpose  Funció pinta tots els plats reservats (DEBUG)
 * @Param    In:     -
 *           Out:    -
 * @return   -
@@ -117,6 +128,5 @@ int removeDish(Plat p);
 *******************************************************************************/
 void printDishes();
 
-void eliminaReserva();
 
 #endif

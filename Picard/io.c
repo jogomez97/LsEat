@@ -243,6 +243,9 @@ int gestionaShell() {
                 sockfd = a;
                 connectat = 1;
                 write(1, CONNECTED, strlen(CONNECTED));
+                if (picard.nPlats > 0) {
+                    enviaTotsElsPlats();
+                }
             }
         } else {
             write(1, ERROR_ESTABLISHED, strlen(ERROR_ESTABLISHED));

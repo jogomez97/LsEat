@@ -57,6 +57,7 @@ int main(int argc, char const *argv[]) {
             printMoney();
             write(1, INTRO_COMAND, strlen(INTRO_COMAND));
 
+            picard.nPlats = 0;
             connectat = 0;
             int end = 0;
 
