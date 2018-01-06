@@ -54,6 +54,16 @@ int isAllSpaces(char* string) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     deleteExtraSpaces
+* @Purpose  Funció que elimina els espais sobrants d'un plat
+* @Param    In:  string Cadena de caràcters a modificar
+*           Out: -
+* @return   retorna la cadena original si no hi ha hagut cap canvi,
+*           la modificada sense espais altrament
+*
+*******************************************************************************/
 char* deleteExtraSpaces(char* string) {
     char* origin = string;
     char* aux;
