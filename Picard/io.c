@@ -57,6 +57,7 @@ int readFile(char* path, Picard* picard) {
             close(fd);
             return 0;
         } else {
+            close(fd);
             write(1, ERROR_FILE2, sizeof(ERROR_FILE2));
             return -1;
         }
@@ -108,13 +109,12 @@ char* readKB() {
 
     bufferKB = (char*) malloc(sizeof(char));
     while (c != '\n') {
-        read(1, &c, sizeof(char));
+        read(0, &c, sizeof(char));
         if (c != '\n') {
             bufferKB[count] = c;
             bufferKB = (char*) realloc(bufferKB, sizeof(char) * (count + 2));
         }
         count++;
-
     }
     bufferKB[count - 1] = '\0';
     if (count == 1) {

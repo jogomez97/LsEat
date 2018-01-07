@@ -56,6 +56,7 @@ int readFile(char* path, Data* d) {
             close(fd);
             return 0;
         } else {
+            close(fd);
             write(1, ERROR_FILE2, sizeof(ERROR_FILE2));
             return -1;
         }

@@ -48,20 +48,19 @@ int insertNode(List* l, Enterprise e) {
         return -1;
     }
     aux->enterprise = e;
-    aux->next = NULL;
+    aux->pre = NULL;
 
     //Modify list structure
     if (isEmpty(l)) {
-        aux->pre = NULL;
+        aux->next = NULL;
         l->first = aux;
         l->last = aux;
         return 0;
     }
-    aux->pre = l->last;
-    aux->next = NULL;
-    l->last->next = aux;
-    l->last = aux;
-
+    aux->pre = NULL;
+    aux->next = l->first;
+    l->first->pre = aux;
+    l->first = aux;
     return 0;
 
 }
@@ -230,12 +229,12 @@ void printList(List* l) {
         Node *aux = l->first;
 
         while (aux != l->last){
-            sprintf(buff, "(%d)%d(%s.%s)-", aux->enterprise.port, aux->enterprise.nConnections,  aux->enterprise.nom, aux->enterprise.ip);
+            sprintf(buff, "(%d)%d-", aux->enterprise.port, aux->enterprise.nConnections);
             write(1, buff, strlen(buff));
             aux = aux->next;
             i++;
         }
-        sprintf(buff, "(%d)%d(%s.%s)\n", aux->enterprise.port, aux->enterprise.nConnections, aux->enterprise.nom, aux->enterprise.ip);
+        sprintf(buff, "(%d)%d\n", aux->enterprise.port, aux->enterprise.nConnections);
         write(1, buff, strlen(buff));
     }
 

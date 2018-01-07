@@ -59,14 +59,20 @@ int main(int argc, char const *argv[]) {
         enterprise.nConnections = 0;
 
         if (error) {
-            raise(SIGINT);
+            pthread_mutex_destroy(&mtx);
+            pthread_mutex_destroy(&mtxMenu);
+            return EXIT_FAILURE;
         } else {
 
             printWelcome();
+            menu.nPlats = 0;
             error = readMenu((char*)argv[2], &menu);
 
             if (error) {
-                raise(SIGINT);
+                alliberaMemoria();
+                pthread_mutex_destroy(&mtx);
+                pthread_mutex_destroy(&mtxMenu);
+                return EXIT_FAILURE;
             } else {
 
                 write(1, C_MENU, strlen(C_MENU));
@@ -111,7 +117,9 @@ void alliberaMemoria() {
     for (i = 0; i < menu.nPlats; i++) {
         free(menu.plats[i].nom);
     }
-    free(menu.plats);
+    if (menu.nPlats > 0) {
+        free(menu.plats);
+    }
 
     //Allibera enterprise
     free(enterprise.nom);

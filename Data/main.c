@@ -31,10 +31,10 @@
 #include "communication.h"
 
 // Declaració de constants
-#define DATA_EXEC         "Executant Data\n"
-#define WAITING_CLIENTS   "Esperant clients...\n"
+#define DATA_EXEC           "Executant Data\n"
+#define WAITING_CLIENTS     "Esperant clients...\n"
 
-#define CONFIGFILE  "Data.dat"
+#define CONFIGFILE          "Data.dat"
 
 // Headers de funcions
 void alliberaMemoria();
@@ -66,6 +66,8 @@ int main () {
     if (error) {
         //Com la funció readFile ja ha mostrat l'error específic, només cal
         //acabar l'execució
+        pthread_mutex_destroy(&mtx);
+        pthread_barrier_destroy(&barrier);
         return EXIT_FAILURE;
     } else {
         signal(SIGINT, intHandler);
@@ -83,6 +85,7 @@ int main () {
             raise(SIGINT);
         }
 
+        //No hi arribarem mai
         return EXIT_SUCCESS;
     }
 }

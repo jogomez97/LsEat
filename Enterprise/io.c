@@ -64,6 +64,7 @@ int readConfig(char* path, Enterprise* enterprise) {
             close(fd);
             return 0;
         } else {
+            close(fd);
             write(1, ERROR_FILE2, sizeof(ERROR_FILE2));
             return -1;
         }
@@ -128,6 +129,7 @@ int readMenu(char* path, Menu* menu) {
             close(fd);
             return 0;
         } else {
+            close(fd);
             write(1, ERROR_FILE2, sizeof(ERROR_FILE2));
             return -1;
         }

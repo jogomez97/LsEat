@@ -49,8 +49,7 @@
 #define ERROR_BIND          "Error en fer el bind!\n"
 #define ERROR_TRAMA         "Error en la trama!\n"
 #define ERROR_DISCONNECTED  "Error! S'ha perdut la connexió\n"
-#define NCONN 10
-#define PORT 8260
+#define NCONN               10
 
 #define ENT_INF             "[ENT_INF]\0"
 #define CONOK               "CONOK\0"
