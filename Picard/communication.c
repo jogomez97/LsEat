@@ -145,12 +145,11 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
     return 1;
 }
 
-
 /*******************************************************************************
 *
 * @Name     showDishFromTrama
 * @Purpose  Funció que mostrarà un plat per pantalla que li ha enviat enterprise
-* @Param    In: data  informació de la trama que ha enviat Enterprise
+* @Param    In: data  Informació de la trama que ha enviat Enterprise
 *           Out: -
 * @return   Retorna 0 si la trama era correcta, -1 altrament
 *
@@ -174,7 +173,15 @@ int showDishFromTrama(char* data) {
     return -1;
 }
 
-
+/*******************************************************************************
+*
+* @Name     show
+* @Purpose  Funció que mostrarà el Menu d'Enterprise per pantalla
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void show() {
     if (connectat) {
         //Fem tot el pertinent per mostrar el menú
@@ -219,6 +226,16 @@ void show() {
 
 }
 
+/*******************************************************************************
+*
+* @Name     order
+* @Purpose  Funció que demanarà un plat a Enterprise, si és possible
+* @Param    In: plat    Nom del plat a demanar
+*               units   Unitats a demanar del plat
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void order(char* plat, char* units) {
     if (connectat) {
         char* aux = getInfoComanda(plat, units);
@@ -256,6 +273,17 @@ void order(char* plat, char* units) {
     }
 }
 
+/*******************************************************************************
+*
+* @Name     delete
+* @Purpose  Funció que eliminarà un nombre de plats de la comanda actual, si és
+*           possible
+* @Param    In: plat    Nom del plat a eliminar
+*               units   Unitats del plat a eliminar de la comanda
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void delete(char* plat, char* units) {
 
     if (connectat) {
@@ -292,8 +320,16 @@ void delete(char* plat, char* units) {
 
 }
 
+/*******************************************************************************
+*
+* @Name     pay
+* @Purpose  Funció que pagarà la comanda actual, si és possible
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void pay() {
-
     if (connectat) {
         //Fem tot el pertinent per a pagar
 
@@ -326,6 +362,16 @@ void pay() {
     }
 }
 
+/*******************************************************************************
+*
+* @Name     enviaTotsElsPlats
+* @Purpose  Funció que enviarà tots els plats d'una comanda a una Enterprise per
+*           a recuperar tots els encàrrecs possibles
+* @Param    In: -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void enviaTotsElsPlats() {
     int i;
     int n = picard.nPlats;
@@ -452,18 +498,16 @@ Trama readTrama(int clientfd, int* error) {
 
     *error = read(clientfd, &trama.type, sizeof(trama.type));
     if (*error <= 0) {
-        if (connectat) {
-            connectat = 0;
-            close(sockfd);
-            write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
-            write(1, CONNECTING, strlen(CONNECTING));
-            int a = connectaServidor(connectat, picard, DATA, NULL);
-            if (a >= 1) {
-                sockfd = a;
-                write(1, CONNECTED, strlen(CONNECTED));
-                connectat = 1;
-                enviaTotsElsPlats();
-            }
+        connectat = 0;
+        close(sockfd);
+        write(1, ERROR_E_DOWN, strlen(ERROR_E_DOWN));
+        write(1, CONNECTING, strlen(CONNECTING));
+        int a = connectaServidor(connectat, picard, DATA, NULL);
+        if (a >= 1) {
+            sockfd = a;
+            write(1, CONNECTED, strlen(CONNECTED));
+            connectat = 1;
+            enviaTotsElsPlats();
         }
         return trama;
     }
