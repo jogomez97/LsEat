@@ -270,7 +270,7 @@ int gestionaShell() {
             error = isAllSpaces(plat);
             if (quantitat > 0 && !error) {
                 plat = deleteExtraSpaces(plat);
-                order(plat, num);
+                order(plat, num, 0);
                 free(plat);
                 plat = NULL;
             } else if (quantitat == 0 && !error) {
@@ -307,7 +307,7 @@ int gestionaShell() {
     } else if (strcmp(PAY, split) == 0 && strtok(NULL, " ") == NULL) {
         pay();
     } else if (strcmp(DISCONNECT, split) == 0 && strtok(NULL, " ") == NULL) {
-        disconnect(connectat, sockfd);
+        disconnect();
         return 1;
     } else {
         write(1, ERROR_COMAND, strlen(ERROR_COMAND));

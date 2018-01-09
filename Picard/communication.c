@@ -104,7 +104,9 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e) {
             int error = inet_aton(e->ip, &s_addr.sin_addr);
 
             free(e->ip);
+            e->ip = NULL;
             free(e->nom);
+            e->nom = NULL;
 
             if (error < 0) {
                 write(1, ERROR_CONNECT, strlen(ERROR_CONNECT));
@@ -219,7 +221,7 @@ void show() {
 
 }
 
-void order(char* plat, char* units) {
+void order(char* plat, char* units, int reorder) {
     if (connectat) {
         char* aux = getInfoComanda(plat, units);
         writeTrama(sockfd, DEMANA, NEW_ORD, aux);
@@ -231,10 +233,12 @@ void order(char* plat, char* units) {
             write(1, REPEAT, strlen(REPEAT));
         } else {
             if (strcmp(trama.header, ORDOK) == 0) {
-                Plat p;
-                p.nom =  plat;
-                p.quants = atoi(units);
-                addDish(p);
+                if (!reorder) {
+                    Plat p;
+                    p.nom =  plat;
+                    p.quants = atoi(units);
+                    addDish(p);
+                }
                 write(1, ORD_CORRECT, strlen(ORD_CORRECT));
             } else if (strcmp(trama.header, ORDKO) == 0) {
                 write(1, ORD_INCORRECT, strlen(ORD_INCORRECT));
@@ -340,7 +344,7 @@ void enviaTotsElsPlats() {
             aux = NULL;
 
             asprintf(&aux, "%d", picard.plats[i].quants);
-            order(picard.plats[i].nom, aux);
+            order(picard.plats[i].nom, aux, 1);
             free(aux);
             aux = NULL;
         }
@@ -358,16 +362,17 @@ void enviaTotsElsPlats() {
 * @return   -
 *
 *******************************************************************************/
-void disconnect(int connectat, int sockfd) {
+void disconnect() {
     write(1, DIS_MSG, strlen(DIS_MSG));
     if (connectat) {
         writeTrama(sockfd, 0x02, PIC_NAME, picard.nom);
 
         int error = 0;
+        connectat = 0;
         Trama t  = readTrama(sockfd, &error);
 
         if (error <= 0) {
-            write(1, ERROR_DATA, strlen(ERROR_DATA));
+            write(1, ERROR_DISCON_E, strlen(ERROR_DISCON_E));
             close(sockfd);
         } else if (gestionaTrama(t, DSC_ENTERP)) {
             free(t.data);

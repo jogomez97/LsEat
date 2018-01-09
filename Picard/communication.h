@@ -55,7 +55,7 @@
 #define DEL_CORRECT         "OK! Anotat el canvi en la comanda\n"
 #define DEL_KO              "El plat no havia estat reservat\n"
 #define DEL_KO2             "No s'havien reservat tantes unitats d'aquest plat\n"
-#define PAY_KO              "Error en processar el pagament\n"
+#define PAY_KO              "Error en processar el pagament.\n"
 #define REPEAT              "\nSi us plau, torni a introduir la comanda\n"
 
 #define PIC_NAME    "[PIC_NAME]\0"
@@ -127,7 +127,7 @@ int showDishFromTrama(char* data);
 
 void show();
 
-void order(char* plat, char* units);
+void order(char* plat, char* units, int reorder);
 
 void delete(char* plat, char* units);
 
@@ -139,13 +139,12 @@ void enviaTotsElsPlats();
 *
 * @Name     disconnect
 * @Purpose  Funció que desconnectarà Picard d'Enterprise (amb el protocol corresponent)
-* @Param    In: connectat   Indica si el Picard està o no connectat
-*               sockfd      File descriptor del que ens hem de desconnectar
+* @Param    In:  -
 *           Out: -
 * @return   -
 *
 *******************************************************************************/
-void disconnect(int connectat, int sockfd);
+void disconnect();
 
 
 /*******************************************************************************

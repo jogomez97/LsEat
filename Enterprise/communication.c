@@ -565,6 +565,7 @@ void * threadPicard(void * arg) {
         free(trama.data);
         trama.data = NULL;
     }
+    pthread_detach(pthread_self());
     return arg;
 }
 
