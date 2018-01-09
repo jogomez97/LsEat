@@ -125,14 +125,64 @@ int connectaServidor(int connectat, Picard picard, int mode, Enterprise* e);
 *******************************************************************************/
 int showDishFromTrama(char* data);
 
+/*******************************************************************************
+*
+* @Name     show
+* @Purpose  Funció que mostrarà el Menu d'Enterprise per pantalla
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void show();
 
+/*******************************************************************************
+*
+* @Name     order
+* @Purpose  Funció que demanara un plat a Enterprise
+* @Param    In:  plat       nom del plat a demanar
+*                units      unitats del plat a demanar
+*                reorder    indica si es tracta d'una reconnexió o no
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void order(char* plat, char* units, int reorder);
 
+/*******************************************************************************
+*
+* @Name     delete
+* @Purpose  Funció que eliminarà un nombre de plats de la comanda actual, si és
+*           possible
+* @Param    In: plat    Nom del plat a eliminar
+*               units   Unitats del plat a eliminar de la comanda
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void delete(char* plat, char* units);
 
+/*******************************************************************************
+*
+* @Name     pay
+* @Purpose  Funció que pagarà la comanda actual, si és possible
+* @Param    In:  -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void pay();
 
+/*******************************************************************************
+*
+* @Name     enviaTotsElsPlats
+* @Purpose  Funció que enviarà tots els plats d'una comanda a una Enterprise per
+*           a recuperar tots els encàrrecs possibles
+* @Param    In: -
+*           Out: -
+* @return   -
+*
+*******************************************************************************/
 void enviaTotsElsPlats();
 
 /*******************************************************************************

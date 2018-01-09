@@ -228,21 +228,18 @@ void show() {
 
 }
 
-<<<<<<< HEAD
-void order(char* plat, char* units, int reorder) {
-=======
 /*******************************************************************************
 *
 * @Name     order
-* @Purpose  Funció que demanarà un plat a Enterprise, si és possible
-* @Param    In: plat    Nom del plat a demanar
-*               units   Unitats a demanar del plat
+* @Purpose  Funció que demanara un plat a Enterprise
+* @Param    In:  plat       nom del plat a demanar
+*                units      unitats del plat a demanar
+*                reorder    indica si es tracta d'una reconnexió o no
 *           Out: -
 * @return   -
 *
 *******************************************************************************/
-void order(char* plat, char* units) {
->>>>>>> a7d5cc2a160a72b6f82b2188b0a0a8c799d2ed77
+void order(char* plat, char* units, int reorder) {
     if (connectat) {
         char* aux = getInfoComanda(plat, units);
         writeTrama(sockfd, DEMANA, NEW_ORD, aux);
